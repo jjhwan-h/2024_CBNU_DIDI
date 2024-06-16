@@ -1,0 +1,87 @@
+<%- include('../partials/header') %>
+
+<div class="cont">
+    <div class="container mt-3" style="height: 100vh; background-color: #ffffff; overflow-y: auto;">
+        <div class="row justify-content-center text-center"> 
+            <h2>투표방 등록</h2>
+        </div>
+        <div class="divider"></div>
+        <div class="row">
+            <div class="col-md-6">
+                <form action="/voteRooms" method="post" enctype="multipart/form-data">
+                    <h3>투표방 정보</h3>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">투표방</span>
+                        <input type="text" class="form-control" placeholder="투표방이름" aria-label="manufacturer" aria-describedby="basic-addon1" name="room_name">
+                    </div>
+            
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="basic-addon1">투표유형</span>
+                        <select class="form-select" aria-label="state" name="category" required>
+                            <option disabled>상태를 선택하세요.</option>
+                            <option value="주민투표">주민투표</option>
+                            <option value="인기투표">인기투표</option>
+                            <option value="찬반">찬반투표</option>
+                        </select>
+                    </div>
+            
+                    <div class="input-group">
+                        <span class="input-group-text">설명</span>
+                        <textarea class="form-control" aria-label="desc" name="desc"></textarea>
+                    </div>
+                    <br>
+                    <div class="flex-container">
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">투표시작</span>
+                            <input type="date"  aria-label="date" name="date_start" required>
+                        </div>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text">투표종료</span>
+                            <input type="date"  aria-label="date" name="date_end" required>
+                        </div>
+                    </div>
+                    
+            </div>
+            <div class="col-md-6">
+                <div class="mb-3 image">
+                    <label for="formFile" class="form-label"><h3>투표방 이미지</h3></label>
+                    <input class="form-control" type="file"  id="img" name="room_img">
+                </div>
+                <label for="jsonFile" class="form-label"><h3>유권자목록</h3></label>
+                    <input class="form-control" type="file"  id="jsonFile" name="voter_json" accept="application/json">
+            </div>
+        </div>
+        <div class="row">
+            <label for="jsonFile" class="form-label"><h3>후보자목록</h3></label>
+                    <input class="form-control" type="file"  id="jsonFile" name="voter_json" accept="application/json">
+
+                    <div class="form-group">
+                        <label for="personCount">후보 수 선택:</label>
+                        <select class="form-control" id="personCount">
+                            <option value="1">1명</option>
+                            <option value="2">2명</option>
+                            <option value="3">3명</option>
+                            <option value="4">4명</option>
+                            <option value="5">5명</option>
+                            <option value="6">6명</option>
+                            <option value="7">7명</option>
+                            <option value="8">8명</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>후보자 사진 업로드:</label>
+                        
+                        <div id="imageDropzone" class="dropzone"></div>
+                        <div id="preview-container" class="row mt-3"></div>
+
+                    </div>
+        </div>
+        <div class="row justify-content-center mt-3 mb-5">
+            <button class="btn btn-success btn-subject justify-content-center col-md-9" id="submit">Submit</button>
+        </div>
+        </form>
+    </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
+<script src="/scripts/createRoom.js"></script>
+<%- include('../partials/footer') %>

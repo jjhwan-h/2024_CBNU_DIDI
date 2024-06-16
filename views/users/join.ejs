@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>DIDI</title>
+    <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/global.css">
+    <link rel="stylesheet" href="/pages/join.css">
+</head>
+<body>
+<div class="cont">
+    <div class="container right-panel-active">
+        <!-- Sign Up -->
+        <div class="container__form container--signup">
+            <form action="#" class="form" id="form1">
+                <h2 class="form__title">Sign Up</h2>
+                <input type="text" placeholder="User" class="input" />
+                <input type="email" placeholder="Email" class="input" />
+                <input type="password" placeholder="Password" class="input" />
+                <button class="join_btn">Sign Up</button>
+                <button class="join_btn" id="btn_look_around">회원가입 없이</button>
+          </form>
+        </div>
+      
+        <!-- Sign In -->
+        <div class="container__form container--signin">
+          <form action="#" class="form" id="form2">
+            <h2 class="form__title">Sign In</h2>
+            <input type="email" placeholder="Email" class="input" />
+            <input type="password" placeholder="Password" class="input" />
+            <a href="#" class="link">Forgot your password?</a>
+            <button class="join_btn">Sign In</button>
+          </form>
+        </div>
+      
+        <!-- Overlay -->
+        <div class="container__overlay">
+          <div class="overlay">
+            <div class="overlay__panel overlay--left">
+              <button class="join_btn" id="signIn">Sign In</button>
+            </div>
+            <div class="overlay__panel overlay--right">
+              <button class="join_btn" id="signUp">Sign Up</button>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+<script src="/scripts/join.js"></script>
+<%- include('../partials/footer') %>

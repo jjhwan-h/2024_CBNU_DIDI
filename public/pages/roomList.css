@@ -1,0 +1,9 @@
+#pagination {margin:10px auto;text-align: center;}
+#pagination a {display:inline-block;margin-right:10px;}
+#pagination .on {font-weight: bold; cursor: default;color:#777;}
+.card-margin{ margin: 0 auto;}
+.card-container {
+    display: flex;
+    justify-content: center; /* 내부의 카드를 가로로 가운데 정렬 */
+    align-items: center; /* 내부의 카드를 세로로 가운데 정렬 */
+}
