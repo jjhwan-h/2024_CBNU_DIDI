@@ -24,12 +24,10 @@ export default class Voter extends Model<InferAttributes<Voter>, InferCreationAt
             email:{
                 type: Sequelize.STRING(20),
                 allowNull:false,
-                unique:true,
             },
             tel:{
                 type:Sequelize.STRING(100),
                 allowNull:false,
-                unique:true,
             }
         },{
             sequelize,

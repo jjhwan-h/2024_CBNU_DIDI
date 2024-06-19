@@ -3,6 +3,7 @@ import Room from '../models/room';
 import Voter from '../models/voter';
 import Candidate from '../models/candidate';
 import {IRoomData} from './interfaces/IvoterRoom';
+import { hasOwnProperty } from '../utils/object';
 
 export const getVoteRooms:RequestHandler = (req,res)=>{
 
@@ -15,28 +16,48 @@ export const afterUpload:RequestHandler = (req,res)=>{
 
 export const registerRoom:RequestHandler = async (req,res)=>{
     try{
+        let candidateNum;
         console.log(req.body);
-        const candidateNum = req.body['dropzoneCategory3-0'].replace(/,+$/, '').split(',');
-        console.log(candidateNum);
-        const voterNum = parseInt(req.body['dropzoneCategory2-0'],10);
+        const request = req.body;
+        if(request && hasOwnProperty(request,'dropzoneCategory1-0') && hasOwnProperty(request,'dropzoneCategory2-0')
+            && hasOwnProperty(request,'dropzoneCategory3-0') ){
+                candidateNum = request['dropzoneCategory3-0'].replace(/,+$/, '').split(',');
+                const candidateDropzoneIds = Array.from({length:candidateNum.length},(_,idx)=>`category4-${idx}`)
+                const allPropertiesExist = candidateDropzoneIds.every(prop => hasOwnProperty(request,prop));
+                if(!allPropertiesExist) return res.redirect(`/registration?error=모든파일을 업로드해주세요`);
+        }
+        else return res.redirect(`/registration?error=모든 파일을 업로드해주세요}`);
+        const voterNum = request['dropzoneCategory2-0'].replace(/,+$/, '').split(',');
         let roomData:IRoomData={
-            name:req.body.room_name,
-            category:req.body.category,
-            desc:req.body.desc,
-            s_date:req.body.date_start,
-            e_date:req.body.date_end,
-            img:req.body['dropzoneCategory1-0']
+            name:request.room_name,
+            category:request.category,
+            desc:request.desc,
+            s_date:request.date_start,
+            e_date:request.date_end,
+            img:request['dropzoneCategory1-0']
         };
 
-            
-        await Room.create(roomData).then(async (el)=>{
-            const roomId = el.dataValues.id;
-            await Voter.update({RoomId:roomId},{where:{id:voterNum}});
-            for(let v of candidateNum){
-                v=parseInt(v,10);
-                await Candidate.update({RoomId:roomId},{where:{id:v}});
-            }
-        });
+        try{
+            await Room.create(roomData).then(async (el)=>{
+                const roomId = el.dataValues.id;
+                for(let v of voterNum){
+                    v=parseInt(v,10);
+                    await Voter.update({
+                        RoomId:roomId, 
+                    },{where:{id:v}});
+                };
+                for(let [idx,v] of candidateNum.entries()){
+                    v=parseInt(v,10);
+                    await Candidate.update({
+                        RoomId:roomId, 
+                        img:request[`category4-${idx}`],
+                    },{where:{id:v}});
+                };
+            });
+        }catch(error:any){
+            return res.redirect(`/registration?error=${error.errors[0].message}`);
+        }
+        
 
         return res.redirect(`/voteRooms?success=투표방등록이 완료되었습니다.`);
     }
@@ -51,16 +72,25 @@ export const voterUpload:RequestHandler= async (req,res)=>{
     if(!jsonFile) return res.send('파일이 없습니다.');
 
     try{
+        let str="";
         const jsonData = JSON.parse(jsonFile.buffer.toString('utf8'));
         //console.log('파일 데이터:', jsonData);
-        try{
-            const el = await Voter.create(jsonData);
-            console.log(el.dataValues.id);
-            res.send(`${el.dataValues.id}`);
-        }catch(error:any){
-            console.error(error);
-            return res.json({ error:error.errors[0].message });
+        for (const key of Object.keys(jsonData)) {
+            const voter = {
+              name: jsonData[key].name,
+              email: jsonData[key].email,
+              tel: jsonData[key].tel,
+            };
+          
+            try {
+              const el = await Voter.create(voter);
+              str = str + el.dataValues.id + ",";
+            } catch (error:any) {
+              console.error('Voter.create 오류:', error);
+              res.json({error:error.errors[0].message});
+            }
         }
+        res.send(`${str}`);
     }catch(error:any){
         console.error(error);
         return res.json({error:error.message});
@@ -68,15 +98,13 @@ export const voterUpload:RequestHandler= async (req,res)=>{
 }
 
 export const candidateUpload:RequestHandler= async (req,res)=>{
-    console.log(req.file);
-    console.log(req.body);
     const jsonFile = req.file;
     if(!jsonFile) return res.send('파일이 없습니다.');
 
     let str="";
     try{
         const jsonData = JSON.parse(jsonFile.buffer.toString('utf8'));
-        console.log('파일 데이터:', jsonData);
+        //console.log('파일 데이터:', jsonData);
         for (const key of Object.keys(jsonData)) {
             const candidate = {
               name: jsonData[key].name,
