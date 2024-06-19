@@ -1,0 +1,6 @@
+node_modules
+.env
+.sequelizerc
+/dist
+backend-397418-8286cc4a1853.json
+/configs

@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import path from 'path';
 import session from 'express-session';
+import { sequelize } from './models/index';
 import {router as pageRouter} from './routes/page';
 import {router as voteRoomRouter} from './routes/voteRooms';
 import dotenv from 'dotenv';
@@ -15,13 +16,13 @@ app.set('port', process.env.SERVER_PORT || 3000);
 app.set('view engine', 'ejs');
 app.set('views',__dirname+'/views');
 
-// sequelize.sync({force:false}) // force. 서버를 실행할때마다 테이블 재생성
-//     .then(()=>{
-//         console.log('데이터베이스 연결 성공');
-//     })
-//     .catch((err:string)=>{
-//         console.log(err);
-//     });
+sequelize.sync({force:false}) // force. 서버를 실행할때마다 테이블 재생성
+    .then(()=>{
+        console.log('데이터베이스 연결 성공');
+    })
+    .catch((err:string)=>{
+        console.log(err);
+    });
 
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -40,6 +41,7 @@ app.use(session({ //express-session 1.5버전이전이라면 cookieParser뒤에 
 }));
 
 app.use('/',pageRouter);
+app.use('/rooms',voteRoomRouter);
 
 app.use((req, res, next) => {
     const error : Error =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`); 
