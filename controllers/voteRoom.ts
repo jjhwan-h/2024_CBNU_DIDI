@@ -44,7 +44,6 @@ export const registerRoom:RequestHandler = async (req,res)=>{
         console.error(error);
         return res.redirect(`/registration?error=${error}`);
     }
-    res.send("success");
 }
 
 export const voterUpload:RequestHandler= async (req,res)=>{
@@ -54,12 +53,17 @@ export const voterUpload:RequestHandler= async (req,res)=>{
     try{
         const jsonData = JSON.parse(jsonFile.buffer.toString('utf8'));
         //console.log('파일 데이터:', jsonData);
-        const el = await Voter.create(jsonData);
-        console.log(el.dataValues.id);
-        res.send(`${el.dataValues.id}`);
+        try{
+            const el = await Voter.create(jsonData);
+            console.log(el.dataValues.id);
+            res.send(`${el.dataValues.id}`);
+        }catch(error:any){
+            console.error(error);
+            return res.json({ error:error.errors[0].message });
+        }
     }catch(error:any){
         console.error(error);
-        return res.json({ error:error.errors[0].message });
+        return res.json({error:error.message});
     }
 }
 
@@ -85,15 +89,15 @@ export const candidateUpload:RequestHandler= async (req,res)=>{
             try {
               const el = await Candidate.create(candidate);
               str = str + el.dataValues.id + ",";
-              console.log(str);
-            } catch (error) {
+            } catch (error:any) {
               console.error('Candidate.create 오류:', error);
+              res.json({error:error.errors[0].message});
             }
-          }
+        }
         res.send(`${str}`);
     }catch(error:any){
         console.error(error);
-        return res.json({ error:error.errors[0].message });
+        return res.json({ error:error.message });
     }
 }
 

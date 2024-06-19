@@ -94,7 +94,7 @@ const createDropzones=(dropzoneId,dropzoneContainerId,num)=>{
                               const elementCount = Object.keys(jsonData).length; // 후보수 계산
                               const personCount = parseInt($("#personCount").val(), 10);
                               if(elementCount !== personCount){
-                                alert(`json 파일 후보수:${elementCount}, 선택한 후보수:${personCount}입니다. \n두 수가 같아야합니다.`);
+                                alert(`Json 파일 후보수:${elementCount}, 선택한 후보수:${personCount}입니다. \n두 수가 같아야합니다.`);
                                 createDropzones('#dropzoneCategory3', 'preview-container-category3',1);
                               }
                               else{
@@ -102,13 +102,10 @@ const createDropzones=(dropzoneId,dropzoneContainerId,num)=>{
                               }
                             } catch (error) {
                               console.error('JSON 파싱 오류:', error);
-                              alert('JSON 파일 파싱 오류');
                             }
                           };
                       
                         await reader.readAsText(file); // 파일을 텍스트로 읽기
-
-                        arr = res.split(',');
                         
                     }
 
