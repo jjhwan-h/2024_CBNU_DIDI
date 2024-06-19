@@ -78,6 +78,7 @@ const createDropzones=(dropzoneId,dropzoneContainerId,num)=>{
                     if(res.error) {
                         alert(res.error);
                         createDropzones(dropzoneId, dropzoneContainerId,1);
+                        return;
                     }
                     if(dropzoneId==='dropzoneCategory3'){
                         if (this.files.length === 0) {
@@ -138,4 +139,3 @@ document.getElementById('personCount').addEventListener('change',()=>{
 
 // Initialize with default value
 createDropzones('#category4','dropzoneCategory4',document.getElementById('personCount').value);
-
