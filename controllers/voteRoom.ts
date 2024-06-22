@@ -5,9 +5,17 @@ import Candidate from '../models/candidate';
 import {IRoomData} from './interfaces/IvoterRoom';
 import { hasOwnProperty } from '../utils/object';
 
-export const getVoteRooms:RequestHandler = (req,res)=>{
+export const getVoteRooms:RequestHandler = async (req,res)=>{
+    const roomDataValues = (await Room.findAll({
+        include:{
+            model:Candidate,
+            attributes:['name','age','img']
+        }
+    })).map((el)=>{return el.dataValues});
 
-    res.render("voteRooms/roomList");
+    const roomJsonString = JSON.stringify(roomDataValues);
+    //console.log(roomJsonString);
+    res.render("voteRooms/roomList",{roomJsonString});
 }
 
 export const afterUpload:RequestHandler = (req,res)=>{
@@ -67,7 +75,7 @@ export const registerRoom:RequestHandler = async (req,res)=>{
     }
 }
 
-export const voterUpload:RequestHandler= async (req,res)=>{
+export const voterUpload:RequestHandler= async (req,res)=>{ //TODO:: 동일한 사람정보가 등록되어있는지 확인(중복투표 방지)
     const jsonFile = req.file;
     if(!jsonFile) return res.send('파일이 없습니다.');
 
@@ -87,7 +95,7 @@ export const voterUpload:RequestHandler= async (req,res)=>{
               str = str + el.dataValues.id + ",";
             } catch (error:any) {
               console.error('Voter.create 오류:', error);
-              res.json({error:error.errors[0].message});
+              return res.json({error:error.errors[0].message});
             }
         }
         res.send(`${str}`);
@@ -119,7 +127,7 @@ export const candidateUpload:RequestHandler= async (req,res)=>{
               str = str + el.dataValues.id + ",";
             } catch (error:any) {
               console.error('Candidate.create 오류:', error);
-              res.json({error:error.errors[0].message});
+              return res.json({error:error.errors[0].message});
             }
         }
         res.send(`${str}`);
