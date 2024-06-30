@@ -6,6 +6,8 @@ import session from 'express-session';
 import { sequelize } from './models/index';
 import {router as pageRouter} from './routes/page';
 import {router as voteRoomRouter} from './routes/voteRooms';
+import {router as authRouter} from './routes/auth';
+import {router as userRouter} from './routes/users';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -42,6 +44,8 @@ app.use(session({ //express-session 1.5버전이전이라면 cookieParser뒤에 
 
 app.use('/',pageRouter);
 app.use('/rooms',voteRoomRouter);
+app.use('/auth',authRouter);
+app.use('/users',userRouter);
 
 app.use((req, res, next) => {
     const error : Error =  new Error(`${req.method} ${req.url} 라우터가 없습니다.`); 

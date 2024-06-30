@@ -3,7 +3,7 @@ import Room from '../models/room';
 import Voter from '../models/voter';
 import Candidate from '../models/candidate';
 import {IRoomData} from './interfaces/IvoterRoom';
-import { hasOwnProperty } from '../utils/object';
+import { hasOwnProperty } from './utils/object';
 
 export const getVoteRooms:RequestHandler = async (req,res)=>{
     const roomDataValues = (await Room.findAll({

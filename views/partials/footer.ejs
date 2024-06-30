@@ -2,15 +2,10 @@
     window.onload = () => {
       if (new URL(location.href).searchParams.get('error')) {
         const msg= new URL(location.href).searchParams.get('error');
-        if(msg==="exist"){
-            alert("이미 존재하는 ID입니다.");
-        }
-        else{
-            alert(msg);
-        }
+        alert(msg);
       }
-      if (new URL(location.href).searchParams.get('success')) {
-        const msg= new URL(location.href).searchParams.get('success');
+      if (new URL(location.href).searchParams.get('message')) {
+        const msg= new URL(location.href).searchParams.get('message');
         alert(msg);
       }
     };
