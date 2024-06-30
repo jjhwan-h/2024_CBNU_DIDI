@@ -210,3 +210,17 @@
     z-index: 5;
   }
 }
+.email-validation{
+  position: relative; /* 부모 요소에 상대 위치를 설정 */
+}
+.email-validation-icon{
+  position: absolute; /* 자식 요소에 절대 위치를 설정 */
+  top: 50%; /* 수직 가운데 정렬 */
+  left: 50%; /* 수평 가운데 정렬 */
+  transform: translate(-50%, -50%); /* 요소를 자신 크기의 50%만큼 왼쪽과 위쪽으로 이동하여 가운데 정렬 */
+}
+
+#email-validation-btn{
+  padding: 10px 20px; /* 상하좌우 여백 설정 */
+  font-size: 14px; /* 글자 크기 설정 */
+}

@@ -6,6 +6,8 @@ export default class Email extends Model<InferAttributes<Email>, InferCreationAt
     declare email:string;
     declare token:string;
     declare isValid:boolean;
+    declare isRegistered:boolean;
+    
     static initiate(sequelize: Sequelize.Sequelize){
         Email.init({
             id:{
@@ -23,6 +25,10 @@ export default class Email extends Model<InferAttributes<Email>, InferCreationAt
                 allowNull:false,
             },
             isValid:{
+                type:Sequelize.BOOLEAN,
+                allowNull:false,
+            },
+            isRegistered:{
                 type:Sequelize.BOOLEAN,
                 allowNull:false,
             }
