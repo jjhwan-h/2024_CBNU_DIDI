@@ -8,6 +8,7 @@ import {router as pageRouter} from './routes/page';
 import {router as voteRoomRouter} from './routes/voteRooms';
 import {router as authRouter} from './routes/auth';
 import {router as userRouter} from './routes/users';
+import faber from './src/Faber';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -41,6 +42,8 @@ app.use(session({ //express-session 1.5버전이전이라면 cookieParser뒤에 
     maxAge: 2* 60 * 60 * 1000 // 2시간
   },
 }));
+
+const agent = faber;
 
 app.use('/',pageRouter);
 app.use('/rooms',voteRoomRouter);
