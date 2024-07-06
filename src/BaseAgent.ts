@@ -82,7 +82,7 @@ export class BaseAgent {
         id: name,
         key: process.env.BCOVRINSEED as string,
       },
-      endpoints: [`${process.env.URL}:${this.port}`],
+      endpoints: [`${process.env.URL}`],
       //autoUpdateStorageOnStartup:true,
     } satisfies InitConfig
     this.config = config
@@ -95,7 +95,6 @@ export class BaseAgent {
     this.agent.registerInboundTransport(new HttpInboundTransport({ port }))
     this.agent.registerOutboundTransport(new HttpOutboundTransport())
     this.agent.registerOutboundTransport(new WsOutboundTransport())
-    console.log("BaseAgent Construct")
   }
 public async createDid():Promise<string>{ //indy bcovrin did 생성방법
   await this.agent.dids.import({ //did값을 넣으면 외부에서 생성한 did를 import할 수 있다. internal 방식으로 create할려면 endoser의 did와 seed가 wallet에 등록되어잇어야한다.
@@ -132,7 +131,7 @@ public async initializeAgent() {
 }
 
 const getAskarAnonCredsIndyModules=()=>{
-  const mediatorInvitationUrl =process.env.MEDIATORINVITATIONURL
+  //const mediatorInvitationUrl =process.env.MEDIATORINVITATIONURL
   const legacyIndyCredentialFormatService = new LegacyIndyCredentialFormatService()
     const legacyIndyProofFormatService = new LegacyIndyProofFormatService()
     return {
@@ -178,9 +177,9 @@ const getAskarAnonCredsIndyModules=()=>{
       ariesAskar: new AskarModule({
         ariesAskar,
       }),
-      mediationRecipient: new MediationRecipientModule({
-        mediatorInvitationUrl,
-      }),
+      // mediationRecipient: new MediationRecipientModule({
+      //   mediatorInvitationUrl,
+      // }),
     } as const
   }
  

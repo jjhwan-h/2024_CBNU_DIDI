@@ -19,6 +19,12 @@ const validateEmail = function() {
     } 
 };
 
+const signIn = function(){
+    axios.post('/users/login').then((res)=>{
+      
+    })
+}
+
 $(document).ready(()=> {
   const btn= $('<button/>', {
     text: 'email 검증하기',
