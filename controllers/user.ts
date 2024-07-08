@@ -13,7 +13,9 @@ const join :RequestHandler=async (req,res,next)=>{ //VC발급
 
             if(exEmail && exEmail.isValid && !exEmail.isRegistered){
                 await exEmail.update({isValid:false, isRegistered:true}); //다른 사람이 동일한 이메일로 가입하는 것을 방지
-                await faber.setupConnection(); // p2p연결
+                const url = await faber.printConnectionInvite();
+                res.write(url);
+                await faber.setupConnection();
                 await faber.issueCredential({email,name}); // p2p연결완료 시 VC발급(email, name, tel)
                 return res.redirect('/?message=증명서 발급이 완료되었습니다. 요청을 승락해주세요.');
             }
@@ -33,7 +35,7 @@ const join :RequestHandler=async (req,res,next)=>{ //VC발급
 const logIn:RequestHandler=async (req,res,next)=>{
     console.log(req.body);
 
-    return 
+    res.end();
 }
 
 export {join,logIn}

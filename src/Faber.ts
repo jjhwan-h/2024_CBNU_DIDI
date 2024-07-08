@@ -54,9 +54,13 @@ class Faber extends BaseAgent {
       this.saveItems('vc-count',{key:0});
     }
 
-    const res = await faber.agent.proofs.getAll();
-    
-    console.log(res);
+    // const proof = await this.agent.proofs.getAll();
+    // console.log(proof)
+    // console.log("===================================\n");
+    // const test= await this.agent.credentials.getAll();
+    // console.log(test)
+
+
   }
 
   private async save(record:BaseRecord){
@@ -112,33 +116,26 @@ class Faber extends BaseAgent {
     return connection
   }
 
-  private async printConnectionInvite() {
-    const outOfBand = await this.agent.oob.createInvitation()
-    this.outOfBandId = outOfBand.id
-    console.log(
-      outOfBand.outOfBandInvitation.toUrl({ domain: `${process.env.URL}` }), 
-    )
-  }
-
+  
   private async waitForConnection() {
     if (!this.outOfBandId) {
       throw new Error(redText(Output.MissingConnectionRecord))
     }
-
+    
     const getConnectionRecord = (outOfBandId: string) =>
       new Promise<ConnectionRecord>((resolve, reject) => {
         // Timeout of 20000 seconds
         const timeoutId = setTimeout(() => reject(new Error(redText(Output.MissingConnectionRecord))), 200000)
-
+        
         // Start listener
         this.agent.events.on<ConnectionStateChangedEvent>(ConnectionEventTypes.ConnectionStateChanged, (e) => {
           //console.log(e)
           if (e.payload.connectionRecord.outOfBandId !== outOfBandId) return
-
+          
           clearTimeout(timeoutId)
           resolve(e.payload.connectionRecord)
         })
-
+        
         // Also retrieve the connection record by invitation if the event has already fired
         void this.agent.connections.findAllByOutOfBandId(outOfBandId).then(([connectionRecord]) => {
           if (connectionRecord) {
@@ -147,20 +144,26 @@ class Faber extends BaseAgent {
           }
         })
       })
-
-    const connectionRecord = await getConnectionRecord(this.outOfBandId)
-    //console.log(`connectionRecord : ${JSON.stringify(connectionRecord)}`)
-    try {
-      await this.agent.connections.returnWhenIsConnected(connectionRecord.id,{timeoutMs:2000000});
-    } catch (e) {
-      console.log(redText(`\nTimeout of 20000 seconds reached.. Returning to home screen.\n`))
-      return
+      
+      const connectionRecord = await getConnectionRecord(this.outOfBandId)
+      //console.log(`connectionRecord : ${JSON.stringify(connectionRecord)}`)
+      try {
+        await this.agent.connections.returnWhenIsConnected(connectionRecord.id,{timeoutMs:2000000});
+      } catch (e) {
+        console.log(redText(`\nTimeout of 20000 seconds reached.. Returning to home screen.\n`))
+        return
+      }
+      console.log(greenText(Output.ConnectionEstablished))
     }
-    console.log(greenText(Output.ConnectionEstablished))
-  }
-
+    
+    public async printConnectionInvite() {
+      const outOfBand = await this.agent.oob.createInvitation()
+      this.outOfBandId = outOfBand.id
+      
+      return outOfBand.outOfBandInvitation.toUrl({ domain: `${process.env.URL}` }) 
+    }
   public async setupConnection() {
-    await this.printConnectionInvite();
+    // await this.printConnectionInvite();
     await this.waitForConnection();
     faber.listener.proofAcceptListener();
   }

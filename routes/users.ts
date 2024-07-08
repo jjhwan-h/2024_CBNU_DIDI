@@ -6,7 +6,7 @@ const router = express.Router();
 //POST /users/join
 router.post('/join',join);
 
-//POST /users/login
-router.post('/login',sendProofRequest,logIn);
+//GET /users/login
+router.get('/login',sendProofRequest,logIn);
 
 export {router};
