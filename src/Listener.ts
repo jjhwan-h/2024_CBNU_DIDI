@@ -25,7 +25,7 @@ export class Listener{
     faber.agent.events.on(ProofEventTypes.ProofStateChanged, async ({ payload }: ProofStateChangedEvent) => {
       if (payload.proofRecord.state === ProofState.PresentationReceived) {
         this.on=true;
-        console.log(payload.proofRecord)
+        console.log(payload)
         this.on=false;
       }
     })
