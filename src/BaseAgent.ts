@@ -82,7 +82,7 @@ export class BaseAgent {
         id: name,
         key: process.env.BCOVRINSEED as string,
       },
-      endpoints: [`${process.env.URL}`],
+      endpoints: [`${process.env.AGENT_URL}`],
       //autoUpdateStorageOnStartup:true,
     } satisfies InitConfig
     this.config = config

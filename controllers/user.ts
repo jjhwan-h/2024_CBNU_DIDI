@@ -10,14 +10,10 @@ const join :RequestHandler=async (req,res,next)=>{ //VC발급
         console.log(email,name)
         try{
             const exEmail = await Email.findOne({where:{email}}); //이메일 검증 확인
-
             if(exEmail && exEmail.isValid && !exEmail.isRegistered){
-                await exEmail.update({isValid:false, isRegistered:true}); //다른 사람이 동일한 이메일로 가입하는 것을 방지
-                const url = await faber.printConnectionInvite();
-                res.write(url);
-                await faber.setupConnection();
-                await faber.issueCredential({email,name}); // p2p연결완료 시 VC발급(email, name, tel)
-                return res.redirect('/?message=증명서 발급이 완료되었습니다. 요청을 승락해주세요.');
+                req.session.email=email;
+                req.session.name=name;
+                return res.send(true);
             }
             else{
             return res.redirect(`/?error=이메일 인증을 먼저 해주세요`);
@@ -32,10 +28,32 @@ const join :RequestHandler=async (req,res,next)=>{ //VC발급
     }  
 }
 
+const issueVC:RequestHandler=async(req,res,next)=>{
+    const email = req.session.email;
+    const name = req.session.name;
+    if(email && name){
+        try{
+            const exEmail = await Email.findOne({where:{email}}); //이메일 검증 확인
+            if(exEmail){
+                await exEmail.update({isValid:false, isRegistered:true}); //다른 사람이 동일한 이메일로 가입하는 것을 방지
+                await faber.issueCredential({email,name});
+                res.end();
+            }
+        }catch(error){
+            res.end();
+            return next(error);
+        }
+    }else{
+        res.end();
+        res.redirect("/?error=VC발급중 문제가 발생하였습니다. 다시 시도해주세요.");
+    }
+}
+
 const logIn:RequestHandler=async (req,res,next)=>{
+    //TODO::vp처리 내용
     console.log(req.body);
 
     res.end();
 }
 
-export {join,logIn}
+export {join,logIn, issueVC}
