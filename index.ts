@@ -38,8 +38,8 @@ app.use(session({ //express-session 1.5버전이전이라면 cookieParser뒤에 
   secret: process.env.COOKIE_SECRET!, //쿠키에 서명
   cookie: {
     httpOnly: true,
-    secure: false,
-    maxAge: 2* 60 * 60 * 1000 // 2시간
+    secure: false, //프로덕션에서는 true로
+    maxAge: 60 * 60 * 1000 // 1시간
   },
 }));
 

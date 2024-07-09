@@ -121,7 +121,6 @@ class Faber extends BaseAgent {
     if (!this.outOfBandId) {
       throw new Error(redText(Output.MissingConnectionRecord))
     }
-    
     const getConnectionRecord = (outOfBandId: string) =>
       new Promise<ConnectionRecord>((resolve, reject) => {
         // Timeout of 20000 seconds
@@ -160,7 +159,7 @@ class Faber extends BaseAgent {
       const outOfBand = await this.agent.oob.createInvitation()
       this.outOfBandId = outOfBand.id
       
-      return outOfBand.outOfBandInvitation.toUrl({ domain: `${process.env.URL}` }) 
+      return outOfBand.outOfBandInvitation.toUrl({ domain: `${process.env.AGENT_URL}` }) 
     }
   public async setupConnection() {
     // await this.printConnectionInvite();

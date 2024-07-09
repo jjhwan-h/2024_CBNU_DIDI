@@ -16,21 +16,28 @@
     <div class="container right-panel-active">
         <!-- Sign Up -->
         <div class="container__form container--signup">
-            <form action="/users/join" method="post" class="form" id="form1">
-                <h2 class="form__title">Sign Up</h2>
-                <input type="text" placeholder="User" class="input" id="name" name="name" required />
+            <form class="form" id="form1">
+              <h2 class="form__title">Sign Up</h2>
+              <div id="signup-form">
+                <div class="row" style="width: 100%;">
+                  <div class="col-md-12 p-0">
+                    <input type="text" placeholder="User" class="input" id="name" name="name" required />
+                  </div>
+                </div>
                 <div class="row" style="width: 100%;">
                   <div class="col-md-12 p-0">
                     <input type="email" placeholder="Email" class="input" id="email" name="email" required/>
                   </div>
-                  <div class="p-0 email-validation" id="email-validation">
-                  </div>
+                  <div class="p-0 email-validation" id="email-validation"></div>
                 </div>
                 <div class="row" style="width: 100%;">
                   <button class="join_btn col-md-6" type="submit" >Sign Up</button>
                 <button class="join_btn col-md-6" type="button" id="btn_look_around">without signing up</button>
                 </div>
-          </form>
+              </div>
+              <div class="row" style="width:100%; display: flex; justify-content: center; align-items: center;" id="signup-qr"></div>
+              <div class="row" style="width:100%; display: flex; justify-content: center; align-items: center;" id="signup-url"></div>
+            </form>
         </div>
       
         <!-- Sign In -->
@@ -38,8 +45,8 @@
             <form action="#" class="form" id="form2">
               <h2 class="form__title">Sign In</h2>
               <button class="join_btn" id="conn" type="button" onclick="signIn()">Sign In</button>
-              <div class="row" style="width:100%; display: flex; justify-content: center; align-items: center;" id="qr"></div>
-              <div class="row" style="width:100%; display: flex; justify-content: center; align-items: center;" id="url"></div>
+              <div class="row" style="width:100%; display: flex; justify-content: center; align-items: center;" id="signin-qr"></div>
+              <div class="row" style="width:100%; display: flex; justify-content: center; align-items: center;" id="signin-url"></div>
           </form>
         </div>
       
