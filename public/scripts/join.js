@@ -26,6 +26,7 @@ const showConn = (qrDiv,urlDiv,event)=>{
   });
   const newImg = $('<img>', {
     class: 'col-md-9',
+    id:'qr-code'
   });
   newBtn.click(()=>{
     navigator.clipboard.writeText(event.url)
@@ -104,7 +105,7 @@ $(document).ready(()=> {
 
     axios.post('/users/join', data)
         .then((response)=> {
-          if(response.data){
+          if(response.data===true){
             const signupForm = $('#signup-form');
             const qrDiv = $('#signup-qr');
             const urlDiv = $('#signup-url');
@@ -114,15 +115,20 @@ $(document).ready(()=> {
               signupForm.remove();
               event = JSON.parse(event.data);
               if('url' in event && 'qr' in event){
+                const qrCode = $('#qr-code')
+                qrCode.remove()
                 showConn(qrDiv,urlDiv,event);
-              }else{
-                newDiv.text(event.message);
-                urlDiv.append(newDiv);
+              }
+
+              if ('redirectUrl' in event) {
+                window.location.href = event.redirectUrl;
               }
               });
             eventSource.onerror = (error)=> {
             console.error('EventSource error:', error);
             };
+          }else{
+            alert('이메일 인증을 먼저 해주세요.')
           }
         }).catch((error)=> {
             console.error('Error submitting form:', error);

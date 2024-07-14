@@ -37,7 +37,6 @@ import { ariesAskar } from '@hyperledger/aries-askar-nodejs'
 import { indyVdr } from '@hyperledger/indy-vdr-nodejs'
 import { DidRepository } from '@aries-framework/core'
 import "reflect-metadata"
-import { container, injectable } from 'tsyringe'
 import { greenText } from './OutputClass'
 import dotenv from 'dotenv';
 

@@ -28,6 +28,11 @@ export class Listener{
         console.log(payload)
         this.on=false;
       }
+      if (payload.proofRecord.state === ProofState.Done) {
+        this.on=true;
+        console.log(payload)
+        this.on=false;
+      }
     })
   }
 
