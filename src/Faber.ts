@@ -22,7 +22,6 @@ export enum RegistryOptions {
   indy = 'did:indy',
 }
 
-
 class Faber extends BaseAgent {
   public outOfBandId?: string
   public credentialDefinition?: RegisterCredentialDefinitionReturnStateFinished
@@ -186,7 +185,6 @@ class Faber extends BaseAgent {
     }
     this.printSchema(schemaTemplate.name, schemaTemplate.version, schemaTemplate.attrNames)
 
-
     const { schemaState } = await this.agent.modules.anoncreds.registerSchema<IndyVdrRegisterSchemaOptions>({
       schema: schemaTemplate,
       options: {
@@ -263,7 +261,6 @@ class Faber extends BaseAgent {
             },
           ],
           credentialDefinitionId: credentialDefinition.credentialDefinitionId,
-
         },
       },
     })
@@ -275,7 +272,6 @@ class Faber extends BaseAgent {
 
   private async newProofAttribute() {
     const schema=await this.getById(CustomRecord,'user-schema').then((el)=>{return el?.metadata.data});
-    
     const proofAttribute = {
       name: {
         name: 'name',
@@ -287,7 +283,7 @@ class Faber extends BaseAgent {
             //cred_def_id: this.credentialDefinition?.credentialDefinitionId,
           },
         ],
-      },
+      }
     }
 
     return proofAttribute
