@@ -126,6 +126,7 @@ $(document).ready(()=> {
               });
             eventSource.onerror = (error)=> {
             console.error('EventSource error:', error);
+            eventSource.close();
             };
           }else{
             alert('이메일 인증을 먼저 해주세요.')

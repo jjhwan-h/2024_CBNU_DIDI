@@ -3,14 +3,8 @@ import type { IndyVdrPoolConfig } from '@aries-framework/indy-vdr'
 
 import {
   AnonCredsCredentialFormatService,
-  AnonCredsHolderServiceSymbol,
-  AnonCredsIssuerServiceSymbol,
   AnonCredsModule,
   AnonCredsProofFormatService,
-  LegacyIndyCredentialFormatService,
-  LegacyIndyProofFormatService,
-  V1CredentialProtocol,
-  V1ProofProtocol,
 } from '@aries-framework/anoncreds'
 import { AskarModule } from '@aries-framework/askar'
 import {
@@ -26,8 +20,7 @@ import {
   HttpOutboundTransport,
   KeyType,
   TypedArrayEncoder,
-  MediationRecipientModule
-  ,WsOutboundTransport
+  WsOutboundTransport
 } from '@aries-framework/core'
 import { IndyVdrIndyDidResolver, IndyVdrAnonCredsRegistry, IndyVdrModule,IndyVdrIndyDidRegistrar } from '@aries-framework/indy-vdr'
 import { agentDependencies, HttpInboundTransport } from '@aries-framework/node'
@@ -35,7 +28,6 @@ import { anoncreds } from '@hyperledger/anoncreds-nodejs'
 import { AnonCredsRsModule } from '@aries-framework/anoncreds-rs'
 import { ariesAskar } from '@hyperledger/aries-askar-nodejs'
 import { indyVdr } from '@hyperledger/indy-vdr-nodejs'
-import { DidRepository } from '@aries-framework/core'
 import "reflect-metadata"
 import { greenText } from './OutputClass'
 import dotenv from 'dotenv';
@@ -63,7 +55,6 @@ export const indyNetworkConfig = {
 
 type DemoAgent = Agent<ReturnType<typeof getAskarAnonCredsIndyModules>>
 
-
 export class BaseAgent {
   public port: number
   public name: string
@@ -82,8 +73,8 @@ export class BaseAgent {
         key: process.env.BCOVRINSEED as string,
       },
       endpoints: [`${process.env.AGENT_URL}`],
-      //autoUpdateStorageOnStartup:true,
     } satisfies InitConfig
+
     this.config = config
    
     this.agent = new Agent({
@@ -131,8 +122,6 @@ public async initializeAgent() {
 
 const getAskarAnonCredsIndyModules=()=>{
   //const mediatorInvitationUrl =process.env.MEDIATORINVITATIONURL
-  const legacyIndyCredentialFormatService = new LegacyIndyCredentialFormatService()
-    const legacyIndyProofFormatService = new LegacyIndyProofFormatService()
     return {
       connections: new ConnectionsModule({
         autoAcceptConnections: true,
@@ -140,22 +129,16 @@ const getAskarAnonCredsIndyModules=()=>{
       credentials: new CredentialsModule({
         autoAcceptCredentials: AutoAcceptCredential.ContentApproved,
         credentialProtocols: [
-          new V1CredentialProtocol({
-            indyCredentialFormat: legacyIndyCredentialFormatService,
-          }),
           new V2CredentialProtocol({
-            credentialFormats: [legacyIndyCredentialFormatService, new AnonCredsCredentialFormatService()],
+            credentialFormats: [ new AnonCredsCredentialFormatService()],
           }),
         ],
       }),
       proofs: new ProofsModule({
         autoAcceptProofs: AutoAcceptProof.ContentApproved,
         proofProtocols: [
-          new V1ProofProtocol({
-            indyProofFormat: legacyIndyProofFormatService,
-          }),
           new V2ProofProtocol({
-            proofFormats: [legacyIndyProofFormatService, new AnonCredsProofFormatService()],
+            proofFormats: [ new AnonCredsProofFormatService()],
           }),
         ],
       }),
