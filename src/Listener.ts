@@ -15,25 +15,32 @@ import {
   ProofEventTypes,
   ProofState,
 } from '@aries-framework/core'
+import { decodeBase64 } from "../controllers/utils";
+import { EventEmitter } from "stream";
 
 export class Listener{
-  public on: boolean
-  public constructor() {
-    this.on = false
-  }
-  public proofAcceptListener(){
-    faber.agent.events.on(ProofEventTypes.ProofStateChanged, async ({ payload }: ProofStateChangedEvent) => {
-      if (payload.proofRecord.state === ProofState.PresentationReceived) {
-        this.on=true;
-        console.log(payload)
-        this.on=false;
-      }
-      if (payload.proofRecord.state === ProofState.Done) {
-        this.on=true;
-        console.log(payload)
-        this.on=false;
-      }
-    })
+  
+  public proofAcceptListener(timeout:number=15000) : Promise<any>{
+    return new Promise((resolve,reject)=>{
+        faber.agent.events.on(ProofEventTypes.ProofStateChanged, async ({ payload }: ProofStateChangedEvent) => {
+          const timeoutId = setTimeout(() => {
+            reject(new Error('Operation timed out'));
+          }, timeout);
+
+          try{
+            if (payload.proofRecord.state === ProofState.Done) {
+              clearTimeout(timeout)
+              const proofRecordId = payload.proofRecord.id;
+              const encryptedMessage = await faber.agent.proofs.findPresentationMessage(proofRecordId);
+              const presentation = JSON.parse(decodeBase64(encryptedMessage?.presentationAttachments[0].data.base64));
+              resolve(presentation["requested_proof"]["revealed_attrs"]);
+            }
+          }catch(error){
+            clearTimeout(timeoutId)
+            reject(error);
+          }
+      });
+    });
   }
 
   public messageListener() {

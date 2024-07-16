@@ -1,3 +1,8 @@
+
+export const hasOwnProperty=(obj:Object, prop:any) => {
+    return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
 export const checkAllInputs = (inputData:stringIndexed)=> {
     const keys:string[] = Object.keys(inputData);
   
@@ -10,3 +15,7 @@ export const checkAllInputs = (inputData:stringIndexed)=> {
 interface stringIndexed{
   [key:string]:any;
 }
+
+export const decodeBase64 = (base64String: string = ''): string => {
+    return Buffer.from(base64String, 'base64').toString('utf-8');
+  }

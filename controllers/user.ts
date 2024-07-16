@@ -1,7 +1,8 @@
 import { RequestHandler } from 'express';
-import {checkAllInputs} from './utils/checkInput';
+import {checkAllInputs} from './utils/index';
 import faber from '../src/Faber';
 import Email from '../models/email';
+import { Listener } from '../src/Listener';
 
 const join :RequestHandler=async (req,res,next)=>{ 
     
@@ -21,7 +22,7 @@ const join :RequestHandler=async (req,res,next)=>{
             }
         }catch(error){
         console.error('Error:: While join:', error);
-        return next(error);
+        next(error);
         }
     }
     else{
@@ -42,6 +43,8 @@ const issueVC:RequestHandler=async(req,res,next)=>{
                 res.write(`id:2\n`);
                 res.write(`data:${JSON.stringify({redirectUrl})}\n\n`)
                 res.end();
+                delete req.session.email;
+                delete req.session.name;
                 return;
             }
         }catch(error){
@@ -50,8 +53,8 @@ const issueVC:RequestHandler=async(req,res,next)=>{
     }else{
         const redirectUrl = `/?message=VC발급 중 문제가 발생하였습니다. 다시 시도해주세요.`
         res.write(`id:2\n`);
-        res.write(`data:${JSON.stringify({redirectUrl})}\n\n`)
-        res.end()
+        res.write(`data:${JSON.stringify({redirectUrl})}\n\n`);
+        res.end();
         return;
     }
 }
@@ -59,7 +62,13 @@ const issueVC:RequestHandler=async(req,res,next)=>{
 const logIn:RequestHandler=async (req,res,next)=>{
     //TODO::vp처리 내용
     
-
+    try{
+        const message = await faber.listener.proofAcceptListener();
+        console.log(message);
+    }catch(error){
+        console.error(error)
+        next(error);
+    }
     res.end();
 }
 

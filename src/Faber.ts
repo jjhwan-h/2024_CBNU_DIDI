@@ -1,4 +1,4 @@
-import type { RegisterCredentialDefinitionReturnStateFinished, RegisterSchemaReturnStateFinished } from '@aries-framework/anoncreds'
+import type { RegisterCredentialDefinitionReturnStateFinished } from '@aries-framework/anoncreds'
 import type { ConnectionRecord, ConnectionStateChangedEvent,  BaseRecordConstructor, TagsBase} from '@aries-framework/core'
 import type { IndyVdrRegisterSchemaOptions, IndyVdrRegisterCredentialDefinitionOptions } from '@aries-framework/indy-vdr'
 import { ConnectionEventTypes, utils,BaseRecord} from '@aries-framework/core'
@@ -52,14 +52,6 @@ class Faber extends BaseAgent {
     if(!vcCount){
       this.saveItems('vc-count',{key:0});
     }
-
-    // const proof = await this.agent.proofs.getAll();
-    // console.log(proof)
-    // console.log("===================================\n");
-    // const test= await this.agent.credentials.getAll();
-    // console.log(test)
-
-
   }
 
   private async save(record:BaseRecord){
@@ -144,7 +136,6 @@ class Faber extends BaseAgent {
       })
       
       const connectionRecord = await getConnectionRecord(this.outOfBandId)
-      //console.log(`connectionRecord : ${JSON.stringify(connectionRecord)}`)
       try {
         await this.agent.connections.returnWhenIsConnected(connectionRecord.id,{timeoutMs:2000000});
       } catch (e) {
@@ -223,7 +214,6 @@ class Faber extends BaseAgent {
       })
 
       const nCount = vcCount?.key[0]+1;
-    
       await this.updateItem('vc-count',{key:nCount});
     
     if (credentialDefinitionState.state !== 'finished') {
@@ -271,16 +261,24 @@ class Faber extends BaseAgent {
 
 
   private async newProofAttribute() {
-    const schema=await this.getById(CustomRecord,'user-schema').then((el)=>{return el?.metadata.data});
+    //const schema=await this.getById(CustomRecord,'user-schema').then((el)=>{return el?.metadata.data});
     const proofAttribute = {
       name: {
-        name: 'name',
+        name:'name',
         restrictions: [
           {
-            schema_id:schema?.schemaId[0],
-            // schema_issuer_id:this.anonCredsIssuerId,
-            //issuer_did:this.anonCredsIssuerId
+            //schema_id:schema?.schemaId[0],
+            //schema_issuer_id:this.anonCredsIssuerId,
+            issuer_id: this.anonCredsIssuerId,
             //cred_def_id: this.credentialDefinition?.credentialDefinitionId,
+          },
+        ],
+      },
+      email: {
+        name:'email',
+        restrictions: [
+          {
+            issuer_id: this.anonCredsIssuerId,
           },
         ],
       }
@@ -313,9 +311,6 @@ class Faber extends BaseAgent {
   }
 
 };
-
-
-
 
 const faber = new Faber(process.env.AGENT_PORT as unknown as number, process.env.NAME as string);
 export default faber
