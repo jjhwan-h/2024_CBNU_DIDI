@@ -1,9 +1,10 @@
 import { RequestHandler } from 'express';
 import Room from '../models/room';
-import Voter from '../models/voter';
+import User from '../models/user';
 import Candidate from '../models/candidate';
 import {IRoomData} from './interfaces/IvoterRoom';
 import { hasOwnProperty } from './utils/index';
+import { sequelize } from '../models';
 
 export const getVoteRooms:RequestHandler = async (req,res)=>{
     const roomDataValues = (await Room.findAll({
@@ -44,13 +45,13 @@ export const registerRoom:RequestHandler = async (req,res)=>{
             e_date:request.date_end,
             img:request['dropzoneCategory1-0']
         };
-
+        const t = await sequelize.transaction();
         try{
             await Room.create(roomData).then(async (el)=>{
                 const roomId = el.dataValues.id;
                 for(let v of voterNum){
                     v=parseInt(v,10);
-                    await Voter.update({
+                    await User.update({
                         RoomId:roomId, 
                     },{where:{id:v}});
                 };
@@ -63,6 +64,7 @@ export const registerRoom:RequestHandler = async (req,res)=>{
                 };
             });
         }catch(error:any){
+            await t.rollback();
             return res.redirect(`/registration?error=${error.errors[0].message}`);
         }
         
@@ -84,15 +86,19 @@ export const voterUpload:RequestHandler= async (req,res)=>{ //TODO:: 동일한 �
         const jsonData = JSON.parse(jsonFile.buffer.toString('utf8'));
         //console.log('파일 데이터:', jsonData);
         for (const key of Object.keys(jsonData)) {
+            const name = jsonData[key].name as string;
+            const email = jsonData[key].email as string;
             const voter = {
-              name: jsonData[key].name,
-              email: jsonData[key].email,
-              tel: jsonData[key].tel,
+              name: name,
+              email: email,
+              status: "preUser",
             };
-          
             try {
-              const el = await Voter.create(voter);
-              str = str + el.dataValues.id + ",";
+              const exUser = await User.findOne({where:{email}})
+              if(!exUser){
+                  const el = await User.create(voter);
+                  str = str + el.dataValues.id + ",";
+              }
             } catch (error:any) {
               console.error('Voter.create 오류:', error);
               return res.json({error:error.errors[0].message});
@@ -119,7 +125,7 @@ export const candidateUpload:RequestHandler= async (req,res)=>{
               gender: jsonData[key].gender,
               age: jsonData[key].age,
               resume: jsonData[key].resume,
-              img: "temp"
+              img: "temp",
             };
           
             try {

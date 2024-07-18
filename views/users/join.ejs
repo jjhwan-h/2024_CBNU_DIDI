@@ -15,7 +15,7 @@
     <div class="container right-panel-active">
         <!-- Sign Up -->
         <div class="container__form container--signup">
-            <form class="form" id="form1">
+            <form class="form" method="post" action="/users/join" >
               <h2 class="form__title">Sign Up</h2>
               <div id="signup-form">
                 <div class="row" style="width: 100%;">
@@ -30,6 +30,11 @@
                   <div class="p-0 email-validation" id="email-validation"></div>
                 </div>
                 <div class="row" style="width: 100%;">
+                  <div class="col-md-12 p-0">
+                    <input type="password" placeholder="password" class="input" id="password" name="password" required />
+                  </div>
+                </div>
+                <div class="row" style="width: 100%;">
                   <button class="join_btn col-md-6" type="submit" >Sign Up</button>
                 <button class="join_btn col-md-6" type="button" id="btn_look_around">without signing up</button>
                 </div>
@@ -41,11 +46,12 @@
       
         <!-- Sign In -->
         <div class="container__form container--signin">
-            <form action="#" class="form" id="form2">
-              <h2 class="form__title">Sign In</h2>
-              <button class="join_btn" id="conn" type="button" onclick="signIn()">Sign In</button>
-              <div class="row" style="width:100%; display: flex; justify-content: center; align-items: center;" id="signin-qr"></div>
-              <div class="row" style="width:100%; display: flex; justify-content: center; align-items: center;" id="signin-url"></div>
+          <form action="/users/login" method="post" class="form" >
+            <h2 class="form__title">Sign In</h2>
+            <input type="email" placeholder="Email" name="email" class="input" />
+            <input type="password" placeholder="Password" name="password" class="input" />
+            <a href="#" class="link">Forgot your password?</a>
+            <button class="join_btn" type="submit">Sign In</button>
           </form>
         </div>
       
