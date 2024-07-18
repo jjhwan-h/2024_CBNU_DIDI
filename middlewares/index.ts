@@ -22,6 +22,22 @@ const sendProofRequest:RequestHandler = async (req,res,next) =>{
     next();
 };
 
+const isLoggedIn:RequestHandler = (req,res,next)=>{
+    if (req.isAuthenticated()) {
+        next();
+      } else {
+        res.status(403).send('로그인 필요');
+      }
+};
+
+const isNotLoggedIn:RequestHandler = (req,res,next)=>{
+    if (!req.isAuthenticated()) {
+        next();
+      } else {
+        const message = encodeURIComponent('로그인한 상태입니다.');
+        res.redirect(`/extinguishers?error=${message}`);
+      }
+}
 
 
-export{sendProofRequest,connection};
+export{sendProofRequest,connection, isNotLoggedIn, isLoggedIn};

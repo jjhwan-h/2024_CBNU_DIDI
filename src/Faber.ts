@@ -260,7 +260,7 @@ class Faber extends BaseAgent {
   }
 
 
-  private async newProofAttribute() {
+  private async logInProofAttribute() {
     //const schema=await this.getById(CustomRecord,'user-schema').then((el)=>{return el?.metadata.data});
     const proofAttribute = {
       name: {
@@ -289,7 +289,7 @@ class Faber extends BaseAgent {
 
   public async sendProofRequest() {
     const connectionRecord = await this.getConnectionRecord();
-    const proofAttribute = await this.newProofAttribute();
+    const proofAttribute = await this.logInProofAttribute();
 
     const res = await this.agent.proofs.requestProof({
       protocolVersion: 'v2',

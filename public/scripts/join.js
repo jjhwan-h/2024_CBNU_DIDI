@@ -41,27 +41,6 @@ const showConn = (qrDiv,urlDiv,event)=>{
   qrDiv.append(newImg);
   urlDiv.append(newBtn);
 }
-const signIn = async ()=>{
-    const qrDiv = $('#signin-qr');
-    const urlDiv = $('#signin-url');
-    const connBtn = $('#conn');
-
-    const eventSource = new EventSource('/users/login',{withCredentials:true});
-    eventSource.onerror = (event) =>{
-        console.error('Error occurred:', event);
-        eventSource.close();
-    };
-    eventSource.onmessage = (event)=>{
-      connBtn.remove();
-      event = JSON.parse(event.data);
-      if('url' in event && 'qr' in event){
-        showConn(qrDiv,urlDiv,event)
-      }else{
-        newDiv.text(event.message);
-        urlDiv.append(newDiv);
-      }
-  };
-}
 
 $(document).ready(()=> {
   const btn= $('<button/>', {
@@ -92,47 +71,4 @@ $(document).ready(()=> {
         });
       }
   })
-
-  $('#form1').submit((el) =>{
-    el.preventDefault(); 
-
-    let formData = $('#form1').serializeArray(); // 배열 형식으로 직렬화
-    let data = {};
-    $(formData).each((index, obj)=>{
-        data[obj.name] = obj.value;
-    });
-    console.log(data);
-
-    axios.post('/users/join', data)
-        .then((response)=> {
-          if(response.data===true){
-            const signupForm = $('#signup-form');
-            const qrDiv = $('#signup-qr');
-            const urlDiv = $('#signup-url');
-            const eventSource = new EventSource('/users/vc', { withCredentials: true });
-
-            eventSource.onmessage = ((event) =>{
-              signupForm.remove();
-              event = JSON.parse(event.data);
-              if('url' in event && 'qr' in event){
-                const qrCode = $('#qr-code')
-                qrCode.remove()
-                showConn(qrDiv,urlDiv,event);
-              }
-
-              if ('redirectUrl' in event) {
-                window.location.href = event.redirectUrl;
-              }
-              });
-            eventSource.onerror = (error)=> {
-            console.error('EventSource error:', error);
-            eventSource.close();
-            };
-          }else{
-            alert('이메일 인증을 먼저 해주세요.')
-          }
-        }).catch((error)=> {
-            console.error('Error submitting form:', error);
-      });
-  });
 });

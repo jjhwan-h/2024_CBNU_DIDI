@@ -26,4 +26,6 @@ router.post('/upload',(req,res)=>{
     res.send("success");
 })
 
+//mypage
+
 export {router};

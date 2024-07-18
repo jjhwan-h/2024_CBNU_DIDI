@@ -9,11 +9,13 @@ import {router as voteRoomRouter} from './routes/voteRooms';
 import {router as authRouter} from './routes/auth';
 import {router as userRouter} from './routes/users';
 import faber from './src/Faber';
+import passport from 'passport';
+import passportConfig from './middlewares/passport';
 import dotenv from 'dotenv';
 
 dotenv.config();
-
 const app = express();
+passportConfig();
 
 app.set('port', process.env.SERVER_PORT || 3000);
 app.set('view engine', 'ejs');
@@ -43,8 +45,11 @@ app.use(session({ //express-session 1.5버전이전이라면 cookieParser뒤에 
   },
 }));
 
+
 const agent = faber;
 
+app.use(passport.initialize());
+app.use(passport.session());
 app.use('/',pageRouter);
 app.use('/rooms',voteRoomRouter);
 app.use('/auth',authRouter);

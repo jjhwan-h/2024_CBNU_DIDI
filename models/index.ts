@@ -1,6 +1,6 @@
 import {Sequelize} from 'sequelize'
 import {development, test, production} from '../configs/config';
-import Voter from './voter';
+import User from './user';
 import Room from './room';
 import Candidate from './candidate';
 import Email from './email';
@@ -8,11 +8,11 @@ import Email from './email';
 const config = development
 export const sequelize = new Sequelize(config.database!,config.username!, config.password,config);
 
-Voter.initiate(sequelize);
+User.initiate(sequelize);
 Room.initiate(sequelize);
 Candidate.initiate(sequelize);
 Email.initiate(sequelize);
 
-Voter.associate();
+User.associate();
 Room.associate();
 Candidate.associate();
