@@ -5,6 +5,7 @@ import Candidate from '../models/candidate';
 import {IRoomData} from './interfaces/IvoterRoom';
 import { hasOwnProperty } from './utils/index';
 import { sequelize } from '../models';
+import VC from '../models/vc';
 
 export const getVoteRooms:RequestHandler = async (req,res)=>{
     const roomDataValues = (await Room.findAll({
@@ -37,6 +38,7 @@ export const registerRoom:RequestHandler = async (req,res)=>{
         }
         else return res.redirect(`/registration?error=모든 파일을 업로드해주세요}`);
         const voterNum = request['dropzoneCategory2-0'].replace(/,+$/, '').split(',');
+        console.log(voterNum)
         let roomData:IRoomData={
             name:request.room_name,
             category:request.category,
@@ -51,9 +53,11 @@ export const registerRoom:RequestHandler = async (req,res)=>{
                 const roomId = el.dataValues.id;
                 for(let v of voterNum){
                     v=parseInt(v,10);
-                    await User.update({
-                        RoomId:roomId, 
-                    },{where:{id:v}});
+                    await VC.create({
+                        isIssued:false,
+                        RoomId:roomId,
+                        UserId:v
+                    });
                 };
                 for(let [idx,v] of candidateNum.entries()){
                     v=parseInt(v,10);
@@ -63,13 +67,15 @@ export const registerRoom:RequestHandler = async (req,res)=>{
                     },{where:{id:v}});
                 };
             });
+            await t.commit();
         }catch(error:any){
             await t.rollback();
+            console.error(error);
             return res.redirect(`/registration?error=${error.errors[0].message}`);
         }
         
 
-        return res.redirect(`/voteRooms?success=투표방등록이 완료되었습니다.`);
+        return res.redirect(`/vote-rooms?success=투표방등록이 완료되었습니다.`);
     }
     catch(error){
         console.error(error);
@@ -96,8 +102,10 @@ export const voterUpload:RequestHandler= async (req,res)=>{ //TODO:: 동일한 �
             try {
               const exUser = await User.findOne({where:{email}})
               if(!exUser){
-                  const el = await User.create(voter);
-                  str = str + el.dataValues.id + ",";
+                    const el = await User.create(voter);
+                    str = str + el.dataValues.id + ",";
+              }else{
+                    str= str + exUser.id + ",";
               }
             } catch (error:any) {
               console.error('Voter.create 오류:', error);

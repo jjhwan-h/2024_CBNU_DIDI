@@ -1,5 +1,6 @@
 
-import IAdmin from '../models/admin';
+import Room from '../models/room';
+import User from '../models/user';
 import IUser from '../models/user';
 
 export {};
@@ -9,7 +10,10 @@ declare global{
         status?: number;
     }
     namespace Express{
-        interface User extends IAdmin {}
+        interface User extends IUser {
+            id:number
+            email:string
+        }
     }
 
 }

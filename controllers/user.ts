@@ -6,6 +6,8 @@ import Email from '../models/email';
 import User from '../models/user';
 import { sequelize } from '../models';
 import passport from 'passport';
+import { InferAttributes, where } from 'sequelize';
+import Room from '../models/room';
 
 const join :RequestHandler=async (req,res,next)=>{ 
     if(checkAllInputs(req.body)){
@@ -90,6 +92,26 @@ const join :RequestHandler=async (req,res,next)=>{
 //     }
 // }
 
+const myPage:RequestHandler=async(req,res,next)=>{
+    try{
+        const userId = req.user!.id;
+        const exUser = await User.findOne(
+            {where:{id:userId},
+            include:[{
+                model:Room,
+                attributes:[]
+            }]
+        }
+        )
+        const user = exUser?.dataValues!;
+        const {password,...info} = user;
+        console.log(info);
+        res.render("users/myPage",{info});
+    }catch(error){
+        return res.redirect(`/vote-rooms/?error=${error}`);
+    }
+}
+
 const login:RequestHandler=async (req,res,next)=>{
     passport.authenticate('local',(authError:any, user:any, info:any)=>{
         if(authError){
@@ -105,7 +127,7 @@ const login:RequestHandler=async (req,res,next)=>{
                 return next(loginError);
             }
 
-            return res.redirect(`/voteRooms`)
+            return res.redirect(`/vote-rooms`)
         })
     })(req,res,next);
 }
@@ -122,4 +144,4 @@ const logout:RequestHandler =(req,res,next) => {
     })
 }
 
-export {join,login, logout}
+export {join,login, logout, myPage}

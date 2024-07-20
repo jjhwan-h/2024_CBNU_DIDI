@@ -1,5 +1,6 @@
 import Room from "./room";
 import  Sequelize,{Model, CreationOptional, InferAttributes, InferCreationAttributes, DataTypes, ForeignKey, ENUM} from "sequelize";
+import VC from "./vc";
 
 export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>>
 {
@@ -8,8 +9,8 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     declare email:string;
     declare password:string | null;
     declare status:string;
-    
-    declare RoomId:ForeignKey<Room['id']>;
+
+    declare VCId:ForeignKey<VC['id']>;
 
     static initiate(sequelize: Sequelize.Sequelize){
         User.init({
@@ -47,6 +48,6 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
         })
     }
     static associate(){
-        User.belongsToMany(Room,{through:"UserRooms"});
+        User.hasOne(VC,{foreignKey:"UserId",sourceKey:"id"});
     }
 }

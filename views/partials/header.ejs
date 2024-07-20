@@ -25,7 +25,7 @@
                         <a href="/info"><button type="button" class="btn btn-success">Info</button></a>
                     </li>
                     <li class="nav-item active">
-                        <a href="/voteRooms"><button type="button" class="btn btn-success">투표방 조회</button></a>
+                        <a href="/vote-rooms"><button type="button" class="btn btn-success">투표방 조회</button></a>
                     </li>
                     <li class="nav-item active">
                         <a href="/registration"><button type="button" class="btn btn-success">투표방 생성</button></a>
@@ -33,9 +33,16 @@
                     <li class="nav-item active">
                         <a href="/users"><button type="button" class="btn btn-success">마이페이지</button></a>
                     </li>
+                    <% if (isAuthenticated) {%>
                     <li class="nav-item active">
                         <a href="/users/logout"><button type="button" class="btn btn-success">Logout</button></a>
                     </li>
+                    <% } else {%>
+                        <li class="nav-item active">
+                            <a href="/"><button type="button" class="btn btn-success">Login</button></a>
+                        </li>
+                    <% } %>
+                    
             </ul>
         </div>
     </nav>

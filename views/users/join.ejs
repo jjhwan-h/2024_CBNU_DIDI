@@ -10,7 +10,11 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="/pages/join.css">
 </head>
-<body>
+<script type="text/javascript">
+  window.history.forward();
+  function noBack(){window.history.forward();} // 이 페이지로의 뒤로가기 차단
+</script>
+<body onload="noBack();" onpageshow="if(event.persisted) noBack();" onunload="">
 <div class="cont">
     <div class="container right-panel-active">
         <!-- Sign Up -->

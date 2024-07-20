@@ -13,6 +13,7 @@ export default class Candidate extends Model<InferAttributes<Candidate>, InferCr
     declare age:number;
     declare img:string;
     declare resume:string;
+    
     declare RoomId:ForeignKey<Room['id']>;
     
     static initiate(sequelize: Sequelize.Sequelize){
