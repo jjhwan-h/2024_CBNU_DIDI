@@ -1,5 +1,6 @@
 import express from 'express';
 import {getVoteRooms} from '../controllers/voteRoom';
+import { isLoggedIn } from '../middlewares';
 const router = express.Router();
 
 //GET /
@@ -8,8 +9,8 @@ router.get('/',(req,res,next)=>{
     }
 )
 
-//GET /voteRooms
-router.get('/voteRooms',getVoteRooms);
+//GET /vote-rooms
+router.get('/vote-rooms',getVoteRooms);
 
 //GET /info
 router.get('/info',(req,res,next)=>{
@@ -17,15 +18,16 @@ router.get('/info',(req,res,next)=>{
 })
 
 //GET /registration
-router.get('/registration',(req,res,next)=>{
+router.get('/registration',isLoggedIn,(req,res,next)=>{
     res.render('voteRooms/createRoom');
 })
 
-//POST /upload
-router.post('/upload',(req,res)=>{
-    res.send("success");
-})
+// //POST /upload
+// router.post('/upload',(req,res)=>{
+//     res.send("success");
+// })
 
-//mypage
+
+
 
 export {router};

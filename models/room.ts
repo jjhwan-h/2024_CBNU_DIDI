@@ -1,6 +1,7 @@
-import  Sequelize,{Model, CreationOptional, InferAttributes, InferCreationAttributes, BelongsToManyGetAssociationsMixin} from "sequelize";
+import  Sequelize,{Model, CreationOptional, InferAttributes, InferCreationAttributes, ForeignKey} from "sequelize";
 import User from "./user";
 import Candidate from "./candidate";
+import VC from "./vc";
 
 enum RoomCategory{
     RESIDENT="주민투표",
@@ -17,6 +18,9 @@ export default class Room extends Model<InferAttributes<Room>, InferCreationAttr
     declare img:string;
     declare s_date:Date;
     declare e_date:Date;
+
+    declare CandidateId:ForeignKey<Candidate['id']>;
+    declare VCId:ForeignKey<VC['id']>;
 
     static initiate(sequelize: Sequelize.Sequelize){
         Room.init({
@@ -61,10 +65,9 @@ export default class Room extends Model<InferAttributes<Room>, InferCreationAttr
         })
     }
     static associate(){
-        Room.belongsToMany(User,{through:"UserRooms"});
         Room.hasMany(Candidate,{
-            foreignKey:'RoomId',sourceKey:'id'
+            foreignKey:"RoomId",sourceKey:"id"
         });
-    
+        Room.hasOne(VC,{foreignKey:"RoomId",sourceKey:"id"});
     }
 }

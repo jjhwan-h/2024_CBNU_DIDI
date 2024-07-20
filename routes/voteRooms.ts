@@ -4,6 +4,7 @@ import multer from "multer";
 import dotenv from "dotenv";
 
 import { afterUpload,  registerRoom, voterUpload, candidateUpload} from '../controllers/voteRoom';
+import { isLoggedIn } from '../middlewares';
 
 dotenv.config();
 const router = express.Router();
@@ -26,16 +27,16 @@ const imgUpload=
 const jsonUpload=multer({storage:multer.memoryStorage()});
 
 //POST /rooms
-router.post('/',registerRoom)
+router.post('/',isLoggedIn,registerRoom)
 
 //POST /rooms/upload
-router.post('/img-upload',imgUpload.single("file[0]"),afterUpload);
+router.post('/img-upload',isLoggedIn,imgUpload.single("file[0]"),afterUpload);
 
 //POST /rooms/voter-upload
-router.post('/voter-upload',jsonUpload.single("file[0]"),voterUpload);
+router.post('/voter-upload',isLoggedIn,jsonUpload.single("file[0]"),voterUpload);
 
 //POST /rooms/candidate-upload
-router.post('/candidate-upload',jsonUpload.single("file[0]"),candidateUpload);
+router.post('/candidate-upload',isLoggedIn,jsonUpload.single("file[0]"),candidateUpload);
 
 
 

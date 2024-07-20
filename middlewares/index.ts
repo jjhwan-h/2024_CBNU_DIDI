@@ -35,7 +35,7 @@ const isNotLoggedIn:RequestHandler = (req,res,next)=>{
         next();
       } else {
         const message = encodeURIComponent('로그인한 상태입니다.');
-        res.redirect(`/extinguishers?error=${message}`);
+        res.redirect(`/vote-rooms?error=${message}`);
       }
 }
 

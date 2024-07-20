@@ -16,17 +16,5 @@
         "gender":"남",
         "age":27,
         "resume":"SW학부 학생"
-    },
-    "4":{
-        "name":"홍길동",
-        "gender":"남",
-        "age":35,
-        "resume":"의적"
-    },
-    "5":{
-        "name":"이몽룡",
-        "gender":"남",
-        "age":28,
-        "resume":"암행어사"
     }
 }

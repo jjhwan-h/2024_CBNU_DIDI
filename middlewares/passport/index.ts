@@ -5,16 +5,12 @@ import Room from '../../models/room';
 
 export default () =>{
     passport.serializeUser((user:any,done)=>{
-        done(null,user.id);
+        done(null,[user.id,user.email]);
     });
     passport.deserializeUser((id:number,done)=>{
         User.findOne({
             where:{id},
-            include:{
-                model:Room,
-                attributes:['id']
-            }
-        }).then(user=>done(null,user))
+        }).then(user =>done(null,user))
         .catch(error=>done(error));
     });
     local();

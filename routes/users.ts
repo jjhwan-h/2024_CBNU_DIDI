@@ -1,5 +1,5 @@
 import express from 'express';
-import { join,login,logout} from '../controllers/user';
+import { join,login,logout, myPage} from '../controllers/user';
 import { sendProofRequest,connection,isLoggedIn,isNotLoggedIn } from '../middlewares';
 
 const router = express.Router();
@@ -15,5 +15,8 @@ router.post('/login',isNotLoggedIn,login);
 
 //GET /users/logout
 router.get('/logout',isLoggedIn,logout);
+
+//GET /users
+router.get('/',isLoggedIn,myPage);
 
 export {router};

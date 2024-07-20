@@ -12,6 +12,7 @@ import faber from './src/Faber';
 import passport from 'passport';
 import passportConfig from './middlewares/passport';
 import dotenv from 'dotenv';
+import nocache from 'nocache';
 
 dotenv.config();
 const app = express();
@@ -21,7 +22,7 @@ app.set('port', process.env.SERVER_PORT || 3000);
 app.set('view engine', 'ejs');
 app.set('views',__dirname+'/views');
 
-sequelize.sync({force:false}) // force. 서버를 실행할때마다 테이블 재생성
+sequelize.sync({force:true}) // force. 서버를 실행할때마다 테이블 재생성
     .then(()=>{
         console.log('데이터베이스 연결 성공');
     })
@@ -50,6 +51,13 @@ const agent = faber;
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(nocache());
+app.use((req,res,next)=>{
+  const auth = req.isAuthenticated();
+    res.locals.user=req.user?.email;
+  res.locals.isAuthenticated = auth;
+  next();
+})
 app.use('/',pageRouter);
 app.use('/rooms',voteRoomRouter);
 app.use('/auth',authRouter);
