@@ -47,9 +47,6 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
         })
     }
     static associate(){
-        User.belongsTo(Room,{  
-            foreignKey:'RoomId',
-            targetKey:'id'
-        })
+        User.belongsToMany(Room,{through:"UserRooms"});
     }
 }

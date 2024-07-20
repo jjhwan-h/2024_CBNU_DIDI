@@ -61,9 +61,7 @@ export default class Room extends Model<InferAttributes<Room>, InferCreationAttr
         })
     }
     static associate(){
-        Room.hasMany(User,{ // 유권자
-            foreignKey:'RoomId',sourceKey:'id'
-        });
+        Room.belongsToMany(User,{through:"UserRooms"});
         Room.hasMany(Candidate,{
             foreignKey:'RoomId',sourceKey:'id'
         });
