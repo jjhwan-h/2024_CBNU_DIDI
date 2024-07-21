@@ -3,9 +3,12 @@ import Room from '../models/room';
 import User from '../models/user';
 import Candidate from '../models/candidate';
 import {IRoomData} from './interfaces/IvoterRoom';
-import { hasOwnProperty } from './utils/index';
+import { hasOwnProperty, sendMail } from './utils/index';
 import { sequelize } from '../models';
 import VC from '../models/vc';
+import { IMailOptions } from './interfaces/IMailOptions';
+import { Op } from 'sequelize';
+import { requestCredentialMail } from '../configs/email';
 
 export const getVoteRooms:RequestHandler = async (req,res)=>{
     const roomDataValues = (await Room.findAll({
@@ -24,7 +27,7 @@ export const afterUpload:RequestHandler = (req,res)=>{
     res.send(req.file?.path);
 }
 
-export const registerRoom:RequestHandler = async (req,res)=>{
+export const registerRoom:RequestHandler = async (req,res,next)=>{
     try{
         let candidateNum;
         console.log(req.body);
@@ -38,7 +41,6 @@ export const registerRoom:RequestHandler = async (req,res)=>{
         }
         else return res.redirect(`/registration?error=모든 파일을 업로드해주세요}`);
         const voterNum = request['dropzoneCategory2-0'].replace(/,+$/, '').split(',');
-        console.log(voterNum)
         let roomData:IRoomData={
             name:request.room_name,
             category:request.category,
@@ -73,9 +75,31 @@ export const registerRoom:RequestHandler = async (req,res)=>{
             console.error(error);
             return res.redirect(`/registration?error=${error.errors[0].message}`);
         }
-        
 
-        return res.redirect(`/vote-rooms?success=투표방등록이 완료되었습니다.`);
+        res.redirect(`/vote-rooms?success=투표방등록이 완료되었습니다.`);
+
+        const user = await User.findAll(
+            {where:
+                {id:
+                    {[Op.in]:voterNum}
+                },
+            attributes:['email','name']
+        });
+        for(let v of user){
+            if(v){
+                const mailOptions :IMailOptions = {
+                    to : v!.email, //사용자가 입력한 이메일 -> 목적지 주소 이메일
+                    html: requestCredentialMail(v,request.room_name)
+               };
+               try{
+                   sendMail(mailOptions);
+               }catch(error){
+                console.error('Error:: Failed to send Eamil:', error);
+                return next(error);
+               }
+            }
+        }
+        return;
     }
     catch(error){
         console.error(error);

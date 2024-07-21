@@ -4,6 +4,7 @@ import Email from '../models/email';
 import {transporter} from '../configs/email';
 import {successHtml, errMail, successMail, alreadyVerifiedHtml} from '../configs/email';
 import { IMailOptions } from './interfaces/IMailOptions';
+import { sendMail } from './utils';
 import dotenv from 'dotenv';
 
 const generateEmailVerificationToken = ()=>{
@@ -42,19 +43,9 @@ export const sendEmail:RequestHandler=async(req,res,next)=>{
         }
     }
     try{
-     transporter.sendMail(mailOptions,(err,response)=>{
-       console.log(response);
-       if(err) {
-        console.log(err)
-        transporter.close() //전송종료
-        res.json({ok : false , msg : ' 메일 전송에 실패하였습니다. 다시 시도해주세요 '})
-        return
-     } else {
-        transporter.close() //전송종료
-        res.json({ok: true, msg: '해당 이메일로 인증 메일을 보냈습니다. 메일의 verify버튼을 눌러주세요'});
-        return 
-     }
-     });
+        const sendRes = sendMail(mailOptions);
+        if(!sendRes) return res.json({ok : false , msg : ' 메일 전송에 실패하였습니다. 다시 시도해주세요 '})
+        else return res.json({ok: true, msg: '해당 이메일로 인증 메일을 보냈습니다. 메일의 verify버튼을 눌러주세요'});
    }catch(error){
     console.error('Error:: Failed to send Eamil:', error);
     return next(error);
