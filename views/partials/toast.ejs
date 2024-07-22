@@ -1,0 +1,25 @@
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+</div>
+
+<div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+  <div class="toast-header">
+    <img src="/imgs/vote3.jpg" width="20px" height="20px" class="rounded me-2" alt="/test.jpg" id="toast-img">
+    <strong class="me-auto">유권자로 등록된 투표방</strong>
+    <small></small>
+    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+  </div>
+  <div class="toast-body">
+    <h5>투표방 정보</h5>
+    <div class="input-group mb-3">
+      <span class="input-group-text" id="basic-addon1">투표방 이름</span>
+      <input type="text" class="form-control" placeholder="투표방 이름" aria-label="room-name" aria-describedby="basic-addon1" id="toast-room-id" disabled>
+    </div>
+    <div class="input-group mb-3">
+      <span class="input-group-text" id="basic-addon1">투표권</span>
+      <input type="text" class="form-control" placeholder="불가" aria-label="right-to-vote" aria-describedby="basic-addon2" id="toast-right-id" disabled>
+    </div>
+    <button type="button" id="btn-present" class="btn btn-primary btn-sm" onclick="location.href='/users/vc';" >투표권 제공받기</button>
+    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="toast">취소</button>
+  </div>
+</div>

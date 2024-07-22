@@ -1,6 +1,6 @@
 import express from 'express';
 import {getVoteRooms} from '../controllers/voteRoom';
-import { isLoggedIn } from '../middlewares';
+import { isLoggedIn, sendToastForVC } from '../middlewares';
 const router = express.Router();
 
 //GET /
@@ -10,11 +10,11 @@ router.get('/',(req,res,next)=>{
 )
 
 //GET /vote-rooms
-router.get('/vote-rooms',getVoteRooms);
+router.get('/vote-rooms',sendToastForVC,getVoteRooms);
 
 //GET /info
 router.get('/info',(req,res,next)=>{
-    res.render('pages/info');
+    res.render('pages/info',req.roomInfo);
 })
 
 //GET /registration

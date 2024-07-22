@@ -2,7 +2,7 @@ import  Sequelize,{Model, CreationOptional, InferAttributes, InferCreationAttrib
 import User from "./user";
 import Room from "./room";
 
-export default class VC extends Model<InferAttributes<VC>, InferCreationAttributes<VC>>
+export default class UserRoom extends Model<InferAttributes<UserRoom>, InferCreationAttributes<UserRoom>>
 {
     declare id: CreationOptional<number>;
     declare isIssued: boolean;
@@ -11,7 +11,7 @@ export default class VC extends Model<InferAttributes<VC>, InferCreationAttribut
     declare UserId:ForeignKey<User['id']>;
 
     static initiate(sequelize: Sequelize.Sequelize){
-        VC.init({
+        UserRoom.init({
             id:{
                 type: Sequelize.INTEGER,
                 primaryKey:true,
@@ -26,15 +26,17 @@ export default class VC extends Model<InferAttributes<VC>, InferCreationAttribut
             sequelize,
             timestamps: true,
             underscored: false,
-            modelName: 'VC',
-            tableName: 'vc',
+            modelName: 'UserRoom',
+            tableName: 'userRoom',
             paranoid: false,
             charset: 'utf8mb4',
             collate: 'utf8mb4_general_ci',
+            indexes:[
+                {
+                    unique: true,
+                    fields: ['UserId', 'RoomId']
+                  }
+            ]
         })
-    }
-    static associate(){
-        VC.belongsTo(User,{foreignKey:"UserId", targetKey:"id"});
-        VC.belongsTo(Room,{foreignKey:"RoomId", targetKey:"id"});
     }
 }

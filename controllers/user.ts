@@ -6,38 +6,42 @@ import Email from '../models/email';
 import User from '../models/user';
 import { sequelize } from '../models';
 import passport from 'passport';
-import { InferAttributes, where } from 'sequelize';
+import { InferAttributes, Transaction, where } from 'sequelize';
 import Room from '../models/room';
+import UserRoom from '../models/userRoom';
+import { transcode } from 'buffer';
 
 const join :RequestHandler=async (req,res,next)=>{ 
     if(checkAllInputs(req.body)){
         const {email, name, password} = req.body; 
-        const t = await sequelize.transaction();
+        const transaction:Transaction = await sequelize.transaction();
         try{
             const exEmail = await Email.findOne({where:{email}}); //이메일 검증 확인
             if(exEmail && exEmail.isValid && !exEmail.isRegistered){
-                await exEmail.update({isValid:false, isRegistered:true}); //다른 사람이 동일한 이메일로 가입하는 것을 방지
+                await exEmail.update({isValid:false, isRegistered:true},{transaction}); //다른 사람이 동일한 이메일로 가입하는 것을 방지
                 const hash = await bcrypt.hash(password,12);
                 const exUser = await User.findOne({
                     where:{email,name}
                 })
                 if(exUser) {
-                    await exUser.update({password:hash, status:"user"});
+                    await exUser.update({password:hash, status:"user"},{transaction});
                 }else{
-                    await User.create({
+                    const user = await User.create({
                         email,
                         name,
                         password:hash,
                         status:"user",
-                    })
+                    },{transaction});
+                    await UserRoom.create({UserId:user.id,isIssued:false},{transaction});
                 }
+                transaction.commit();
                 return res.redirect(`/?message=회원가입이 완료되었습니다.`)
             }
             else{
                 return res.redirect(`/?error=이메일 검증을 완료해주세요.`)
             }
         }catch(error){
-        await t.rollback();
+        await transaction.rollback();
         console.error('Error:: While join:', error);
         next(error);
         }
@@ -95,18 +99,16 @@ const join :RequestHandler=async (req,res,next)=>{
 const myPage:RequestHandler=async(req,res,next)=>{
     try{
         const userId = req.user!.id;
-        const exUser = await User.findOne(
-            {where:{id:userId},
-            include:[{
+        const exUser = await User.findByPk(userId,{
+            include:{
                 model:Room,
-                attributes:[]
-            }]
-        }
-        )
+                as:"vote"
+            }
+         })
         const user = exUser?.dataValues!;
         const {password,...info} = user;
-        console.log(info);
-        res.render("users/myPage",{info});
+        const roomInfo = JSON.stringify(req.roomInfo) || `[]`;
+        res.render("users/myPage",{info,roomInfo});
     }catch(error){
         return res.redirect(`/vote-rooms/?error=${error}`);
     }

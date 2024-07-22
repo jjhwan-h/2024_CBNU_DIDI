@@ -1,6 +1,10 @@
 import faber from "../src/Faber"
 import { RequestHandler } from 'express';
 import qrcode from 'qrcode';
+import VC from "../models/userRoom";
+import Room from "../models/room";
+import { Op } from "sequelize";
+import UserRoom from "../models/userRoom";
 
 const connection:RequestHandler = async(req,res,next)=>{
     res.setHeader('Content-Type', 'text/event-stream');
@@ -39,5 +43,20 @@ const isNotLoggedIn:RequestHandler = (req,res,next)=>{
       }
 }
 
+const sendToastForVC:RequestHandler = async (req,res,next)=>{
+    if(req.user?.id){
+        const vc = await UserRoom.findAll({where:{UserId:req.user.id, isIssued:0}});
+        const room = vc.map((el)=>el.RoomId);
+        const roomInfo = await Room.findAll({
+          where:
+          {id:
+            {[Op.in]:room}
+          },
+          attributes:['id','name','img']
+        }).then((rooms)=> {return rooms.map((el)=>el.dataValues)});
+        req.roomInfo = roomInfo
+    }
+    next();
+}
 
-export{sendProofRequest,connection, isNotLoggedIn, isLoggedIn};
+export{sendProofRequest,connection, isNotLoggedIn, isLoggedIn, sendToastForVC};

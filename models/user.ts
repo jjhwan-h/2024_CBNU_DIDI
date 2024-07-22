@@ -1,6 +1,6 @@
 import Room from "./room";
-import  Sequelize,{Model, CreationOptional, InferAttributes, InferCreationAttributes, DataTypes, ForeignKey, ENUM} from "sequelize";
-import VC from "./vc";
+import  Sequelize,{Model, CreationOptional, InferAttributes, InferCreationAttributes, DataTypes, ForeignKey,BelongsToManyGetAssociationsMixin} from "sequelize";
+import UserRoom from "./userRoom";
 
 export default class User extends Model<InferAttributes<User>, InferCreationAttributes<User>>
 {
@@ -10,7 +10,8 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     declare password:string | null;
     declare status:string;
 
-    declare VCId:ForeignKey<VC['id']>;
+    declare UserRoomId:ForeignKey<UserRoom['id']>;
+    declare getRooms: BelongsToManyGetAssociationsMixin<Room>;
 
     static initiate(sequelize: Sequelize.Sequelize){
         User.init({
@@ -48,6 +49,6 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
         })
     }
     static associate(){
-        User.hasOne(VC,{foreignKey:"UserId",sourceKey:"id"});
+        User.belongsToMany(Room,{through:UserRoom, as:"vote"});
     }
 }
