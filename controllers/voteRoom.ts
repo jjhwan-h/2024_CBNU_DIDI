@@ -5,7 +5,7 @@ import Candidate from '../models/candidate';
 import {IRoomData} from './interfaces/IvoterRoom';
 import { hasOwnProperty, sendMail } from './utils/index';
 import { sequelize } from '../models';
-import VC from '../models/vc';
+import UserRoom from '../models/userRoom';
 import { IMailOptions } from './interfaces/IMailOptions';
 import { Op } from 'sequelize';
 import { requestCredentialMail } from '../configs/email';
@@ -19,8 +19,8 @@ export const getVoteRooms:RequestHandler = async (req,res)=>{
     })).map((el)=>{return el.dataValues});
 
     const roomJsonString = JSON.stringify(roomDataValues);
-    //console.log(roomJsonString);
-    res.render("voteRooms/roomList",{roomJsonString});
+    const roomInfo = JSON.stringify(req.roomInfo) || `[]`;
+    res.render("voteRooms/roomList",{roomJsonString,roomInfo});
 }
 
 export const afterUpload:RequestHandler = (req,res)=>{
@@ -49,29 +49,29 @@ export const registerRoom:RequestHandler = async (req,res,next)=>{
             e_date:request.date_end,
             img:request['dropzoneCategory1-0']
         };
-        const t = await sequelize.transaction();
+        const transaction = await sequelize.transaction();
         try{
             await Room.create(roomData).then(async (el)=>{
                 const roomId = el.dataValues.id;
                 for(let v of voterNum){
                     v=parseInt(v,10);
-                    await VC.create({
+                    await UserRoom.create({
                         isIssued:false,
                         RoomId:roomId,
                         UserId:v
-                    });
+                    }),{transaction};
                 };
                 for(let [idx,v] of candidateNum.entries()){
                     v=parseInt(v,10);
                     await Candidate.update({
                         RoomId:roomId, 
                         img:request[`category4-${idx}`],
-                    },{where:{id:v}});
+                    },{where:{id:v},transaction});
                 };
             });
-            await t.commit();
+            await transaction.commit();
         }catch(error:any){
-            await t.rollback();
+            await transaction.rollback();
             console.error(error);
             return res.redirect(`/registration?error=${error.errors[0].message}`);
         }

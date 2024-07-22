@@ -1,3 +1,5 @@
+import { showToast } from "./toast.js";
+
 $(document).ready(function() {
     $('input, textarea').prop('disabled', true);
     $('#editButton').click(function() {
@@ -15,4 +17,7 @@ $(document).ready(function() {
         var pageNum = $(this).index();
         $('.page').eq(pageNum).show();
     });
+
+    const roomInfo = JSON.parse(window.serverData.roomInfo);
+    showToast(roomInfo)
 });

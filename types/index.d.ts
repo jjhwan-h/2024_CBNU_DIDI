@@ -1,10 +1,16 @@
 
+import { request } from 'express';
 import Room from '../models/room';
 import User from '../models/user';
 import IUser from '../models/user';
 
 export {};
 
+interface IRoomInfo{
+    id: number,
+    name: string,
+    img: string
+}
 declare global{
     interface Error{ 
         status?: number;
@@ -13,6 +19,9 @@ declare global{
         interface User extends IUser {
             id:number
             email:string
+        }
+        interface Request {
+            roomInfo : IRoomInfo[]
         }
     }
 
