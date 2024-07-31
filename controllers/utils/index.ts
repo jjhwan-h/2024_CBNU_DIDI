@@ -1,4 +1,5 @@
 import {transporter} from '../../configs/email';
+import { ICandidate, ICandidates } from '../interfaces/ICandidate';
 import { IMailOptions } from '../interfaces/IMailOptions';
 
 export const hasOwnProperty=(obj:Object, prop:any) => {
@@ -34,4 +35,21 @@ export const sendMail = (mailOptions : IMailOptions) : boolean=>{
     }
     });
     return true;
+}
+
+export function hasEmptyValues(obj: ICandidates): boolean {
+  for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+          const candidate = obj[key];
+          for (const attr in candidate) {
+              if (candidate.hasOwnProperty(attr)) {
+                  const value = candidate[attr as keyof ICandidate];
+                  if (value === "" || value === null || value === undefined) {
+                      return true;
+                  }
+              }
+          }
+      }
+  }
+  return false;
 }

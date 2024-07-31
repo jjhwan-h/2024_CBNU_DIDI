@@ -17,8 +17,8 @@ export default class Room extends Model<InferAttributes<Room>, InferCreationAttr
     declare category:RoomCategory
     declare desc:string;
     declare img:string;
-    declare s_date:Date;
-    declare e_date:Date;
+    declare "sDate":Date;
+    declare "eDate":Date;
 
     declare CandidateId:ForeignKey<Candidate['id']>;
     declare UserRoomId:ForeignKey<UserRoom['id']>;
@@ -38,7 +38,7 @@ export default class Room extends Model<InferAttributes<Room>, InferCreationAttr
             },
             category: {
                 type: Sequelize.ENUM(...Object.values(RoomCategory)),
-                allowNull: false,
+                allowNull: true,
             },
             desc:{
                 type:Sequelize.STRING(100),
@@ -48,11 +48,11 @@ export default class Room extends Model<InferAttributes<Room>, InferCreationAttr
                 type:Sequelize.STRING(200),
                 allowNull:true,
             },
-            s_date:{
+            sDate:{
                 type:Sequelize.DATE,
                 allowNull:false,
             },
-            e_date:{
+            eDate:{
                 type:Sequelize.DATE,
                 allowNull:false,
             }

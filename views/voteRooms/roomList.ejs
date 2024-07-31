@@ -15,16 +15,16 @@
                                 <div class="card card-margin my-3" style="width: 24rem;">
                                     <img src="<%=roomJsonString[i].img%>" class="card-img-top" onerror="handleError(this)">
                                     <div class="card-body">
-                                      <h5 class="card-title">"<%=roomJsonString[i].name%>"</h5>
+                                      <h5 class="card-title"><%=roomJsonString[i].name%></h5>
                                     </div>
                                     <ul class="list-group list-group-flush">
-                                      <li class="list-group-item">"<%=roomJsonString[i].category%>"</li>
-                                      <li class="list-group-item">"<%=roomJsonString[i]["s_date"]%>"</li>
-                                      <li class="list-group-item">"<%=roomJsonString[i]["e_date"]%>"</li>
+                                      <li class="list-group-item">카테고리 : <%=roomJsonString[i].category%></li>
+                                      <li class="list-group-item">시작날짜 : <%=roomJsonString[i]["sDate"]%></li>
+                                      <li class="list-group-item">종료날짜 : <%=roomJsonString[i]["eDate"]%></li>
                                     </ul>
                                     <div class="card-body">
                                       <a href="#" class="card-link">투표하기</a>
-                                      <button class="card-link button" onclick="modalBtnClickEvent(<%=JSON.stringify(roomJsonString[i])%>)">자세히</button>
+                                      <button class="card-link button" onclick="modalBtnClickEvent(<%=JSON.stringify(roomJsonString[i])%>)">간략히</button>
                                     </div>
                                   </div>
                             </div>
@@ -49,25 +49,51 @@
     const handleError=(img) =>{
     img.onerror = null; // 무한 루프 방지
     img.src = '/imgs/vote3.jpg';
-}
+    }
 
     const modalBtnClickEvent=(modalData)=>{
         let limit;
         const {desc,Candidates,v} = modalData;
-        for(let [idx,value] of Candidates.entries()){
-            if(value.img!=="temp") $(`#image${idx+1}`).attr('src',value.img);
-            else $(`#image${idx+1}`).attr('src','https://storage.googleapis.com/cbnu_didi/public/vote3.jpg');
-            $(`#name${idx+1}`).text(`${value.name}`);
-            $(`#age${idx+1}`).text(`만${value.age}세`);
-            limit=idx+1;
-        }
-        
-        for(let i=limit+1;i<9;i++){
+        // for(let [idx,value] of Candidates.entries()){
+        //     if(value.img!=="temp") $(`#image${idx+1}`).attr('src',value.img);
+        //     else $(`#image${idx+1}`).attr('src','https://storage.googleapis.com/cbnu_didi/public/vote3.jpg');
+        //     $(`#name${idx+1}`).text(`${value.name}`);
+        //     $(`#age${idx+1}`).text(`${value.age}년생`);
+        //     limit=idx+1;
+        // }
+
+        for(let i=limit+1;i<Candidates.length;i++){
             $(`#c${i}`).remove();
         }
+        console.log(Candidates);
+
+        const candidates = Candidates;
+        const modalItemsPerPage = 3;
+        const modalPageCount = Math.ceil(candidates.length / modalItemsPerPage);
+        let html = ''
+        for (let page = 0; page < modalPageCount; page++) {
+            html += `<div class="justify-content-center page ${page === 0 ? 'active' : ''}">
+                        <div class="row">`;
+            for (let i = page * modalItemsPerPage; i < Math.min((page + 1) * modalItemsPerPage, candidates.length); i++) {
+                html += `<div class="col-md-4 m-3">
+                            <div class="card card-margin my-3" style="width: 24rem;">
+                                <img src="${candidates[i].img}" class="card-img-top" onerror="handleError(this)">
+                                <div class="card-body">
+                                  <h5 class="card-title">${candidates[i].name}</h5>
+                                </div>
+                                <ul class="list-group list-group-flush">
+                                  <li class="list-group-item">이름 : ${candidates[i].name}</li>
+                                  <li class="list-group-item">생년 : ${candidates[i].age}</li>
+                                </ul>
+                              </div>
+                        </div>`;
+            }
+            html += `</div>
+                    </div>`;
+        }
+
+        $('#candidate').html(html);
         $(`#desc`).text(desc)
-
-
 
         $('#roomModal').modal('show');
     } 

@@ -1,21 +1,134 @@
-.cont {
-    align-items: center;
-    background-color: var(--white);
-    background: url("/imgs/vote3.jpg");
-    background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    display: grid;
-    height: 100vh;
-    place-items: center;
-  }
-
-  .divider {
-    border-bottom: 1px solid #080808; /* 선의 두께와 색상을 설정할 수 있습니다. */
-    margin: 20px 0; /* 필요에 따라 여백을 조정합니다. */
+.step {
+  text-align: center;
+  padding: 10px;
 }
-.flex-container {
-    display: flex; /* Flexbox 레이아웃 활성화 */
-    flex-wrap: nowrap; /* 자식 요소들을 한 줄에 나열 */
+.step-number {
+  font-size: 24px;
+  background: #f0f0f0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: inline-block;
+  line-height: 40px;
+}
+.step-text {
+  display: inline-block;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+.image-upload {
+  border: 1px solid #ddd;
+  padding: 20px;
+  text-align: center;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+.form-group.required .control-label:after {
+  content:"*";
+  color:red;
+}
+.form-control::placeholder {
+  color: #bbb;
+}
+
+.custom-container {
+  max-width: 1200px;
+  padding-left: 0;
+  padding-right: 0;
+  background-color: transparent;
+  border: none;
+  margin: 0 auto;
+}
+
+.candidate-list {
+  list-style: none;
+  padding: 0;
+}
+.candidate-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+.candidate-info {
+  display: flex;
+  align-items: center;
+}
+.candidate-number {
+  font-size: 18px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+.candidate-name {
+  font-size: 16px;
+  margin-right: 10px;
+}
+.candidate-school {
+  font-size: 14px;
+  color: #888;
+}
+.btn-space {
+  margin-right: 5px;
+}
+.header, .footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.custom-container {
+  display: none;
+}
+.custom-container.active {
+  display: block;
+}
+
+.upload-img {
+  width: 150px;
+  height: auto;
+}
+
+.room-btn{
+  background-color: var(--blue);
+  background-image: linear-gradient(90deg, var(--blue) 0%, var(--lightblue) 74%);
+  border-radius: 20px;
+  border: 1px solid var(--blue);
+  color: var(--white);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: bold;
+  letter-spacing: 0.1rem;
+  padding: 0.9rem 4rem;
+  text-transform: uppercase;
+  transition: transform 80ms ease-in;
+}
+
+.candidateList-preview-img{
+  width: 50px;
+  height: auto;
+}
+
+.candidate{
+  background-color: #f9f9f9;
+    border: none;
+    outline: none; /* 포커스 시 테두리 제거 */
+    padding: 10px; /* 약간의 패딩 추가 */
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.candidate:focus{
+  outline:none;
+}
+
+.btn-group{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.pagination{
+  display: flex;
+  justify-content: center;
 }

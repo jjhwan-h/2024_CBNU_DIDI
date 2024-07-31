@@ -1,95 +1,193 @@
 <%- include('../partials/header') %>
 
-<div class="cont">
-    <div class="container mt-3" style="height: 95%; background-color: #ffffff; overflow-y: auto;">
-        <div class="row justify-content-center text-center"> 
-            <h2>투표방 등록</h2>
+<form class="mt-4" id="room-form" enctype="multipart/form-data">
+<!-- 투표 정보 입력 컨테이너 -->
+<div class="custom-container mt-5 active" id="voteInfoContainer">
+    <div class="row mb-4">
+        <div class="col-4 step">
+            <h3><span class="step-text">투표 정보</span></h3>
         </div>
-        <div class="divider"></div>
-        <form action="/rooms" method="post" enctype="application/x-www-form-urlencoded">
-        <div class="row">
-            <div>
-                    <h4>투표방 정보</h4>
-                    <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">투표방</span>
-                        <input type="text" class="form-control" placeholder="투표방이름" aria-label="manufacturer" aria-describedby="basic-addon1" name="room_name" required>
-                    </div>
-            
-                    <div class="input-group mb-3">
-                        <span class="input-group-text" id="basic-addon1">투표유형</span>
-                        <select class="form-select" aria-label="state" name="category" required>
-                            <option disabled>상태를 선택하세요.</option>
-                            <option value="주민투표">주민투표</option>
-                            <option value="인기투표">인기투표</option>
-                            <option value="찬반">찬반투표</option>
-                        </select>
-                    </div>
-            
-                    <div class="input-group">
-                        <span class="input-group-text">설명</span>
-                        <textarea class="form-control" aria-label="desc" name="desc" required></textarea>
-                    </div>
-                    <br>
-                    <div class="flex-container">
-                        <div class="input-group mb-3">
-                            <span class="input-group-text">투표시작</span>
-                            <input type="date"  aria-label="date" name="date_start" required>
+        <div class="col-4 step">
+            <h5><span class="step-text text-secondary">후보자 등록</span></h5> 
+        </div>
+        <div class="col-4 step">
+            <h5><span class="step-text text-secondary">유권자 등록</span></h5>
+        </div>
+    </div>
+    <hr class="m-4">
+        <div class="form-group row">
+            <h3><label class="control-label ">썸네일 이미지</label></h3>
+            <div class="image-upload col-md-6 ">
+                <div class="row">
+                    <img id="room-imagePreview" class="image-preview" src="" alt="미리보기 이미지" style="display: none;" >
+                        <div id="room-input-explain">
+                            <p>투표를 대표하는 사진을 업로드해주세요</p>
+                            <p>사진은 가로 3:4 비율로 고정되며, 최대 1장, 최대 30MB까지 업로드 할 수 있습니다.</p>
+                            <p>
+                            <img src="/imgs/upload-img.png" class="upload-img">
+                            </p>
                         </div>
-                        <div class="input-group mb-3">
-                            <span class="input-group-text">투표종료</span>
-                            <input type="date"  aria-label="date" name="date_end" required>
-                        </div>
-                    </div> 
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                    <div class="dropzone-container mb-3" id="category1">
-                        <h4>투표방 이미지</h4>
-                        <div class="dropzone" id="dropzoneCategory1"></div>
-                        <div id="preview-container-category1" class="preview-container"></div>
-                    </div>
-            </div>
-            <div class="col-md-6">
-                <div class="dropzone-container mb-3" id="category2">
-                    <h4>유권자 목록</h4>
-                    <div class="dropzone" id="dropzoneCategory2"></div>
-                    <div id="preview-container-category2" class="preview-container"></div>
-                 </div>
-            </div> 
-        </div>
-            
-        <div class="row">
-            <div class="dropzone-container" id="category3">
-                <div class="form-group">
-                    <label for="personCount"><h4>후보 수 선택</h4></label>
-                    <select class="form-control" id="personCount">
-                        <option value="1">1명</option>
-                        <option value="2">2명</option>
-                        <option value="3">3명</option>
-                        <option value="4">4명</option>
-                        <option value="5">5명</option>
-                        <option value="6">6명</option>
-                        <option value="7">7명</option>
-                        <option value="8">8명</option>
-                    </select>
+                    </img>
                 </div>
-                <h4>후보자목록</h4>
-                <button id="checkButton" type="button" style="display: none;">JSON 파일 검증</button>
-                <div class="dropzone" id="dropzoneCategory3"></div>
-                <div id="preview-container-category3" class="preview-container mb-3"></div>
-             </div>
-                    <div class="form-group">
-                        <label><h4>후보자 사진 업로드</h4></label>
-                        <div class="dropzone-container" id="category4"></div>
-                    </div>
+                <div class="row">
+                    <input type="file" class="form-control-file room-img-input" id="room-url" accept="image/*" hidden>
+                    <input type="hidden" id="room-img" required>
+                    <button type="button" class="mt-4 room-btn img-file-input" id="room-id" >파일 선택</button>
+                 </div>
+            </div>
+            <div class="form-group col-md-6 required">
+                <h3><label for="vote-name" class="control-label">투표명</label></h3>
+                <input type="text" class="form-control m-1" id="vote-name" name="room-name" placeholder="투표명을 입력해주세요">
+                <hr class="m-2">
+                <h3><label for="start-time" class="control-label m-1">투표 시간</label></h3>
+                <ul class="form-row m-1">
+                    <li class="col">
+                        <h4><label for="start-date" class="control-label m-1">시작 시간</label></h4>
+                        <input type="date" class="form-control m-1" id="start-date" name="room-sDate">
+                    </li>
+                    <li class="col">
+                        <h4><label for="end-date" class="control-label m-1">종료 시간</label></h4>
+                        <input type="date" class="form-control m-1" id="end-date" name="room-eDate">
+                    </li>
+                </ul>
+            </div>
         </div>
-        <div class="row justify-content-center mt-3 mb-5">
-            <button class="btn btn-success btn-subject justify-content-center col-md-9" id="submit">Submit</button>
+        <hr class="m-4">
+        <div class="form-group row required m-2">
+            <h3><label for="description" class="control-label">투표 상세 설명</label></h3>
+            <textarea class="form-control" id="description" name="room-desc" rows="10" placeholder="투표 상세 설명을 입력해주세요"></textarea>
         </div>
-    </form>
+        <div class="text-end">
+            <button type="button" class="btn btn-primary m-2 btn-lg" id="nextToCandidates">다음</button>
+        </div>
+    </div>
+
+<!-- 후보자 등록 컨테이너 -->
+<div class="custom-container mt-5" id="candidateContainer">
+    <div class="row mb-4">
+    <div class="col-4 step">
+        <h5><span class="step-text text-secondary">투표 정보</span></h5>
+    </div>
+    <div class="col-4 step">
+        <h3><span class="step-text">후보자 등록</span></h3> 
+    </div>
+    <div class="col-4 step">
+        <h5><span class="step-text text-secondary">유권자 등록</span></h5>
     </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
+<hr class="m-4">
+    <div class="header mb-4">
+        <div>
+            <h2>후보자 등록</h2>
+        </div>
+        <div>
+            <button type="button" class="btn btn-primary" id="nextAddCandidate">후보자 추가하기</button>
+        </div>
+    </div>
+    <div>
+        <h4><p>후보자 목록 <span id="candidateCount">0</span></p></h4>
+        <ul class="candidate-list" id="candidateList">
+            <!-- 후보자 목록이 여기에 추가됩니다 -->
+        </ul>
+    </div>
+
+    <div class="footer">
+        <button type="button" class="btn btn-outline-primary" id="backToVoteInfo">이전 : 투표 정보</button>
+        <button type="button" class="btn btn-primary" id="nextAddVoter">다음</button>
+    </div>
+</div>
+
+<!-- 후보자 추가 컨테이너 -->
+<div class="custom-container mt-5" id="addCandidateContainer">
+    <h3 class="text-center">후보자 추가</h3>
+    <hr class="m-4">
+        <div class="form-group row">
+            <div class="col-md-6">
+                <h3><label class="control-label ">후보자 이미지</label></h3>
+                <div class="image-upload ">
+                    <div class="row">
+                        <img id="candidate-imagePreview" class="image-preview" src="" alt="미리보기 이미지" style="display: none;" >
+                            <div id="candidate-input-explain">
+                                <p>투표를 대표하는 사진을 업로드해주세요</p>
+                                <p>사진은 가로 3:4 비율로 고정되며, 최대 1장, 최대 30MB까지 업로드 할 수 있습니다.</p>
+                                <p>
+                                <img src="/imgs/upload-img.png" class="upload-img">
+                                </p>
+                            </div>
+                        </img>
+                    </div>
+                    <div class="row">
+                        <input type="file" class="form-control-file candidate-img-input" id="candidate-url"  accept="image/*" hidden>
+                        <input type="hidden" id="candidate-img" required>
+                        <button type="button" class="mt-4 room-btn img-file-input" id="candidate-id" >파일 선택</button>
+                     </div>
+                </div>
+            </div>
+            <div class="form-group col-md-6 required">
+                <div class="row">
+                    <h3><label for="candidate-name" class="control-label">이름</label></h3>
+                    <input type="text" class="form-control m-4" id="candidate-name" placeholder="후보자 이름">
+                    <h3><label for="candidate-gender" class="control-label m-4">성별</label></h3>
+                    <select class="form-control" id="candidate-gender">
+                        <option value="">성별을 선택하세요</option>
+                        <option value="남">남성</option>
+                        <option value="여">여성</option>
+                    </select>
+                    <h3><label for="candidate-age" class="control-label m-4">나이</label></h3>
+                    <select class="form-control" id="candidate-age">
+                        <option value="">출생연도를 선택하세요</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row required m-4">
+                <h3><label for="description" class="control-label">후보자 정보 및 공약</label></h3>
+                <textarea class="form-control" id="candidate-desc" rows="10" placeholder="투표 상세 설명을 입력해주세요"></textarea>
+                <div class="text-end">
+                    <button type="button" class="btn btn-primary m-2 btn-lg" id="addCandidate">후보자 추가</button>
+                    <button type="button" class="btn btn-primary m-2 btn-lg" id="cancel">취소</button>
+                </div>
+            </div>  
+        </div>
+</div>
+
+<!-- 유권자 등록 컨테이너 -->
+<div class="custom-container mt-5" id="voterContainer">
+    <div class="row mb-4">
+        <div class="col-4 step">
+            <h5><span class="step-text text-secondary">투표 정보</span></h5>
+        </div>
+        <div class="col-4 step">
+            <h5><span class="step-text text-secondary">후보자 등록</span></h5> 
+        </div>
+        <div class="col-4 step">
+            <h3><span class="step-text">유권자 등록</span></h3>
+        </div>
+    </div>
+    <hr class="m-4">
+    <div class="header mb-4">
+        <div>
+            <h2>유권자 등록</h2>
+        </div>
+        <div>
+            <input type="file" class="form-control-file voter-input" name="voter" accept=".json" hidden>
+            <button type="button" class="btn btn-primary mt-4 file-input" id="voter-id" >유권자 등록</button>
+        </div>
+    </div>
+
+    <div>
+        <h4><p>유권자 목록 <span id="voterCount">0</span></p></h4>
+        <div class="voter-list" id="voterList">
+            <!-- 유권자 목록이 여기에 추가됩니다 -->
+        </div>
+        <div id="pagination" class="pagination"></div>
+    </div>
+
+    <div class="footer">
+        <button type="button" class="btn btn-outline-primary" id="backToCandidateInfo">이전 : 후보자 등록</button>
+        <button type="submit" class="btn btn-primary">투표방 생성</button>
+    </div>
+</div>
+</form>
+
 <script src="/scripts/createRoom.js"></script>
 <%- include('../partials/footer') %>
