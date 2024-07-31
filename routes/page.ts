@@ -17,8 +17,8 @@ router.get('/info',(req,res,next)=>{
     res.render('pages/info',req.roomInfo);
 })
 
-//GET /registration
-router.get('/registration',isLoggedIn,(req,res,next)=>{
+//GET /vote-rooms/registration
+router.get('/vote-rooms/registration',isLoggedIn,(req,res,next)=>{
     res.render('voteRooms/createRoom');
 })
 

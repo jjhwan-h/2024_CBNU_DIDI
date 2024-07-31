@@ -2,13 +2,15 @@ import { RequestHandler } from 'express';
 import Room from '../models/room';
 import User from '../models/user';
 import Candidate from '../models/candidate';
-import {IRoomData} from './interfaces/IvoterRoom';
-import { hasOwnProperty, sendMail } from './utils/index';
+import {IRoom, IRoomData} from './interfaces/IvoterRoom';
+import { checkAllInputs, hasOwnProperty, sendMail } from './utils/index';
 import { sequelize } from '../models';
 import UserRoom from '../models/userRoom';
 import { IMailOptions } from './interfaces/IMailOptions';
 import { Op } from 'sequelize';
 import { requestCredentialMail } from '../configs/email';
+import { ICandidate, ICandidateAttr, ICandidates } from './interfaces/ICandidate';
+import { error } from 'console';
 
 export const getVoteRooms:RequestHandler = async (req,res)=>{
     const roomDataValues = (await Room.findAll({
@@ -24,155 +26,123 @@ export const getVoteRooms:RequestHandler = async (req,res)=>{
 }
 
 export const afterUpload:RequestHandler = (req,res)=>{
-    res.send(req.file?.path);
+    console.log(req.body.url);
+    res.send(req.body.url);
 }
 
 export const registerRoom:RequestHandler = async (req,res,next)=>{
     try{
-        let candidateNum;
-        console.log(req.body);
-        const request = req.body;
-        if(request && hasOwnProperty(request,'dropzoneCategory1-0') && hasOwnProperty(request,'dropzoneCategory2-0')
-            && hasOwnProperty(request,'dropzoneCategory3-0') ){
-                candidateNum = request['dropzoneCategory3-0'].replace(/,+$/, '').split(',');
-                const candidateDropzoneIds = Array.from({length:candidateNum.length},(_,idx)=>`category4-${idx}`)
-                const allPropertiesExist = candidateDropzoneIds.every(prop => hasOwnProperty(request,prop));
-                if(!allPropertiesExist) return res.redirect(`/registration?error=모든파일을 업로드해주세요`);
+        if (!req.file) {
+            return res.status(400).json({
+                error:"Bad Request",
+                message:"유권자를 업로드 해주세요."
+            });
         }
-        else return res.redirect(`/registration?error=모든 파일을 업로드해주세요}`);
-        const voterNum = request['dropzoneCategory2-0'].replace(/,+$/, '').split(',');
-        let roomData:IRoomData={
-            name:request.room_name,
-            category:request.category,
-            desc:request.desc,
-            s_date:request.date_start,
-            e_date:request.date_end,
-            img:request['dropzoneCategory1-0']
-        };
+        const jsonData = JSON.parse(req.file.buffer.toString('utf-8'));
+        const request = req.body;
+        let candidate : ICandidate[]= [];
+        let room : IRoom = {};
+        if(request && hasOwnProperty(request,'room-img') && hasOwnProperty(request,'room-name')
+            && hasOwnProperty(request,'room-sDate') && hasOwnProperty(request,'room-eDate') && hasOwnProperty(request,'room-desc')){
+                const NumRegex = /\d$/;
+                const RoomRegex = /^room/;
+                for(const key in request){
+                    if(NumRegex.test(key)){
+                        const num  = parseInt(key.split('-')[2],10);
+                        const attr = key.split('-')[1] as ICandidateAttr;
+                        if(!candidate[num]){
+                            candidate[num] = {} as ICandidate;
+                        }
+                        if(request[key])
+                            candidate[num][attr] = request[key];
+                        else
+                            return res.redirect(`/registration?error=모든 후보자, 유권자 정보를 작성해주세요`);
+                    }else if(RoomRegex.test(key)){
+                        const attr = key.split('-')[1];
+                        room[attr] = request[key];
+                    }
+                }
+        } else {
+                return res.status(400).json({
+                error:"Bad Request",
+                message:"모든 방정보를 작성해주세요."
+            });
+        }
+
         const transaction = await sequelize.transaction();
         try{
-            await Room.create(roomData).then(async (el)=>{
-                const roomId = el.dataValues.id;
-                for(let v of voterNum){
-                    v=parseInt(v,10);
-                    await UserRoom.create({
-                        isIssued:false,
-                        RoomId:roomId,
-                        UserId:v
-                    }),{transaction};
-                };
-                for(let [idx,v] of candidateNum.entries()){
-                    v=parseInt(v,10);
-                    await Candidate.update({
-                        RoomId:roomId, 
-                        img:request[`category4-${idx}`],
-                    },{where:{id:v},transaction});
-                };
+            await Room.create(room as unknown as IRoomData,{transaction}).then(async (el)=>{
+                    const roomId = el.dataValues.id;
+
+                    console.log(candidate);
+                    if(checkAllInputs(candidate)){
+                        for(const [idx,v] of candidate.entries()){
+                            if (candidate[idx] !== undefined) {
+                                candidate[idx].RoomId = roomId;
+                                await Candidate.create(candidate[idx],{transaction});
+                            } 
+                        }
+                    }else{
+                        return res.status(400).json({
+                            error:"Bad Request",
+                            message:"모든 후보자의 정보를 작성해주세요."
+                        });
+                    }
+
+                    for (const key of Object.keys(jsonData)) {
+                        const name = jsonData[key].name as string;
+                        const email = jsonData[key].email as string;
+                        const voter = {
+                        name: name,
+                        email: email,
+                        status: "preUser",
+                    };
+                    const exUser = await User.findOne({where:{email}});
+                    if(!exUser){
+                        await User.create(voter,{transaction}).then(async (el)=>{
+                            const userId = el.dataValues.id;
+                            await UserRoom.create({
+                                RoomId:roomId,
+                                UserId:userId,
+                                isIssued:false
+                            },{transaction})
+                        });
+                    }else{
+                        const exUserRoom = await UserRoom.findOne({where:{UserId:exUser.id,RoomId:roomId}});
+                        if(!exUserRoom){
+                            await UserRoom.create({
+                                RoomId:roomId,
+                                UserId:exUser.id,
+                                isIssued:false
+                            },{transaction});
+                        }
+                        else{
+                            transaction.rollback();
+                            return res.status(400).json({
+                                error:"Bad Request",
+                                message:"중복된 (email,name)조합이 있습니다."
+                            })
+                        }
+                        
+                    }
+                }
             });
-            await transaction.commit();
-        }catch(error:any){
-            await transaction.rollback();
+        }catch(error){
+            transaction.rollback();
             console.error(error);
-            return res.redirect(`/registration?error=${error.errors[0].message}`);
+            return res.status(400).json({
+                error:"Bad Request",
+                message:"방 생성 중 오류가 발생했습니다. 다시 시도해주세요."
+            });
         }
-
-        res.redirect(`/vote-rooms?success=투표방등록이 완료되었습니다.`);
-
-        const user = await User.findAll(
-            {where:
-                {id:
-                    {[Op.in]:voterNum}
-                },
-            attributes:['email','name']
-        });
-        for(let v of user){
-            if(v){
-                const mailOptions :IMailOptions = {
-                    to : v!.email, //사용자가 입력한 이메일 -> 목적지 주소 이메일
-                    html: requestCredentialMail(v,request.room_name)
-               };
-               try{
-                   sendMail(mailOptions);
-               }catch(error){
-                console.error('Error:: Failed to send Eamil:', error);
-                return next(error);
-               }
-            }
-        }
-        return;
+        transaction.commit();
+        return res.status(200).send("방생성이 완료되었습니다.");
     }
     catch(error){
         console.error(error);
-        return res.redirect(`/registration?error=${error}`);
+        return res.status(400).json({
+            error:"Bad Request",
+            message:"방 생성 중 오류가 발생했습니다. 다시 시도해 주세요."
+        });
     }
 }
-
-export const voterUpload:RequestHandler= async (req,res)=>{ //TODO:: 동일한 사람정보가 등록되어있는지 확인(중복투표 방지)
-    const jsonFile = req.file;
-    if(!jsonFile) return res.send('파일이 없습니다.');
-
-    try{
-        let str="";
-        const jsonData = JSON.parse(jsonFile.buffer.toString('utf8'));
-        //console.log('파일 데이터:', jsonData);
-        for (const key of Object.keys(jsonData)) {
-            const name = jsonData[key].name as string;
-            const email = jsonData[key].email as string;
-            const voter = {
-              name: name,
-              email: email,
-              status: "preUser",
-            };
-            try {
-              const exUser = await User.findOne({where:{email}})
-              if(!exUser){
-                    const el = await User.create(voter);
-                    str = str + el.dataValues.id + ",";
-              }else{
-                    str= str + exUser.id + ",";
-              }
-            } catch (error:any) {
-              console.error('Voter.create 오류:', error);
-              return res.json({error:error.errors[0].message});
-            }
-        }
-        res.send(`${str}`);
-    }catch(error:any){
-        console.error(error);
-        return res.json({error:error.message});
-    }
-}
-
-export const candidateUpload:RequestHandler= async (req,res)=>{
-    const jsonFile = req.file;
-    if(!jsonFile) return res.send('파일이 없습니다.');
-
-    let str="";
-    try{
-        const jsonData = JSON.parse(jsonFile.buffer.toString('utf8'));
-        //console.log('파일 데이터:', jsonData);
-        for (const key of Object.keys(jsonData)) {
-            const candidate = {
-              name: jsonData[key].name,
-              gender: jsonData[key].gender,
-              age: jsonData[key].age,
-              resume: jsonData[key].resume,
-              img: "temp",
-            };
-          
-            try {
-              const el = await Candidate.create(candidate);
-              str = str + el.dataValues.id + ",";
-            } catch (error:any) {
-              console.error('Candidate.create 오류:', error);
-              return res.json({error:error.errors[0].message});
-            }
-        }
-        res.send(`${str}`);
-    }catch(error:any){
-        console.error(error);
-        return res.json({ error:error.message });
-    }
-}
-
-

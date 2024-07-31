@@ -30,7 +30,8 @@ const isLoggedIn:RequestHandler = (req,res,next)=>{
     if (req.isAuthenticated()) {
         next();
       } else {
-        res.status(403).send('로그인 필요');
+        const referer = req.headers.referer || '/';
+        res.status(403).redirect(`${referer}?error=로그인을 해주세요.`);
       }
 };
 

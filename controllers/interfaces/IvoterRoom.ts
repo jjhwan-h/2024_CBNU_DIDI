@@ -3,13 +3,17 @@ enum RoomCategory{
     POPULARITY="인기투표",
     PNC="찬반투표"
 }
+
 export interface IRoomData{
     name:string,
     category:RoomCategory,
     desc:string,
-    s_date:Date,
-    e_date:Date,
+    sDate:Date,
+    eDate:Date,
     img:string
+}
+export interface IRoom{
+    [key : string] : string | RoomCategory | Date
 }
 
 export interface IVoter{
