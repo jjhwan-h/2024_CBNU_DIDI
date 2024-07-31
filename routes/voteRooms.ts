@@ -18,31 +18,38 @@ const storage = new Storage({
 
 const bucket = storage.bucket(process.env.BUCKET as string);
 
-const imgUpload= 
-    multer({
-    storage: new MulterGoogleCloudStorage({
-        bucket: process.env.BUCKET,
-        keyFilename: process.env.KEY_FILENAME,
-        projectId:process.env.PROJECT_ID,
-        filename: (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
-            cb(null, `room/${Date.now()}_${file.originalname}`);
-          },
-     }),
-     limits:{
-        fileSize:5*1024*1024,
-     }
-});
+// const imgUpload= 
+//     multer({
+//     storage: new MulterGoogleCloudStorage({
+//         bucket: process.env.BUCKET,
+//         keyFilename: process.env.KEY_FILENAME,
+//         projectId:process.env.PROJECT_ID,
+//         filename: (req: Request, file: Express.Multer.File, cb: (error: Error | null, filename: string) => void) => {
+//             cb(null, `room/${Date.now()}_${file.originalname}`);
+//           },
+//      }),
+//      limits:{
+//         fileSize:5*1024*1024,
+//      }
+// });
 
 const upload=multer({storage:multer.memoryStorage()});
 
 const sharpImage: RequestHandler= async (req,res,next) =>{
+    let width, height;
     if (!req.file) {
         return res.status(400).send('No file uploaded.');
     }
-    
+    if(req.body.attr==="room"){
+        width=400;
+        height=300;
+    }else{
+        width=300;
+        height=400;
+    }
     try {
         const processedImage = await sharp(req.file.buffer)
-            .resize(300, 400) // 원하는 크기로 조정
+            .resize(width, height) // 원하는 크기로 조정
             .toFormat('jpeg') // 포맷 설정 (예: jpeg)
             .toBuffer();
         
@@ -69,7 +76,6 @@ const imageUpload:RequestHandler = async (req,res,next)=>{
         });
 
         blobStream.on('finish', () => {
-            // 업로드가 완료되면 파일의 공개 URL을 반환합니다.
             url = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
             req.body.url = url;
             next();
@@ -80,7 +86,6 @@ const imageUpload:RequestHandler = async (req,res,next)=>{
             res.status(500).send('Error uploading to GCS');
         });
 
-        // 이미지 데이터를 GCS에 스트리밍합니다.
         await blobStream.end(req.body.image);
     } catch (error) {
         console.error('Error uploading image', error);
@@ -92,5 +97,4 @@ router.post('/',isLoggedIn,upload.single("voter"),registerRoom)
 
 //POST /rooms/img-upload
 router.post('/img-upload',isLoggedIn,upload.single("image"),sharpImage,imageUpload,afterUpload);
-imgUpload.fields
 export {router};
