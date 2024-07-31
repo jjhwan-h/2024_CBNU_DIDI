@@ -7,3 +7,11 @@
     justify-content: center; /* 내부의 카드를 가로로 가운데 정렬 */
     align-items: center; /* 내부의 카드를 세로로 가운데 정렬 */
 }
+.room-list-card-img-top{
+    width: 100%;
+    height: 18rem;
+}
+.modal-card-img-top{
+    width: 100%;
+    height: 16rem;
+}

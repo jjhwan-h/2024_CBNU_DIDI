@@ -118,6 +118,7 @@ $(document).ready(function() {
             reader.readAsDataURL(input.files[0]);
             const formData = new FormData();
             formData.append('image', input.files[0]);
+            formData.append('attr',imgName);
             $.ajax({
                 url: '/rooms/img-upload',
                 method: 'POST',
