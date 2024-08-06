@@ -31,12 +31,12 @@ const modalBtnClickEvent=(modalData)=>{
 
     const candidates = Candidates;
 
-    const sliderWrapper = document.getElementById('slider');
-    const modalItemsPerPage = 4; 
+    const sliderWrapper = $('#slider');
+    let modalItemsPerPage = 4; 
     let currentSlide = 0;
 
     function initSlider() {
-        sliderWrapper.innerHTML = candidates.map(candidate => `
+        const html = candidates.map(candidate => `
             <div class="slider-item">
                 <div class="card">
                     <img src="${candidate.img}" class="card-img-top" onerror="handleError(this)" alt="${candidate.name}">
@@ -47,20 +47,21 @@ const modalBtnClickEvent=(modalData)=>{
                 </div>
             </div>
         `).join('');
+        sliderWrapper.html(html)
     }
 
     function slideTo(index) {
         currentSlide = index;
         const maxIndex = Math.max(0, candidates.length - modalItemsPerPage);
         currentSlide = Math.max(0, Math.min(currentSlide, maxIndex));
-        sliderWrapper.style.transform = `translateX(-${currentSlide * 210}px)`;
+        sliderWrapper.css('transform',`translateX(-${currentSlide * (100/modalItemsPerPage)}vw)`);
     }
 
-    document.getElementById('prevBtn').addEventListener('click', () => {
+    $('#prevBtn').on('click', () => {
         slideTo(currentSlide - 1);
     });
 
-    document.getElementById('nextBtn').addEventListener('click', () => {
+    $('#nextBtn').on('click', () => {
         slideTo(currentSlide + 1);
     });
     initSlider();
@@ -68,6 +69,17 @@ const modalBtnClickEvent=(modalData)=>{
 
     $(`#desc`).text(desc)
     $('#roomModal').modal('show');
+
+    function calculateItemsPerPage() {
+        const containerWidth = $('.slider-container').width();
+        const slideWidth = $('.slider-item').outerWidth(true); 
+        return Math.floor(containerWidth / slideWidth);
+    }
+
+    $(window).on('resize', function () {
+        modalItemsPerPage = calculateItemsPerPage();
+        slideTo(currentSlide);
+    });
 } 
 
   

@@ -54,7 +54,7 @@ app.use(passport.session());
 app.use(nocache());
 app.use((req,res,next)=>{
   const auth = req.isAuthenticated();
-    res.locals.user=req.user?.email;
+  res.locals.user=req.user?.email;
   res.locals.isAuthenticated = auth;
   next();
 })

@@ -162,8 +162,7 @@ $(document).ready(function() {
             processData: false,
             contentType: false,
             success: function(response) {
-                alert(response);
-                window.location.href("/vote-rooms");
+                window.location.href="/vote-rooms?message=방 생성이 완료되었습니다.";
             },
             error: function(xhr, status, error) {
                 const errorData = xhr.responseJSON;
