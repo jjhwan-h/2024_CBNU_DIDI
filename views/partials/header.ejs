@@ -9,12 +9,14 @@
     <link rel="stylesheet" href="/pages/join.css">
     <link rel="stylesheet" href="/pages/roomList.css">
     <link rel="stylesheet" href="/pages/createRoom.css">
+    <link rel="stylesheet" href="/pages/myPage.css">
+    <link rel="stylesheet" href="/pages/header.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-        <a class="navbar-brand" href="/">DIDI</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg">
+        <a class="navbar-brand bg" href="/">DIDI</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
             aria-expanded="false" aria-label="Toggle navigation">
             <!-- <span class="navbar-toggler-icon"></span> -->
@@ -23,24 +25,24 @@
         <div  id="navbarSupportedContent" >
             <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a href="/info"><button type="button" class="btn btn-success">Info</button></a>
+                        <a href="/info"><button type="button" class="btn bg">Info</button></a>
                     </li>
                     <li class="nav-item active">
-                        <a href="/vote-rooms"><button type="button" class="btn btn-success">투표방 조회</button></a>
+                        <a href="/vote-rooms"><button type="button" class="btn bg">투표방 조회</button></a>
                     </li>
                     <li class="nav-item active">
-                        <a href="/vote-rooms/registration"><button type="button" class="btn btn-success">투표방 생성</button></a>
+                        <a href="/vote-rooms/registration"><button type="button" class="btn bg">투표방 생성</button></a>
                     </li>
                     <li class="nav-item active">
-                        <a href="/users"><button type="button" class="btn btn-success">마이페이지</button></a>
+                        <a href="/users"><button type="button" class="btn bg">마이페이지</button></a>
                     </li>
                     <% if (isAuthenticated) {%>
                     <li class="nav-item active">
-                        <a href="/users/logout"><button type="button" class="btn btn-success">Logout</button></a>
+                        <a href="/users/logout"><button type="button" class="btn bg">Logout</button></a>
                     </li>
                     <% } else {%>
                         <li class="nav-item active">
-                            <a href="/"><button type="button" class="btn btn-success">Login</button></a>
+                            <a href="/"><button type="button" class="btn bg">Login</button></a>
                         </li>
                     <% } %>
                     

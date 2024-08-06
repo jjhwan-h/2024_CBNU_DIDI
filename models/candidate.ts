@@ -8,6 +8,7 @@ enum genderCategory{
 export default class Candidate extends Model<InferAttributes<Candidate>, InferCreationAttributes<Candidate>>
 {
     declare id: CreationOptional<number>;
+    declare num: number;
     declare name:string;
     declare gender:string;
     declare age:string;
@@ -22,6 +23,10 @@ export default class Candidate extends Model<InferAttributes<Candidate>, InferCr
                 type: Sequelize.INTEGER,
                 primaryKey:true,
                 autoIncrement:true,
+            },
+            num:{
+                type:Sequelize.INTEGER,
+                allowNull:false,
             },
             name:{
                 type: Sequelize.STRING(20),
