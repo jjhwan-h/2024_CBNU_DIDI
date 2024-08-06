@@ -13,7 +13,7 @@ router.get('/',(req,res,next)=>{
 router.get('/vote-rooms',sendToastForVC,getVoteRooms);
 
 //GET /info
-router.get('/info',(req,res,next)=>{
+router.get('/info',sendToastForVC,(req,res,next)=>{
     res.render('pages/info',req.roomInfo);
 })
 

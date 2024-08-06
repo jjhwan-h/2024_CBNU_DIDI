@@ -1,3 +1,5 @@
+import { paginate } from "./utils.js";
+
 let imgCount=0;
 let candidateCount = 1;
 
@@ -86,7 +88,8 @@ $(document).ready(function() {
 
         candidateList.append(candidateItem);
 
-        updateCandidateCount();
+        candidateCount = candidateList.children().length+1;
+        $('#candidateCount').text(candidateCount-1).attr('name','candidate-num');
 
         $('#candidate-name').val('');
         $('#candidate-gender').val('');
@@ -101,9 +104,10 @@ $(document).ready(function() {
     });
 
     function updateCandidateCount() {
-        const candidateList = $('#candidateList');
-        $('#candidateCount').text(candidateCount).attr('name','candidate-num');
-        candidateCount = candidateList.children().length+1;
+        $('.candidate-list').each(function(index, element) {
+            const childCount = $(element).children().length;
+            $('#candidateCount').text(childCount).attr('name','candidate-num');
+        });
     }
 
     $('input[class$="-img-input"]').change(function(event) {
@@ -186,7 +190,12 @@ $('.voter-input').change(function(event) {
             try {
                 const jsonContent = JSON.parse(e.target.result);
                 const jsonLength = jsonContent.length;
-                paginate(jsonContent);
+                const el = {
+                    data:jsonContent,
+                    pagination:"pagination",
+                    tableList:"voterList"
+                }
+                paginate(el);
                 $('#voterCount').text(jsonLength);
             } catch (error) {
                 $('#voterList').html('<div class="alert alert-danger">Invalid JSON file.</div>');
@@ -203,61 +212,3 @@ $('.file-input').click(function(event){
 });
 
 
-function jsonToTable(currentPage,json) {
-    let keys = Object.keys(json[0]);
-    let table = '<table class="table table-bordered">';
-    
-    // Table header
-    table += '<thead><tr>';
-    table += '<th>#</th>'; // Index column
-    for (let key of keys) {
-        table += `<th>${key}</th>`;
-    }
-    table += '</tr></thead>';
-
-    // Table body
-    table += '<tbody>';
-    for (let [index, row] of json.entries()) {
-        table += '<tr>';
-        table += `<td>${currentPage*10+index + 1}</td>`; // Adding index
-        for (let key of keys) {
-            table += `<td>${row[key]}</td>`;
-        }
-        table += '</tr>';
-    }
-    table += '</tbody>';
-
-    table += '</table>';
-    return table;
-}
-
-function paginate(data) {
-    const rowsPerPage = 10;
-    const totalPages = Math.ceil(data.length / rowsPerPage);
-    let currentPage = 1;
-
-    function renderTable(page) {
-        const start = (page - 1) * rowsPerPage;
-        const end = start + rowsPerPage;
-        const paginatedData = data.slice(start, end);
-
-        $('#voterList').html(jsonToTable(page-1,paginatedData));
-        renderPagination(totalPages, page);
-    }
-
-    function renderPagination(totalPages, currentPage) {
-        let paginationHtml = '';
-        for (let i = 1; i <= totalPages; i++) {
-            paginationHtml += `<span class="page-item"><a class="page-link" href="#" data-page="${i}">${i}</a></span>`;
-        }
-        $('#pagination').html(paginationHtml);
-
-        $('.page-link').click(function(e) {
-            e.preventDefault();
-            currentPage = $(this).data('page');
-            renderTable(currentPage);
-        });
-    }
-
-    renderTable(currentPage);
-}
