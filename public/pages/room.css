@@ -1,0 +1,90 @@
+.room-image{
+    width: 85%;
+    height: auto;
+}
+.room-card {
+    border: none;
+}
+.room-card-header {
+    background-color: #f8f9fa;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+}
+.room-card-body {
+    border: 1px solid #d3d3d3;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+.card-body {
+    border: 1px solid #d3d3d3;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+}
+.room-card-body-img{
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+}
+.room-info{
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+}
+.gif{
+    width: 70%;
+}
+.state-badge{
+    width: 70%;
+}
+.state-badge-container{
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+}
+.candidate-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 20%;
+    object-fit: cover;
+    margin-right: 15px;
+}
+.candidate-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    height: 100px;
+}
+.candidate-item:last-child {
+    margin-bottom: 0;
+}
+.btn-custom {
+    background-color: #f5f7ff;
+    color: #495057;
+    font-weight: bold;
+}
+.btn-custom:hover {
+    background-color: #e1e6ff;
+    color: #333;
+}
+.btn-vote-start {
+    background-color: #f1f3ff;
+    color: #007bff;
+}
+.btn-vote-start:hover {
+    background-color: #e0e7ff;
+    color: #0056b3;
+}
+.details-toggle {
+    color: #6c757d;
+    cursor: pointer;
+}
+.scrollable-div{
+    overflow: auto;
+    height: 400px;
+}
