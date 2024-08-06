@@ -69,12 +69,13 @@ export const registerRoom:RequestHandler = async (req,res,next)=>{
             });
         }
 
+        room["creator"]=req.user?.id as number;
+        room["voterCount"] = Object.keys(jsonData).length;
         const transaction = await sequelize.transaction();
         try{
             await Room.create(room as unknown as IRoomData,{transaction}).then(async (el)=>{
                     const roomId = el.dataValues.id;
 
-                    console.log(candidate);
                     if(checkAllInputs(candidate)){
                         for(const [idx,v] of candidate.entries()){
                             if (candidate[idx] !== undefined) {

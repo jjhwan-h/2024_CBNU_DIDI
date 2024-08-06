@@ -19,6 +19,8 @@ export default class Room extends Model<InferAttributes<Room>, InferCreationAttr
     declare img:string;
     declare "sDate":Date;
     declare "eDate":Date;
+    declare creator:number
+    declare voterCount:number
 
     declare CandidateId:ForeignKey<Candidate['id']>;
     declare UserRoomId:ForeignKey<UserRoom['id']>;
@@ -54,6 +56,14 @@ export default class Room extends Model<InferAttributes<Room>, InferCreationAttr
             },
             eDate:{
                 type:Sequelize.DATE,
+                allowNull:false,
+            },
+            creator:{
+                type:Sequelize.INTEGER,
+                allowNull:false,
+            },
+            voterCount:{
+                type:Sequelize.INTEGER,
                 allowNull:false,
             }
         },{

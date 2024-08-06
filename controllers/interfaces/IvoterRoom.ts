@@ -10,10 +10,12 @@ export interface IRoomData{
     desc:string,
     sDate:Date,
     eDate:Date,
-    img:string
+    img:string,
+    creator:number,
+    voterCount:number
 }
 export interface IRoom{
-    [key : string] : string | RoomCategory | Date
+    [key : string] : string | RoomCategory | Date | number
 }
 
 export interface IVoter{
