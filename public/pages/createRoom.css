@@ -58,9 +58,12 @@
   align-items: center;
 }
 .candidate-number {
-  font-size: 18px;
+  text-align: center;
+  font-weight:bold;
+  width: 25px;
+  font-size: 16px;
   font-weight: bold;
-  margin-right: 10px;
+  color: black;
 }
 .candidate-name {
   font-size: 16px;
@@ -139,6 +142,11 @@
   width: 100%;
   height: 36rem;
 }
+<<<<<<< HEAD
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> 3fda154 (fix: candidate에 후보자 번호 추가)
 
 .btn-primary{
   background-color: #0C344E;
@@ -147,4 +155,9 @@
 /* .btn-secondary{
   background-color: #344D2A;
   color: var(--white);
+<<<<<<< HEAD
 } */
+=======
+} */
+>>>>>>> Stashed changes
+>>>>>>> 3fda154 (fix: candidate에 후보자 번호 추가)

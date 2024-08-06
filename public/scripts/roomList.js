@@ -36,12 +36,13 @@ const modalBtnClickEvent=(modalData)=>{
     let currentSlide = 0;
 
     function initSlider() {
+        candidates.reverse();
         const html = candidates.map(candidate => `
             <div class="slider-item">
                 <div class="card">
                     <img src="${candidate.img}" class="card-img-top" onerror="handleError(this)" alt="${candidate.name}">
                     <div class="card-body">
-                        <p class="rank-circle">${1}</p>
+                        <p class="rank-circle">${candidate.num}</p>
                         <h5 class="card-title">${candidate.name}</h5>
                     </div>
                 </div>

@@ -49,19 +49,19 @@ $(document).ready(function() {
 
         const candidateInfo = $('<div>').addClass('candidate-info col-md-9');
 
-        const candidateNumber = $('<span>').addClass('candidate-number').text(candidateCount);
+        const candidateNumber = $('<input>').addClass('candidate candidate-number m-4 rank-circle').attr('name',`candidate-num-${candidateCount}`).attr('readonly',true).val(candidateCount);
 
-        const candidateName = $('<input>').addClass('candidate candidate-name m-4').attr('name',`candidate-name-${candidateCount}`).val($('#candidate-name').val());
+        const candidateName = $('<input>').addClass('candidate candidate-name m-4').attr('name',`candidate-name-${candidateCount}`).attr('readonly',true).val($('#candidate-name').val());
 
-        const candidateGender = $('<input>').addClass('candidate candidate-gender m-4').attr('name',`candidate-gender-${candidateCount}`).val($('#candidate-gender').val());
+        const candidateGender = $('<input>').addClass('candidate candidate-gender m-4').attr('name',`candidate-gender-${candidateCount}`).attr('readonly',true).val($('#candidate-gender').val());
 
-        const candidateAge = $('<input>').addClass('candidate candidate-age m-4').attr('name',`candidate-age-${candidateCount}`).val($('#candidate-age').val());
+        const candidateAge = $('<input>').addClass('candidate candidate-age m-4').attr('name',`candidate-age-${candidateCount}`).attr('readonly',true).val($('#candidate-age').val());
 
-        const candidateDesc = $('<input>').addClass('candidate-desc').attr('name',`candidate-desc-${candidateCount}`).val($('#candidate-desc').val()).attr('hidden',true);;
+        const candidateDesc = $('<input>').addClass('candidate-desc').attr('name',`candidate-desc-${candidateCount}`).attr('readonly',true).attr('hidden',true).val($('#candidate-desc').val());
 
         const candidateImg = $('<img>').addClass('candidate-img candidateList-preview-img m-4').attr('src',$('#candidate-imagePreview').attr('src'));
 
-        const candidateImgUrl = $('<input>').addClass('candidate-img-url').attr('name',`candidate-img-${candidateCount}`).val($('#candidate-img').val()).attr('hidden',true);
+        const candidateImgUrl = $('<input>').addClass('candidate-img-url').attr('name',`candidate-img-${candidateCount}`).attr('hidden',true).attr('readonly',true).val($('#candidate-img').val());
 
         candidateInfo.append(candidateNumber);
         candidateInfo.append(candidateImg);

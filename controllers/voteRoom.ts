@@ -6,17 +6,17 @@ import {IRoom, IRoomData} from './interfaces/IvoterRoom';
 import { checkAllInputs, hasOwnProperty, sendMail } from './utils/index';
 import { sequelize } from '../models';
 import UserRoom from '../models/userRoom';
-import { IMailOptions } from './interfaces/IMailOptions';
-import { Op } from 'sequelize';
-import { requestCredentialMail } from '../configs/email';
 import { ICandidate, ICandidateAttr, ICandidates } from './interfaces/ICandidate';
-import { error } from 'console';
+
+function isCandidateKey(key: string): key is keyof ICandidate {
+    return ['num','name','age','gender','desc','img'].includes(key);
+}
 
 export const getVoteRooms:RequestHandler = async (req,res)=>{
     const roomDataValues = (await Room.findAll({
         include:{
             model:Candidate,
-            attributes:['name','age','img']
+            attributes:['name','age','img','num']
         }
     })).map((el)=>{return el.dataValues});
 
@@ -40,7 +40,7 @@ export const registerRoom:RequestHandler = async (req,res,next)=>{
         }
         const jsonData = JSON.parse(req.file.buffer.toString('utf-8'));
         const request = req.body;
-        let candidate : ICandidate[]= [];
+        let candidates : ICandidate[]= [];
         let room : IRoom = {};
         if(request && hasOwnProperty(request,'room-img') && hasOwnProperty(request,'room-name')
             && hasOwnProperty(request,'room-sDate') && hasOwnProperty(request,'room-eDate') && hasOwnProperty(request,'room-desc')){
@@ -50,13 +50,21 @@ export const registerRoom:RequestHandler = async (req,res,next)=>{
                     if(NumRegex.test(key)){
                         const num  = parseInt(key.split('-')[2],10);
                         const attr = key.split('-')[1] as ICandidateAttr;
-                        if(!candidate[num]){
-                            candidate[num] = {} as ICandidate;
+                        if(isCandidateKey(attr) && request[key] ){
+                            if(!candidates[num]){
+                                candidates[num] = {} as ICandidate;
+                            }
+                            if (attr === "num") {
+                                candidates[num][attr] = parseInt(request[key], 10) as ICandidate[typeof attr];
+                            } else {
+                                candidates[num][attr] = request[key] as string;
+                            }
                         }
-                        if(request[key])
-                            candidate[num][attr] = request[key];
                         else
-                            return res.redirect(`/registration?error=모든 후보자, 유권자 정보를 작성해주세요`);
+                            return res.status(400).json({
+                                error:"Bad Request",
+                                message:"모든 후보자/유권자 정보를 작성해주세요."
+                            });
                     }else if(RoomRegex.test(key)){
                         const attr = key.split('-')[1];
                         room[attr] = request[key];
@@ -76,11 +84,11 @@ export const registerRoom:RequestHandler = async (req,res,next)=>{
             await Room.create(room as unknown as IRoomData,{transaction}).then(async (el)=>{
                     const roomId = el.dataValues.id;
 
-                    if(checkAllInputs(candidate)){
-                        for(const [idx,v] of candidate.entries()){
-                            if (candidate[idx] !== undefined) {
-                                candidate[idx].RoomId = roomId;
-                                await Candidate.create(candidate[idx],{transaction});
+                    if(checkAllInputs(candidates)){
+                        for(const [idx,v] of candidates.entries()){
+                            if (candidates[idx] !== undefined) {
+                                candidates[idx].RoomId = roomId;
+                                await Candidate.create(candidates[idx],{transaction});
                             } 
                         }
                     }else{
