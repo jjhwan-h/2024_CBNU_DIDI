@@ -7,6 +7,7 @@ import { checkAllInputs, hasOwnProperty, sendMail } from './utils/index';
 import { sequelize } from '../models';
 import UserRoom from '../models/userRoom';
 import { ICandidate, ICandidateAttr, ICandidates } from './interfaces/ICandidate';
+import { where } from 'sequelize';
 
 function isCandidateKey(key: string): key is keyof ICandidate {
     return ['num','name','age','gender','desc','img'].includes(key);
@@ -19,10 +20,37 @@ export const getVoteRooms:RequestHandler = async (req,res)=>{
             attributes:['name','age','img','num']
         }
     })).map((el)=>{return el.dataValues});
-
     const roomJsonString = JSON.stringify(roomDataValues);
     const roomInfo = JSON.stringify(req.roomInfo) || `[]`;
     res.render("voteRooms/roomList",{roomJsonString,roomInfo});
+}
+
+export const getVoteRoom:RequestHandler=async(req,res)=>{
+    const roomId = req.params.id;
+    try{
+        const room = await Room.findOne({
+            where:{id:roomId},
+            include:{
+                model:Candidate,
+                attributes:['num','name','age','gender','img','desc']
+                }
+            }).then((el)=>{
+            return el?.dataValues
+        });
+        console.log(room)
+        if(room)
+            res.render("voteRooms/room",{room})
+        else
+            return res.status(400).json({
+                error:"Bad Request",
+                message:"해당 방이 없습니다."
+            })
+    }catch(error){
+        return res.status(400).json({
+            error:"다시 시도해 주세요.",
+            message:""
+        })
+    }
 }
 
 export const afterUpload:RequestHandler = (req,res)=>{

@@ -23,7 +23,7 @@
                                       <li class="list-group-item">종료날짜 : <%=roomJsonString[i]["eDate"]%></li>
                                     </ul>
                                     <div class="card-body">
-                                      <a href="#" class="card-link">투표하기</a>
+                                      <a href="/vote-rooms/<%=roomJsonString[i].id%>" class="card-link">투표하기</a>
                                       <button class="card-link" id="card-desc" style="border: 0; background-color: white;" onclick="modalBtnClickEvent(<%=JSON.stringify(roomJsonString[i])%>)">간략히</button>
                                     </div>
                                   </div>
