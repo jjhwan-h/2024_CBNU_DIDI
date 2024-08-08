@@ -5,3 +5,11 @@
 .btn:hover {
     color: white;
 }
+.navbar{
+    height: 60px;
+}
+
+.navbar-brand{
+    height: 60px;
+    margin-left: 10px;
+}

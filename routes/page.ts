@@ -12,6 +12,11 @@ router.get('/',(req,res,next)=>{
 //GET /vote-rooms
 router.get('/vote-rooms',sendToastForVC,getVoteRooms);
 
+//GET /vote-rooms/registration
+router.get('/vote-rooms/registration',isLoggedIn,(req,res,next)=>{
+    res.render('voteRooms/createRoom');
+})
+
 //GET /vote-rooms/:id
 router.get('/vote-rooms/:id',getVoteRoom);
 
@@ -20,10 +25,6 @@ router.get('/info',sendToastForVC,(req,res,next)=>{
     res.render('pages/info',req.roomInfo);
 })
 
-//GET /vote-rooms/registration
-router.get('/vote-rooms/registration',isLoggedIn,(req,res,next)=>{
-    res.render('voteRooms/createRoom');
-})
 
 // //POST /upload
 // router.post('/upload',(req,res)=>{

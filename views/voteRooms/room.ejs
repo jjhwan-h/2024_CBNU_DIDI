@@ -1,9 +1,10 @@
 <%- include('../partials/header') %>
+<%- include('../partials/candiModal') %>
 <% const roomData = room%>
 <% console.log(roomData)%>
-<div class="custom-container mt-5 active">
+<div class="custom-container mt-5 mb-5 active">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <a href="#" class="text-secondary">투표 목록</a>
+        <a href="javascript:history.back()" class="text-secondary">투표 목록</a>
         <button class="btn btn-custom">투표 수정</button>
     </div>
 
@@ -97,14 +98,18 @@
 
     <div class="scrollable-div">
         <% for(let i=0;i<roomData.Candidates.length; i++){ %>
-            <div class="candidate-item"> 
+            <button class="candidate-item" onclick="modalBtnClickEvent(<%=JSON.stringify(roomData.Candidates[i].dataValues)%>)"> 
                 <span class="rank-circle"><%= roomData.Candidates[i].num %></span>
                 <img class=" candidate-img col-md-1" src=<%=roomData.Candidates[i].img %> >
                 <div class="col-md-10">
                     <strong style="font-size: 20px;"><%= roomData.Candidates[i].name %></strong><br>
                 </div>
-            </div>
+            </button>
         <%}%>
     </div>
+    <div class="mb-5">
+
+    </div>
 </div>
+<script  src="/scripts/room.js"></script>
 <%- include('../partials/footer') %>
