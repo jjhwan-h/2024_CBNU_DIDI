@@ -5,6 +5,7 @@
     height: 45px;
     bottom: 0;
     width: 100%;
+    position: fixed;
     padding-left: 10px;
 }
 

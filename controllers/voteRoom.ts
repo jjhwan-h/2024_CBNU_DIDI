@@ -17,7 +17,7 @@ export const getVoteRooms:RequestHandler = async (req,res)=>{
     const roomDataValues = (await Room.findAll({
         include:{
             model:Candidate,
-            attributes:['name','age','img','num']
+            attributes:['name','age','img','num','desc','gender']
         }
     })).map((el)=>{return el.dataValues});
     const roomJsonString = JSON.stringify(roomDataValues);
@@ -37,7 +37,6 @@ export const getVoteRoom:RequestHandler=async(req,res)=>{
             }).then((el)=>{
             return el?.dataValues
         });
-        console.log(room)
         if(room)
             res.render("voteRooms/room",{room})
         else
