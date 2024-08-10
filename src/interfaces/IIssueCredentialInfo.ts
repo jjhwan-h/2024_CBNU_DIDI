@@ -1,4 +1,4 @@
 export interface IIssueCredentialInfo{
-        email : string;
-        name : string;
+        vc : string;
+        room : string;
 }

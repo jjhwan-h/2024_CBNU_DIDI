@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import faber from '../src/Faber';
 import Email from '../models/email';
 import User from '../models/user';
+import Vc from '../models/vc';
 import { sequelize } from '../models';
 import passport from 'passport';
 import { InferAttributes, Transaction, where } from 'sequelize';
@@ -51,50 +52,47 @@ const join :RequestHandler=async (req,res,next)=>{
     }  
 }
 
-// const issueVC:RequestHandler=async(req,res,next)=>{
-//     const email = req.session.email;
-//     const name = req.session.name;
-//     if(email && name){
-//         const t = await sequelize.transaction();
-//         try{
-//             const exEmail = await Email.findOne({where:{email}}); //이메일 검증 확인
-//             if(exEmail && exEmail.isValid && !exEmail.isRegistered){
-//                 const hashEmail = await bcrypt.hash(email,10);
-//                 const hashName = await bcrypt.hash(name,10);
-//                 try{
-//                     await exEmail.update({isValid:false, isRegistered:true}); //다른 사람이 동일한 이메일로 가입하는 것을 방지
-//                     const exUser = await User.findOne({where:{name:hashName,email:hashEmail}});
-//                     if(exUser){
-//                         const redirectUrl = `/?error=exist`
-//                         res.write(`data:${JSON.stringify({redirectUrl})}\n\n`)
-//                         res.end();
-//                     }
-//                     await User.create({
-//                         email:hashEmail,
-//                         name:hashName
-//                     });
-//                 }catch(error){
-//                     await t.rollback();
-//                     console.error(error);
-//                 }
-//                 await faber.issueCredential({email,name});
-//                 const redirectUrl = `/?message=VC발급이 완료되었습니다.`;
-//                 res.write(`data:${JSON.stringify({redirectUrl})}\n\n`);
-//                 res.end();
-//                 delete req.session.email;
-//                 delete req.session.name;
-//                 return;
-//             }
-//         }catch(error){
-//             return next(error);
-//         }
-//     }else{
-//         const redirectUrl = `/?message=VC발급 중 문제가 발생하였습니다. 다시 시도해주세요.`
-//         res.write(`data:${JSON.stringify({redirectUrl})}\n\n`);
-//         res.end();
-//         return;
-//     }
-// }
+const issueVC:RequestHandler=async(req,res,next)=>{
+    const email= req.user?.email;
+    const name = req.user?.name;
+    const roomId = req.body
+    if(email && name){
+        const transaction = await sequelize.transaction();
+        try{
+            const vc = await Vc.create({
+                isUsed:false
+            },{transaction});
+            await UserRoom.update(
+                {isIssued:true}
+                ,{
+                    where:{
+                        RoomId:roomId
+                    },
+                    transaction:transaction
+            });
+            const vcId = String(vc.id);
+            if(vc && roomId){
+                await faber.issueCredential({vc:vcId,room:roomId});
+            }else{
+               throw new Error("Failed to create");
+            }
+            transaction.commit();
+            const redirectUrl = `/?message=VC발급이 완료되었습니다.`;
+            res.write(`${JSON.stringify({"url":redirectUrl})}`);
+            res.end();
+            return;
+        }
+        catch(error){
+            await transaction.rollback();
+            return next(error);
+        }
+    }else{
+        const redirectUrl = `/?message=VC발급 중 문제가 발생하였습니다. 다시 시도해주세요.`
+        res.write(`url:${redirectUrl}`);
+        res.end();
+        return;
+    }
+}
 
 const myPage:RequestHandler=async(req,res,next)=>{
     try{
@@ -146,4 +144,4 @@ const logout:RequestHandler =(req,res,next) => {
     })
 }
 
-export {join,login, logout, myPage}
+export {join,login, logout, myPage,issueVC}

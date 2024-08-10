@@ -1,5 +1,5 @@
 import express from 'express';
-import { join,login,logout, myPage} from '../controllers/user';
+import { join,login,logout, myPage, issueVC} from '../controllers/user';
 import { sendProofRequest,connection,isLoggedIn,isNotLoggedIn, sendToastForVC } from '../middlewares';
 
 const router = express.Router();
@@ -7,8 +7,8 @@ const router = express.Router();
 //POST /users/join
 router.post('/join',isNotLoggedIn,join);
 
-//GET /users/vc
-// router.get('/vc',connection,issueVC);
+//POST /users/vc
+router.post('/vc',connection,issueVC);
 
 //GET /users/login
 router.post('/login',isNotLoggedIn,login);
