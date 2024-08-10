@@ -98,9 +98,9 @@
 
     <div class="scrollable-div">
         <% for(let i=0;i<roomData.Candidates.length; i++){ %>
-            <button class="candidate-item" onclick="modalBtnClickEvent(<%=JSON.stringify(roomData.Candidates[i].dataValues)%>)"> 
+            <button class="room-candidate-item" onclick="modalBtnClickEvent(<%=JSON.stringify(roomData.Candidates[i].dataValues)%>)"> 
                 <span class="rank-circle"><%= roomData.Candidates[i].num %></span>
-                <img class=" candidate-img col-md-1" src=<%=roomData.Candidates[i].img %> >
+                <img class=" room-candidate-img col-md-1" src=<%=roomData.Candidates[i].img %> >
                 <div class="col-md-10">
                     <strong style="font-size: 20px;"><%= roomData.Candidates[i].name %></strong><br>
                 </div>

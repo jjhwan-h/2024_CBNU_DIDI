@@ -85,3 +85,29 @@
     font-weight: bold;
     margin-right: 10px;
   }
+
+  .qr-info{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .qr-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; 
+    margin-top: 20px; 
+}
+
+.QR {
+    margin-bottom: 10px; /* QR 코드와 URL 간의 간격 조정 */
+}
+
+.url {
+    font-size: 14px;
+    color: #333;
+    text-align: center; /* URL을 중앙 정렬 */
+}
+.qr-gif{
+  width:10%;
+}

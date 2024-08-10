@@ -7,16 +7,15 @@ import { Op } from "sequelize";
 import UserRoom from "../models/userRoom";
 
 const connection:RequestHandler = async(req,res,next)=>{
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
-    res.flushHeaders();
+    res.setHeader('Content-Type', 'text/plain');
     const url = await faber.printConnectionInvite();
     const qr = await qrcode.toDataURL(url);
-    res.write(`data:${JSON.stringify({url,qr})}\n\n`);
+    const info= {url,qr}
+    res.write((`${JSON.stringify({"connection":info})}`));
+    console.log("waiting...")
+
     await faber.setupConnection();
     
-    console.log("waiting...")
     next();
 }
 

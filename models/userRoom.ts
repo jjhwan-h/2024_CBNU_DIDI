@@ -21,7 +21,6 @@ export default class UserRoom extends Model<InferAttributes<UserRoom>, InferCrea
                 type:Sequelize.BOOLEAN,
                 defaultValue:false
             }
-
         },{
             sequelize,
             timestamps: true,

@@ -171,7 +171,7 @@ class Faber extends BaseAgent {
     const schemaTemplate = {
       name: 'DIDI' + utils.uuid(),
       version: '1.0.0',
-      attrNames: ['name', 'email'],
+      attrNames: ['VC', 'room'],
       issuerId: this.anonCredsIssuerId,
     }
     this.printSchema(schemaTemplate.name, schemaTemplate.version, schemaTemplate.attrNames)
@@ -229,7 +229,7 @@ class Faber extends BaseAgent {
   }
 
   public async issueCredential(credentailInfo:IIssueCredentialInfo) {
-    const {email,name} = credentailInfo;
+    const {vc,room} = credentailInfo;
     const schema = await this.getById(CustomRecord,'user-schema').then((el)=>{return el?.metadata.data});
     if(schema){
       const credentialDefinition = await this.registerCredentialDefinition(schema.schemaId[0]);
@@ -242,12 +242,12 @@ class Faber extends BaseAgent {
         anoncreds: { 
           attributes: [
             {
-              name: 'name',
-              value: name,
+              name: 'vc',
+              value: vc,
             },
             {
-              name: 'email',
-              value: email,
+              name: 'room',
+              value: room,
             },
           ],
           credentialDefinitionId: credentialDefinition.credentialDefinitionId,
@@ -263,8 +263,8 @@ class Faber extends BaseAgent {
   private async logInProofAttribute() {
     //const schema=await this.getById(CustomRecord,'user-schema').then((el)=>{return el?.metadata.data});
     const proofAttribute = {
-      name: {
-        name:'name',
+      vc: {
+        name:'vc',
         restrictions: [
           {
             //schema_id:schema?.schemaId[0],
@@ -274,8 +274,8 @@ class Faber extends BaseAgent {
           },
         ],
       },
-      email: {
-        name:'email',
+      room: {
+        name:'room',
         restrictions: [
           {
             issuer_id: this.anonCredsIssuerId,

@@ -4,7 +4,7 @@ import User from './user';
 import Room from './room';
 import Candidate from './candidate';
 import Email from './email';
-import VC from './userRoom';
+import Vc from './vc';
 import UserRoom from './userRoom';
 //const env = process.env.NODE_ENV as 'production' || 'test' || 'development';
 const config = development
@@ -15,8 +15,10 @@ Room.initiate(sequelize);
 Candidate.initiate(sequelize);
 Email.initiate(sequelize);
 UserRoom.initiate(sequelize);
+Vc.initiate(sequelize);
 
 Room.associate();
 Candidate.associate();
 User.associate();
+Vc.associate();
 

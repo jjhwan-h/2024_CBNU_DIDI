@@ -1,7 +1,7 @@
 import  Sequelize,{Model, BelongsToManyGetAssociationsMixin, CreationOptional, InferAttributes, InferCreationAttributes, ForeignKey} from "sequelize";
 import User from "./user";
 import Candidate from "./candidate";
-import VC from "./userRoom";
+import Vc from "./vc";
 import UserRoom from "./userRoom";
 
 enum RoomCategory{
@@ -82,5 +82,8 @@ export default class Room extends Model<InferAttributes<Room>, InferCreationAttr
             foreignKey:"RoomId",sourceKey:"id"
         });
         Room.belongsToMany(Room,{through:UserRoom,as:"vote"});
+        Room.hasMany(Vc,{
+            foreignKey:"RoomId",sourceKey:"id"
+        })
     }
 }

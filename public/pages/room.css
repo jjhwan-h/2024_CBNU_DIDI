@@ -43,14 +43,15 @@
     justify-content: center; 
     align-items: center;
 }
-.candidate-img {
+.room-candidate-img {
     width: 60px;
     height: 60px;
     border-radius: 20%;
     object-fit: cover;
     margin-right: 15px;
+    margin-left:30px;
 }
-.candidate-item {
+.room-candidate-item {
     display: flex;
     align-items: center;
     margin-bottom: 15px;
@@ -102,13 +103,14 @@
     justify-content: center;
     margin: auto;
 }
-.candidate-info {
+
+.candidate-modal-info {
     background-color: #F4F5FA;
     border-radius: 10px;
     padding: 20px;
     height: auto;
 }
-.candidate-info div {
+.candidate-modal-info div {
     margin: 20px;
 }
 .candidate-title {
@@ -158,4 +160,18 @@
 }
 .profile-details .icon {
     margin-right: 5px;
+}
+#doNotShowAgain{
+    display: flex;
+    justify-content: flex-end;
+    position:relative;
+    height: 10px;
+    bottom: 0px;
+    width: 100%;
+}
+#doNot-hr{
+    margin: 10px 0; 
+    width: 100%; 
+    margin-top: 5px; 
+    margin-bottom: 5px; 
 }

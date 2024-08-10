@@ -1,4 +1,5 @@
 <%- include('../partials/header') %>
+<%- include('../partials/qrModal') %>
 <% let user = info; %>
 
 <div class="custom-container mt-5 active">
@@ -37,7 +38,7 @@
 <script>
     window.serverData = {
             roomInfo: <%- JSON.stringify(roomInfo)%>,
-            itemsPerPage : 4
+            itemsPerPage : 4,
         }
 </script>
 <script type="module" src="/scripts/myPage.js"></script>
