@@ -55,36 +55,54 @@ const join :RequestHandler=async (req,res,next)=>{
 const issueVC:RequestHandler=async(req,res,next)=>{
     const email= req.user?.email;
     const name = req.user?.name;
-    const roomId = req.body
-    if(email && name){
+    const roomId = req.body.roomId
+    if(email && name && req.user?.id){
         const transaction = await sequelize.transaction();
         try{
+            await UserRoom.findOne(
+                {
+                    where:{
+                        UserId:req.user.id,
+                        RoomId:roomId
+                    }
+                }
+            ).then((el)=>{
+                if (el?.isIssued){
+                    throw new Error("Already Issued");
+                }
+            });
             const vc = await Vc.create({
-                isUsed:false
+                isUsed:false,
+                RoomId:roomId,
             },{transaction});
             await UserRoom.update(
                 {isIssued:true}
                 ,{
                     where:{
+                        UserId:req.user.id,
                         RoomId:roomId
                     },
                     transaction:transaction
             });
             const vcId = String(vc.id);
-            if(vc && roomId){
-                await faber.issueCredential({vc:vcId,room:roomId});
+            const room = String(roomId);
+            if(vcId && roomId){
+                await faber.issueCredential({vc:vcId,room:room});
             }else{
                throw new Error("Failed to create");
             }
             transaction.commit();
-            const redirectUrl = `/?message=VC발급이 완료되었습니다.`;
+            const redirectUrl = `/users?message=VC발급이 완료되었습니다.`;
             res.write(`${JSON.stringify({"url":redirectUrl})}`);
             res.end();
             return;
         }
         catch(error){
             await transaction.rollback();
-            return next(error);
+            console.log(error)
+            res.write(`error:${error}`);
+            res.end();
+            return;
         }
     }else{
         const redirectUrl = `/?message=VC발급 중 문제가 발생하였습니다. 다시 시도해주세요.`

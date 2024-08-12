@@ -112,20 +112,22 @@ class Faber extends BaseAgent {
     if (!this.outOfBandId) {
       throw new Error(redText(Output.MissingConnectionRecord))
     }
+
+    console.log('Waiting for Alice to finish connection...')
+
     const getConnectionRecord = (outOfBandId: string) =>
       new Promise<ConnectionRecord>((resolve, reject) => {
-        // Timeout of 20000 seconds
+        // Timeout of 20 seconds
         const timeoutId = setTimeout(() => reject(new Error(redText(Output.MissingConnectionRecord))), 200000)
-        
+
         // Start listener
         this.agent.events.on<ConnectionStateChangedEvent>(ConnectionEventTypes.ConnectionStateChanged, (e) => {
-          //console.log(e)
           if (e.payload.connectionRecord.outOfBandId !== outOfBandId) return
-          
+
           clearTimeout(timeoutId)
           resolve(e.payload.connectionRecord)
         })
-        
+
         // Also retrieve the connection record by invitation if the event has already fired
         void this.agent.connections.findAllByOutOfBandId(outOfBandId).then(([connectionRecord]) => {
           if (connectionRecord) {
@@ -134,16 +136,17 @@ class Faber extends BaseAgent {
           }
         })
       })
-      
-      const connectionRecord = await getConnectionRecord(this.outOfBandId)
-      try {
-        await this.agent.connections.returnWhenIsConnected(connectionRecord.id,{timeoutMs:2000000});
-      } catch (e) {
-        console.log(redText(`\nTimeout of 20000 seconds reached.. Returning to home screen.\n`))
-        return
-      }
-      console.log(greenText(Output.ConnectionEstablished))
+
+    const connectionRecord = await getConnectionRecord(this.outOfBandId)
+
+    try {
+      await this.agent.connections.returnWhenIsConnected(connectionRecord.id)
+    } catch (e) {
+      console.log(redText(`\nTimeout of 20 seconds reached.. Returning to home screen.\n`))
+      return
     }
+    console.log(greenText(Output.ConnectionEstablished))
+  }
     
     public async printConnectionInvite() {
       const outOfBand = await this.agent.oob.createInvitation()
@@ -171,7 +174,7 @@ class Faber extends BaseAgent {
     const schemaTemplate = {
       name: 'DIDI' + utils.uuid(),
       version: '1.0.0',
-      attrNames: ['VC', 'room'],
+      attrNames: ['vc', 'room'],
       issuerId: this.anonCredsIssuerId,
     }
     this.printSchema(schemaTemplate.name, schemaTemplate.version, schemaTemplate.attrNames)
