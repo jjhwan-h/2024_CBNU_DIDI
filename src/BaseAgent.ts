@@ -84,7 +84,7 @@ export class BaseAgent {
     });
     this.agent.registerInboundTransport(new HttpInboundTransport({ port }))
     this.agent.registerOutboundTransport(new HttpOutboundTransport())
-    this.agent.registerOutboundTransport(new WsOutboundTransport())
+    // this.agent.registerOutboundTransport(new WsOutboundTransport())
   }
 public async createDid():Promise<string>{ //indy bcovrin did 생성방법
   await this.agent.dids.import({ //did값을 넣으면 외부에서 생성한 did를 import할 수 있다. internal 방식으로 create할려면 endoser의 did와 seed가 wallet에 등록되어잇어야한다.
