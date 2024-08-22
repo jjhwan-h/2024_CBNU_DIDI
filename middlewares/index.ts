@@ -14,7 +14,15 @@ const connection:RequestHandler = async(req,res,next)=>{
     res.write((`${JSON.stringify({"connection":info})}`));
     console.log("waiting...")
 
-    await faber.setupConnection();
+    try{
+      await faber.setupConnection();
+    }catch(error){
+      console.error(error);
+      const redirectUrl = `/users?message=연결도중 에러가 발생했습니다. 다시 시도해주세요.`;
+      res.write(`${JSON.stringify({"url":redirectUrl})}`);
+      res.end();
+      return;
+    }
     
     next();
 }

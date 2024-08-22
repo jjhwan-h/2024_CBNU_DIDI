@@ -134,6 +134,7 @@ export const registerRoom:RequestHandler = async (req,res,next)=>{
                         name: name,
                         email: email,
                         status: "preUser",
+                        did:"",
                         };
                         const exUser = await User.findOne({where:{email}});
                         if(!exUser){ // 비회원
