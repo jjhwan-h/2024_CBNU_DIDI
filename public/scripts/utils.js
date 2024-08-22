@@ -56,3 +56,57 @@ export const  paginate= (el)=> {
 
     renderTable(totalPages,rowsPerPage,currentPage,el);
 }
+
+export const getQR=(url,formData={})=>{
+    $('#qrModal').modal('show');
+    formData = JSON.stringify(formData);
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json' 
+        },
+        body: formData
+    }).then(response => {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        // const output = document.getElementById('output');
+        
+        function read() {
+            reader.read().then(({ done, value }) => {
+                if (done) {
+                    console.log('Stream complete');
+                    return;
+                }
+                const chunk = decoder.decode(value, { stream: true });
+                const message = JSON.parse(chunk)
+                if (message.connection){
+                   const newImg = $('<img>');
+                   const newBtn = $('<button></button>', {
+                    class: 'join_btn',
+                    text:'url 클립보드로 복사'
+                  });
+                  newBtn.click(()=>{
+                    navigator.clipboard.writeText(message.connection.url)
+                      .then(function() {
+                          alert('url이 성공적으로 복사되었습니다. 기기에서 url을 입력해주세요');
+                      })
+                      .catch(function(err) {
+                          console.error('url 복사에 실패했습니다:', err);
+                      });
+                  });
+                   newImg.attr('src',message.connection.qr);
+                   $('.qr-info').hide();
+                   $('.QR').append(newImg);
+                   $('.url').append(newBtn);
+                }
+                else if(message.url){
+
+                }
+                read(); 
+            });
+        }
+        
+        read();
+    })
+    .catch(error => console.error('Error:', error));
+}

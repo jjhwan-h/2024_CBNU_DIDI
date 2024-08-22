@@ -9,6 +9,7 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
     declare email:string;
     declare password:string | null;
     declare status:string;
+    declare did:string;
 
     declare UserRoomId:ForeignKey<UserRoom['id']>;
     declare getRooms: BelongsToManyGetAssociationsMixin<Room>;
@@ -29,6 +30,10 @@ export default class User extends Model<InferAttributes<User>, InferCreationAttr
                 allowNull:false,
             },
             password:{
+                type: Sequelize.STRING,
+                allowNull:true,
+            },
+            did:{
                 type: Sequelize.STRING,
                 allowNull:true,
             },

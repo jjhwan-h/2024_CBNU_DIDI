@@ -1,3 +1,4 @@
+import {getQR} from "./utils.js"
 let voteCount=1;
 $(document).ready(function() {
     $('input, textarea').prop('disabled', true);
@@ -17,6 +18,11 @@ $(document).ready(function() {
         $('.page').eq(pageNum).show();
     });
 
+    $('#did-button').click(function(){
+        const url="users/did";
+        getQR(url);
+    })
+
     const roomInfo = JSON.parse(window.serverData.roomInfo);
     headVote();
     addVote(roomInfo,window.serverData.itemsPerPage);
@@ -35,9 +41,9 @@ function addVote(roomInfo,itemsPerPage){
     
             const voteNumber = $('<span>').addClass('vote-number rank-circle').text(voteCount);
     
-            const roomName = $('<input>').addClass('vote vote-name m-4').attr('id',`vote-name-${voteCount}`).val(roomInfo[i].name);
+            const roomName = $('<input>').addClass('vote vote-name m-4').attr('id',`vote-name-${voteCount}`).attr('readonly',true).val(roomInfo[i].name);
     
-            const roomId = $('<input>').addClass('vote vote-id m-4').attr('id',`vote-id-${voteCount}`).val(roomInfo[i].id);
+            const roomId = $('<input>').addClass('vote vote-id m-4').attr('id',`vote-id-${voteCount}`).attr('readonly',true).val(roomInfo[i].id);
     
             const roomImg = $('<img>').addClass('vote-img voteList-preview-img m-4').attr('src',roomInfo[i].img);
     
@@ -50,58 +56,9 @@ function addVote(roomInfo,itemsPerPage){
     
             const issueButton = $('<button>').addClass('btn btn-outline-secondary btn-sm btn-space').text('발급받기');
             issueButton.on('click',function(){
-                    $('#qrModal').modal('show');
-                    const formData = JSON.stringify({roomId:roomInfo[i].id});
-                    fetch('users/vc', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json' 
-                        },
-                        body: formData
-                    }).then(response => {
-                        const reader = response.body.getReader();
-                        const decoder = new TextDecoder();
-                        // const output = document.getElementById('output');
-        
-                        function read() {
-                            reader.read().then(({ done, value }) => {
-                                if (done) {
-                                    console.log('Stream complete');
-                                    return;
-                                }
-        
-                                const chunk = decoder.decode(value, { stream: true });
-                                const message = JSON.parse(chunk)
-                                if (message.connection){
-                                   const newImg = $('<img>');
-                                   const newBtn = $('<button></button>', {
-                                    class: 'join_btn',
-                                    text:'url 클립보드로 복사'
-                                  });
-                                  newBtn.click(()=>{
-                                    navigator.clipboard.writeText(message.connection.url)
-                                      .then(function() {
-                                          alert('url이 성공적으로 복사되었습니다. 기기에서 url을 입력해주세요');
-                                      })
-                                      .catch(function(err) {
-                                          console.error('url 복사에 실패했습니다:', err);
-                                      });
-                                  });
-                                   newImg.attr('src',message.connection.qr);
-                                   $('.qr-info').hide();
-                                   $('.QR').append(newImg);
-                                   $('.url').append(newBtn);
-                                }
-                                else if(message.url){
-
-                                }
-                                read(); 
-                            });
-                        }
-        
-                        read();
-                    })
-                    .catch(error => console.error('Error:', error));
+                const url = "users/vote";
+                const formData = {roomId:roomInfo[i].id};
+                getQR(url,formData);
             })
     
             const deleteButton = $('<button>').addClass('btn btn-outline-danger btn-sm').text('삭제하기').click(function() {
@@ -154,5 +111,3 @@ function headVote(){
 
     voteList.append(voteItem);
 }
-
-

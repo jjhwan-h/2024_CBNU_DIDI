@@ -24,6 +24,7 @@ const join :RequestHandler=async (req,res,next)=>{
                 const exUser = await User.findOne({
                     where:{email,name}
                 })
+                const did = await faber.createDid();
                 if(exUser) {
                     await exUser.update({password:hash, status:"user"},{transaction});
                 }else{
@@ -32,6 +33,7 @@ const join :RequestHandler=async (req,res,next)=>{
                         name,
                         password:hash,
                         status:"user",
+                        did
                     },{transaction});
                     await UserRoom.create({UserId:user.id,isIssued:false},{transaction});
                 }
@@ -52,7 +54,7 @@ const join :RequestHandler=async (req,res,next)=>{
     }  
 }
 
-const issueVC:RequestHandler=async(req,res,next)=>{
+const issueVoteVC:RequestHandler=async(req,res,next)=>{
     const email= req.user?.email;
     const name = req.user?.name;
     const roomId = req.body.roomId
@@ -87,7 +89,7 @@ const issueVC:RequestHandler=async(req,res,next)=>{
             const vcId = String(vc.id);
             const room = String(roomId);
             if(vcId && roomId){
-                await faber.issueCredential({vc:vcId,room:room});
+                await faber.issueVoteCredential({vc:vcId,room:room});
             }else{
                throw new Error("Failed to create");
             }
@@ -110,6 +112,31 @@ const issueVC:RequestHandler=async(req,res,next)=>{
         res.end();
         return;
     }
+}
+
+const issueDidVC:RequestHandler=async(req,res,next)=>{
+    try{
+        const did:string = await User.findOne({
+            where:{
+                id:req.user?.id,
+            }
+        }).then((el)=>{
+            return el?.dataValues.did!
+        })
+        await faber.issueDidCredential({did});
+        const redirectUrl = `/users?message=Did발급이 완료되었습니다.`;
+        res.write(`${JSON.stringify({"url":redirectUrl})}`);
+        res.end();
+        return;
+    }catch(error){
+        console.error(error);
+        const redirectUrl = `/users?message=DID발급중 문제가 발생했습니다. 다시 시도해주세요.`;
+        res.write(`${JSON.stringify({"url":redirectUrl})}`);
+        res.end();
+        return;
+    }
+    
+
 }
 
 const myPage:RequestHandler=async(req,res,next)=>{
@@ -162,4 +189,4 @@ const logout:RequestHandler =(req,res,next) => {
     })
 }
 
-export {join,login, logout, myPage,issueVC}
+export {join,login, logout, myPage,issueVoteVC, issueDidVC}
