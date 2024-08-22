@@ -9,7 +9,7 @@ signUpBtn.on("click", ()=> {
     container.addClass("right-panel-active");
 })
 lookAroundBtn.on("click", () =>{
-    window.location.href = '/info';
+    window.location.href = '/';
 })
 const validateEmail = () =>{
     const emailInput = $("#email").val();

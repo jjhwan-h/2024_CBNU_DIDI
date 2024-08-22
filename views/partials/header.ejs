@@ -13,12 +13,13 @@
     <link rel="stylesheet" href="/pages/header.css">
     <link rel="stylesheet" href="/pages/room.css">
     <link rel="stylesheet" href="/pages/page.css">
+    <link rel="stylesheet" href="/pages/main.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg">
-        <a href="/"><img src="/imgs/DIDI.png" class="navbar-brand bg"></a>
+        <a href="/"><img src="/imgs/ballot.png" class="navbar-brand bg"></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
             aria-expanded="false" aria-label="Toggle navigation">
             <!-- <span class="navbar-toggler-icon"></span> -->
@@ -26,9 +27,6 @@
         <div class="collapse navbar-collapse"></div>
         <div  id="navbarSupportedContent" >
             <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a href="/info"><button type="button" class="btn bg">Info</button></a>
-                    </li>
                     <li class="nav-item active">
                         <a href="/vote-rooms"><button type="button" class="btn bg">투표방 조회</button></a>
                     </li>
@@ -44,7 +42,7 @@
                     </li>
                     <% } else {%>
                         <li class="nav-item active">
-                            <a href="/"><button type="button" class="btn bg">Login</button></a>
+                            <a href="/join"><button type="button" class="btn bg">Login</button></a>
                         </li>
                     <% } %>
                     

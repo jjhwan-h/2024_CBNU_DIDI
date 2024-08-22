@@ -157,7 +157,7 @@ const logout:RequestHandler =(req,res,next) => {
         }
         req.session.destroy((error)=>{
             res.clearCookie('connect.sid');
-            res.redirect('/');
+            res.redirect('/join');
         })
     })
 }

@@ -61,7 +61,7 @@
     "ts-node": "^10.4.0",
     "typescript": "^5.4.5"
   },
-  "overrides": {
+  "resolutions": {
     "ref-napi": "npm:@2060.io/ref-napi"
   }
 }
