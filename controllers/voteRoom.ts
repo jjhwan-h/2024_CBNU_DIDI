@@ -8,6 +8,8 @@ import { sequelize } from '../models';
 import UserRoom from '../models/userRoom';
 import { ICandidate, ICandidateAttr, ICandidates } from './interfaces/ICandidate';
 import { where } from 'sequelize';
+import { IMailOptions } from './interfaces/IMailOptions';
+import { requestCredentialMail } from '../configs/email';
 
 function isCandidateKey(key: string): key is keyof ICandidate {
     return ['num','name','age','gender','desc','img'].includes(key);
@@ -132,36 +134,37 @@ export const registerRoom:RequestHandler = async (req,res,next)=>{
                         name: name,
                         email: email,
                         status: "preUser",
-                    };
-                    const exUser = await User.findOne({where:{email}});
-                    if(!exUser){
-                        await User.create(voter,{transaction}).then(async (el)=>{
-                            const userId = el.dataValues.id;
-                            await UserRoom.create({
-                                RoomId:roomId,
-                                UserId:userId,
-                                isIssued:false
-                            },{transaction})
-                        });
-                    }else{
-                        const exUserRoom = await UserRoom.findOne({where:{UserId:exUser.id,RoomId:roomId}});
-                        if(!exUserRoom){
-                            await UserRoom.create({
-                                RoomId:roomId,
-                                UserId:exUser.id,
-                                isIssued:false
-                            },{transaction});
+                        };
+                        const exUser = await User.findOne({where:{email}});
+                        if(!exUser){ // 비회원
+                            await User.create(voter,{transaction}).then(async (el)=>{
+                                const userId = el.dataValues.id;
+                                await UserRoom.create({
+                                    RoomId:roomId,
+                                    UserId:userId,
+                                    isIssued:false
+                                },{transaction})
+                            });
+                        }else{ // 회원
+                            const exUserRoom = await UserRoom.findOne({where:{UserId:exUser.id,RoomId:roomId}});
+                            if(!exUserRoom){
+                                await UserRoom.create({
+                                    RoomId:roomId,
+                                    UserId:exUser.id,
+                                    isIssued:false
+                                },{transaction});
+                            }
+                            else{
+                                transaction.rollback();
+                                return res.status(400).json({
+                                    error:"Bad Request",
+                                    message:"중복된 (email,name)조합이 있습니다."
+                                })
+                            }
+                            
                         }
-                        else{
-                            transaction.rollback();
-                            return res.status(400).json({
-                                error:"Bad Request",
-                                message:"중복된 (email,name)조합이 있습니다."
-                            })
-                        }
-                        
+                        //TODO::유권자 등록 메일전송
                     }
-                }
             });
         }catch(error){
             transaction.rollback();
@@ -172,7 +175,20 @@ export const registerRoom:RequestHandler = async (req,res,next)=>{
             });
         }
         transaction.commit();
-        return res.status(200).send("방생성이 완료되었습니다.");
+        res.status(200).send("방생성이 완료되었습니다.");
+        
+        for(const key of Object.keys(jsonData)){ //유권자로 등록됨을 알리는 메일
+            const name = jsonData[key].name as string;
+            const email = jsonData[key].email as string;
+            const mailOptions :IMailOptions = {
+                to : email, //사용자가 입력한 이메일 -> 목적지 주소 이메일
+                html: requestCredentialMail(name,email,room['name'] as string)
+            };
+            const sendRes = sendMail(mailOptions);
+            if(!sendRes) console.log({ok : false , msg : ' 메일 전송에 실패하였습니다.'})
+            else console.log({ok: true, msg: '해당 이메일로 인증 메일을 보냈습니다.'});
+        }
+        return
     }
     catch(error){
         console.error(error);

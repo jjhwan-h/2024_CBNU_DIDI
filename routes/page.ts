@@ -3,8 +3,8 @@ import {getVoteRooms, getVoteRoom} from '../controllers/voteRoom';
 import { isLoggedIn, sendToastForVC } from '../middlewares';
 const router = express.Router();
 
-//GET /
-router.get('/',(req,res,next)=>{
+//GET /join
+router.get('/join',(req,res,next)=>{
         res.render('users/join');
     }
 )
@@ -20,9 +20,9 @@ router.get('/vote-rooms/registration',isLoggedIn,(req,res,next)=>{
 //GET /vote-rooms/:id
 router.get('/vote-rooms/:id',getVoteRoom);
 
-//GET /info
-router.get('/info',sendToastForVC,(req,res,next)=>{
-    res.render('pages/info',req.roomInfo);
+//GET /
+router.get('/',sendToastForVC,(req,res,next)=>{
+    res.render('pages/main',req.roomInfo);
 })
 
 

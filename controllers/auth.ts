@@ -22,7 +22,7 @@ export const sendEmail:RequestHandler=async(req,res,next)=>{
    const mailOptions :IMailOptions = {
      to : email, //사용자가 입력한 이메일 -> 목적지 주소 이메일
      html: successMail(email,result)
-};
+    };
  
    const exEmail = await Email.findOne({where:{email}});
  

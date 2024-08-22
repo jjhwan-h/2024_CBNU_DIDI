@@ -8,6 +8,12 @@
         const msg= new URL(location.href).searchParams.get('message');
         alert(msg);
       }
+      const url = new URL(window.location)
+      if (url.search || url.hash){
+          url.search='';
+          url.hash='';
+          window.history.replaceState({},document.title,url.pathname);
+      }
     };
   </script>
     </body>
