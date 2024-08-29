@@ -1,10 +1,14 @@
 import faber from "../src/Faber"
 import { RequestHandler } from 'express';
 import qrcode from 'qrcode';
-import VC from "../models/userRoom";
 import Room from "../models/room";
 import { Op } from "sequelize";
 import UserRoom from "../models/userRoom";
+import User from "../models/user";
+import { randomBytes } from "crypto";
+import { fromBase64, hasOwnProperty } from "../controllers/utils";
+import { Key as AskarKey, KeyAlgs } from "@hyperledger/aries-askar-shared";
+import baseX from "base-x";
 
 const connection:RequestHandler = async(req,res,next)=>{
     res.setHeader('Content-Type', 'text/plain');
@@ -12,7 +16,6 @@ const connection:RequestHandler = async(req,res,next)=>{
     const qr = await qrcode.toDataURL(url);
     const info= {url,qr}
     res.write((`${JSON.stringify({"connection":info})}`));
-    console.log("waiting...")
 
     try{
       await faber.setupConnection();
@@ -67,4 +70,59 @@ const sendToastForVC:RequestHandler = async (req,res,next)=>{
     next();
 }
 
-export{sendProofRequest,connection, isNotLoggedIn, isLoggedIn, sendToastForVC};
+export interface IdidAuthObject{
+  did:string,
+  signature:string,
+}
+
+const didAuth:RequestHandler = async(req,res,next)=>{
+  const exUser = await User.findOne({
+    where:{
+    id:req.user?.id
+    }
+  });
+  res.write((`${JSON.stringify({"did":"DID Auth중..."})}`));
+  try{
+    const randomBuffer = randomBytes(16);
+    const randomMessage = randomBuffer.toString('hex');
+    const message = {
+      "DIDMessage":randomMessage
+    }
+    //메시지 전달
+    faber.sendMessage(JSON.stringify(message));
+    //did resolve && key객체 생성
+    const didAuthObject : IdidAuthObject =  await faber.listener.messageListener();
+    if (didAuthObject.hasOwnProperty("signature") && didAuthObject.hasOwnProperty("did")) {
+      const did = didAuthObject.did;
+      if(did!=exUser?.dataValues.did){
+        throw new Error("사용자의 did가 아닙니다.");
+      }
+      const didDocument = await faber.agent.dids.resolve(did);
+      const signature = fromBase64(didAuthObject.signature)
+  
+      const encoded = didDocument.didDocument?.verificationMethod![0].publicKeyBase58 as string;
+      const BASE58 = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+      const bs58 = baseX(BASE58);
+      const key = bs58.decode(encoded); //public key
+
+      const verifyKey = AskarKey.fromPublicBytes({publicKey:key,algorithm:KeyAlgs.Ed25519});
+
+      if(verifyKey.verifySignature({message:randomBuffer,signature:signature})){ //검증
+        console.log("didAuth 성공")
+        next();
+      }else{
+        throw new Error("did검증에 실패하였습니다.");
+      }
+    }else{
+        throw new Error("did 또는 서명된 메시지를 받지못하였습니다.");
+    }
+  }catch (err){
+    console.log(err)
+    const redirectUrl = `/users?message=did검증에 실패하였습니다.`;
+    res.write(`${JSON.stringify({"url":redirectUrl})}`);
+    res.end();
+    return;
+  } 
+}
+
+export{sendProofRequest,connection, isNotLoggedIn, isLoggedIn, sendToastForVC,didAuth};

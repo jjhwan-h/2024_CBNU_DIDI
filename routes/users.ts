@@ -1,6 +1,6 @@
 import express from 'express';
 import { join,login,logout, myPage, issueVoteVC, issueDidVC} from '../controllers/user';
-import { sendProofRequest,connection,isLoggedIn,isNotLoggedIn, sendToastForVC } from '../middlewares';
+import { sendProofRequest,connection,isLoggedIn,isNotLoggedIn, sendToastForVC,didAuth } from '../middlewares';
 
 const router = express.Router();
 
@@ -8,10 +8,7 @@ const router = express.Router();
 router.post('/join',isNotLoggedIn,join);
 
 //POST /users/vote
-router.post('/vote',connection,issueVoteVC);
-
-//POST /users/did
-router.post('/did',connection,issueDidVC);
+router.post('/vote',connection,didAuth,issueVoteVC);
 
 //GET /users/login
 router.post('/login',isNotLoggedIn,login);

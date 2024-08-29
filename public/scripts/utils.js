@@ -78,7 +78,7 @@ export const getQR=(url,formData={})=>{
                     return;
                 }
                 const chunk = decoder.decode(value, { stream: true });
-                const message = JSON.parse(chunk)
+                const message = JSON.parse(chunk);
                 if (message.connection){
                    const newImg = $('<img>');
                    const newBtn = $('<button></button>', {
@@ -99,13 +99,28 @@ export const getQR=(url,formData={})=>{
                    $('.QR').append(newImg);
                    $('.url').append(newBtn);
                 }
-                else if(message.url){
-
+                else if(message.did){
+                    $('.QR').empty();
+                    $('.url').empty();
+                    $('#info').text(message.did)
+                    $('.qr-info').show();
+                }
+                else if(message.vc){
+                    $('.QR').empty();
+                    $('.url').empty();
+                    $('#info').text(message.vc)
+                    $('.qr-info').show();
+                }
+                else if(message.complete){
+                    console.log(message.complete)
+                    $('.QR').empty();
+                    $('.url').empty();
+                    $('#info').text("connection 생성중...")
+                    window.location.href=message.complete
                 }
                 read(); 
             });
         }
-        
         read();
     })
     .catch(error => console.error('Error:', error));

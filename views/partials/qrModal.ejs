@@ -1,4 +1,4 @@
-<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModal" aria-hidden="true">
+<div class="modal fade" id="qrModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="qrModal" aria-hidden="true">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header" style="text-align: center;">
@@ -8,7 +8,7 @@
             <div class="modal-body qr-modal-body">
                 <div class="qr-info">
                     <img class="qr-gif" src="/imgs/loading.gif">
-                    <span style="font-size: 50px; font-weight: bold;">connection 생성중...</span>
+                    <span id="info" style="font-size: 50px; font-weight: bold;">connection 생성중...</span>
                 </div>
                 <div class="qr-container">
                     <div class="QR"></div>
@@ -20,8 +20,8 @@
 </div>
 <script>
     $('.btn-close').click(function(){
-        $('.QR').hide();
-        $('.url').hide();
+        $('.QR').empty();
+        $('.url').empty();
         $('.qr-info').show();
     })
 </script>
