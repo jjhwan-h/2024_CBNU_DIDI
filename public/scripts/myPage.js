@@ -18,11 +18,6 @@ $(document).ready(function() {
         $('.page').eq(pageNum).show();
     });
 
-    $('#did-button').click(function(){
-        const url="users/did";
-        getQR(url);
-    })
-
     const roomInfo = JSON.parse(window.serverData.roomInfo);
     headVote();
     addVote(roomInfo,window.serverData.itemsPerPage);
@@ -80,10 +75,6 @@ function addVote(roomInfo,itemsPerPage){
     }
 }
 
-function updateCandidateCount() {
-    //서버로 투표권 삭제 요청 
-}
-
 function headVote(){
     const voteList = $('#voteList');
 
@@ -93,9 +84,9 @@ function headVote(){
 
     const voteNumber = $('<span>').addClass('vote-number m-3').text("#");
 
-    const roomName = $('<input>').addClass('vote vote-name m-4').val("방 이름");
+    const roomName = $('<input>').addClass('vote vote-name m-4').attr('readonly',true).val("방 이름");
 
-    const roomId = $('<input>').addClass('vote vote-age m-4').val("방 번호");
+    const roomId = $('<input>').addClass('vote vote-age m-4').attr('readonly',true).val("방 번호");
 
     const roomImg = $('<span>').addClass('vote-img voteList-preview-img m-4').text("썸네일");
 

@@ -43,12 +43,23 @@ export class Listener{
     });
   }
 
-  public messageListener() {
+ public async messageListener() : Promise<any> {
+  return new Promise((resolve,reject)=>{
     faber.agent.events.on(BasicMessageEventTypes.BasicMessageStateChanged, async (event: BasicMessageStateChangedEvent) => {
       if (event.payload.basicMessageRecord.role === BasicMessageRole.Receiver) {
         console.log(`\n received a message: ${event.payload.message.content}\n`)
+        // didauth를 위한 서명된 message와 did수신
+        try{
+          console.log(event.payload.basicMessageRecord)
+          console.log(event.metadata.contextCorrelationId)
+          const jsonObject = JSON.parse(event.payload.message.content);
+          resolve(jsonObject)
+        }catch (err){
+          console.log(err)
+        }
       }
     })
+  })
   }
 
 }

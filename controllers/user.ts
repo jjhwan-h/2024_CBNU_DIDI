@@ -10,11 +10,10 @@ import passport from 'passport';
 import { InferAttributes, Transaction, where } from 'sequelize';
 import Room from '../models/room';
 import UserRoom from '../models/userRoom';
-import { transcode } from 'buffer';
 
 const join :RequestHandler=async (req,res,next)=>{ 
     if(checkAllInputs(req.body)){
-        const {email, name, password} = req.body; 
+        const {email, name, password,did} = req.body; 
         const transaction:Transaction = await sequelize.transaction();
         try{
             const exEmail = await Email.findOne({where:{email}}); //이메일 검증 확인
@@ -24,16 +23,15 @@ const join :RequestHandler=async (req,res,next)=>{
                 const exUser = await User.findOne({
                     where:{email,name}
                 })
-                const did = await faber.createDid();
                 if(exUser) {
-                    await exUser.update({password:hash, status:"user"},{transaction});
+                    await exUser.update({password:hash, status:"user", did},{transaction});
                 }else{
                     const user = await User.create({
                         email,
                         name,
                         password:hash,
                         status:"user",
-                        did
+                        did,
                     },{transaction});
                     await UserRoom.create({UserId:user.id,isIssued:false},{transaction});
                 }
@@ -55,6 +53,7 @@ const join :RequestHandler=async (req,res,next)=>{
 }
 
 const issueVoteVC:RequestHandler=async(req,res,next)=>{
+    res.write((`${JSON.stringify({"vc":"VC발급중..."})}`));
     const email= req.user?.email;
     const name = req.user?.name;
     const roomId = req.body.roomId
@@ -95,7 +94,7 @@ const issueVoteVC:RequestHandler=async(req,res,next)=>{
             }
             transaction.commit();
             const redirectUrl = `/users?message=VC발급이 완료되었습니다.`;
-            res.write(`${JSON.stringify({"url":redirectUrl})}`);
+            res.write(`${JSON.stringify({"complete":redirectUrl})}`);
             res.end();
             return;
         }
@@ -135,8 +134,6 @@ const issueDidVC:RequestHandler=async(req,res,next)=>{
         res.end();
         return;
     }
-    
-
 }
 
 const myPage:RequestHandler=async(req,res,next)=>{

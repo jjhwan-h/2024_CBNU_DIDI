@@ -38,6 +38,8 @@ class Faber extends BaseAgent {
   public async buildFaber(){
     await this.initializeAgent();
     const record = await this.getDids();
+    // const connect = await this.agent.connections.getAll();
+    // console.log(connect);
     if(record.length===0) await this.importDid();
     else{
       this.anonCredsIssuerId=record[0]["did"];
