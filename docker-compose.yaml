@@ -1,21 +1,21 @@
 services:
   backend:
+    platform: linux/arm64
     build:
       context: .
       dockerfile: Dockerfile
-    platform: linux/arm64
     volumes:
-      - ./:/myfolder/
+      - ./src:/myfolder/src
     ports:
       - 3000:3000
     env_file:
       - ./.env.docker
   database:
     platform: linux/arm64
-    image: mysql:latest
+    image: mysql:8.3.0
     environment:
-      MYSQL_DATABASE: "mydocker"
-      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
     ports:
       - 3306:3306
   # database:

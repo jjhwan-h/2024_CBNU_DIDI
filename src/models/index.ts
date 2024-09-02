@@ -8,7 +8,8 @@ import Vc from './vc';
 import UserRoom from './userRoom';
 //const env = process.env.NODE_ENV as 'production' || 'test' || 'development';
 const config = development
-export const sequelize = new Sequelize(config.database!,config.username!, config.password,config);
+export const sequelize = new Sequelize(
+    config.database!,config.username!, config.password,config);
 
 User.initiate(sequelize);
 Room.initiate(sequelize);
