@@ -8,7 +8,7 @@ import {router as pageRouter} from './routes/page';
 import {router as voteRoomRouter} from './routes/voteRooms';
 import {router as authRouter} from './routes/auth';
 import {router as userRouter} from './routes/users';
-import faber from './src/Faber';
+import faber from './agent/Faber';
 import passport from 'passport';
 import passportConfig from './middlewares/passport';
 import dotenv from 'dotenv';
@@ -55,7 +55,7 @@ app.use(nocache());
 app.use((req,res,next)=>{
   const auth = req.isAuthenticated();
   res.locals.user=req.user?.email;
-  res.locals.isAuthenticated = auth;
+  res.locals.isAuthenticated = auth; 
   next();
 })
 app.use('/',pageRouter);

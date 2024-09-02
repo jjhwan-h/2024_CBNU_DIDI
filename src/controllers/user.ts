@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import {checkAllInputs} from './utils/index';
 import bcrypt from 'bcrypt';
-import faber from '../src/Faber';
+import faber from '../agent/Faber';
 import Email from '../models/email';
 import User from '../models/user';
 import Vc from '../models/vc';

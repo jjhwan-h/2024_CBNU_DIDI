@@ -1,5 +1,6 @@
 node_modules
 .env
+.env.docker
 .sequelizerc
 /dist
 backend-397418-8286cc4a1853.json

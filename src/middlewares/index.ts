@@ -1,4 +1,4 @@
-import faber from "../src/Faber"
+import faber from "../agent/Faber"
 import { RequestHandler } from 'express';
 import qrcode from 'qrcode';
 import Room from "../models/room";
