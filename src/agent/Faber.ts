@@ -175,7 +175,6 @@ class Faber extends BaseAgent {
   public async setupConnection() {
     // await this.printConnectionInvite();
     await this.waitForConnection();
-    faber.listener.proofAcceptListener();
   }
 
   private printSchema(name: string, version: string, attributes: string[]) {
@@ -344,7 +343,11 @@ class Faber extends BaseAgent {
     }
   }
 
+<<<<<<< HEAD:src/agent/Faber.ts
   private async logInProofAttribute() {
+=======
+  private async voteProofAttribute() {
+>>>>>>> feature/VP:src/Faber.ts
     //const schema=await this.getById(CustomRecord,'vote-schema').then((el)=>{return el?.metadata.data});
     const proofAttribute = {
       vc: {
@@ -354,7 +357,7 @@ class Faber extends BaseAgent {
             //schema_id:schema?.schemaId[0],
             //schema_issuer_id:this.anonCredsIssuerId,
             issuer_id: this.anonCredsIssuerId,
-            //cred_def_id: this.credentialDefinition?.credentialDefinitionId,
+            cred_def_id: this.credentialDefinition?.credentialDefinitionId,
           },
         ],
       },
@@ -373,7 +376,11 @@ class Faber extends BaseAgent {
 
   public async sendProofRequest() {
     const connectionRecord = await this.getConnectionRecord();
+<<<<<<< HEAD:src/agent/Faber.ts
     const proofAttribute = await this.logInProofAttribute();
+=======
+    const proofAttribute = await this.voteProofAttribute();
+>>>>>>> feature/VP:src/Faber.ts
 
     const res = await this.agent.proofs.requestProof({
       protocolVersion: 'v2',

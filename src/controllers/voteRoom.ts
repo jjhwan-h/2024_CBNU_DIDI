@@ -28,7 +28,11 @@ export const getVoteRooms:RequestHandler = async (req,res)=>{
 }
 
 export const getVoteRoom:RequestHandler=async(req,res)=>{
+<<<<<<< HEAD
     const roomId = req.params.id;
+=======
+    const roomId = req.params.room_id;
+>>>>>>> feature/VP
     try{
         const room = await Room.findOne({
             where:{id:roomId},

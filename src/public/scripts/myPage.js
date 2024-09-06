@@ -51,9 +51,14 @@ function addVote(roomInfo,itemsPerPage){
     
             const issueButton = $('<button>').addClass('btn btn-outline-secondary btn-sm btn-space').text('발급받기');
             issueButton.on('click',function(){
+<<<<<<< HEAD
                 const url = "users/vote";
                 const formData = {roomId:roomInfo[i].id};
                 getQR(url,formData);
+=======
+                const url = `/users/vote-right/${roomInfo[i].id}`;
+                getQR(url);
+>>>>>>> feature/VP
             })
     
             const deleteButton = $('<button>').addClass('btn btn-outline-danger btn-sm').text('삭제하기').click(function() {
