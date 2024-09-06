@@ -1,0 +1,22 @@
+services:
+  backend:
+    platform: linux/arm64
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/myfolder/src
+    ports:
+      - 3000:3000
+    env_file:
+      - ./.env.docker
+  database:
+    platform: linux/arm64
+    restart: always
+    image: mysql:8.3.0
+    environment:
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+    ports:
+      - 3306:3306

@@ -154,7 +154,6 @@ class Faber extends BaseAgent {
   public async setupConnection() {
     // await this.printConnectionInvite();
     await this.waitForConnection();
-    faber.listener.proofAcceptListener();
   }
 
   private printSchema(name: string, version: string, attributes: string[]) {
@@ -228,40 +227,75 @@ class Faber extends BaseAgent {
     return this.credentialDefinition
   }
 
-  public async issueCredential(credentailInfo:IIssueCredentialInfo) {
-    const {email,name} = credentailInfo;
-    const schema = await this.getById(CustomRecord,'user-schema').then((el)=>{return el?.metadata.data});
-    if(schema){
-      const credentialDefinition = await this.registerCredentialDefinition(schema.schemaId[0]);
-      const connectionRecord = await this.getConnectionRecord();
-    
-      await this.agent.credentials.offerCredential({
-      connectionId: connectionRecord.id,
-      protocolVersion: 'v2',
-      credentialFormats: {
-        anoncreds: { 
-          attributes: [
-            {
-              name: 'name',
-              value: name,
-            },
-            {
-              name: 'email',
-              value: email,
-            },
-          ],
-          credentialDefinitionId: credentialDefinition.credentialDefinitionId,
+  public async issueVoteCredential(credentailInfo:IVoteIssueCredentialInfo) {
+    const {vc,room} = credentailInfo;
+    const schema = await this.getById(CustomRecord,'vote-schema').then((el)=>{return el?.metadata.data});
+    try{
+      if(schema){
+        const credentialDefinition = await this.registerCredentialDefinition(schema.schemaId[0]);
+        const connectionRecord = await this.getConnectionRecord();
+      
+        await this.agent.credentials.offerCredential({
+        connectionId: connectionRecord.id,
+        protocolVersion: 'v2',
+        credentialFormats: {
+          anoncreds: { 
+            attributes: [
+              {
+                name: 'vc',
+                value: vc,
+              },
+              {
+                name: 'room',
+                value: room,
+              },
+            ],
+            credentialDefinitionId: credentialDefinition.credentialDefinitionId,
+          },
         },
-      },
-    })
-    }else{
-      console.log("UserSchema is not exist");
-    }  
+      })
+      }else{
+        console.log("UserSchema is not exist");
+      }  
+    }catch(error){
+      console.error(error)
+    }
+  }
+    
+
+  public async issueDidCredential(credentailInfo:IDidIssueCredentialInfo) {
+    const {did} = credentailInfo;
+    const schema = await this.getById(CustomRecord,'did-schema').then((el)=>{return el?.metadata.data});
+    try{
+      if(schema){
+        const credentialDefinition = await this.registerCredentialDefinition(schema.schemaId[0]);
+        const connectionRecord = await this.getConnectionRecord();
+      
+        await this.agent.credentials.offerCredential({
+        connectionId: connectionRecord.id,
+        protocolVersion: 'v2',
+        credentialFormats: {
+          anoncreds: { 
+            attributes: [
+              {
+                name: 'did',
+                value: did,
+              }
+            ],
+            credentialDefinitionId: credentialDefinition.credentialDefinitionId,
+          },
+        },
+      })
+      }else{
+        console.log("UserSchema is not exist");
+      }  
+    }catch(error:any){
+      console.error("An error occured: ",error.message)
+    }
   }
 
-
-  private async newProofAttribute() {
-    //const schema=await this.getById(CustomRecord,'user-schema').then((el)=>{return el?.metadata.data});
+  private async voteProofAttribute() {
+    //const schema=await this.getById(CustomRecord,'vote-schema').then((el)=>{return el?.metadata.data});
     const proofAttribute = {
       name: {
         name:'name',
@@ -270,7 +304,7 @@ class Faber extends BaseAgent {
             //schema_id:schema?.schemaId[0],
             //schema_issuer_id:this.anonCredsIssuerId,
             issuer_id: this.anonCredsIssuerId,
-            //cred_def_id: this.credentialDefinition?.credentialDefinitionId,
+            cred_def_id: this.credentialDefinition?.credentialDefinitionId,
           },
         ],
       },
@@ -289,7 +323,7 @@ class Faber extends BaseAgent {
 
   public async sendProofRequest() {
     const connectionRecord = await this.getConnectionRecord();
-    const proofAttribute = await this.newProofAttribute();
+    const proofAttribute = await this.voteProofAttribute();
 
     const res = await this.agent.proofs.requestProof({
       protocolVersion: 'v2',
