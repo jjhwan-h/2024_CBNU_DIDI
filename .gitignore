@@ -4,9 +4,4 @@ node_modules
 .sequelizerc
 /src/dist
 backend-397418-8286cc4a1853.json
-<<<<<<< HEAD
-/configs
-/sampleData
-=======
 /src/sampleData
->>>>>>> feature/VP

@@ -1,10 +1,7 @@
 services:
   backend:
     platform: linux/arm64
-<<<<<<< HEAD
-=======
     restart: always
->>>>>>> feature/VP
     build:
       context: .
       dockerfile: Dockerfile
@@ -16,23 +13,10 @@ services:
       - ./.env.docker
   database:
     platform: linux/arm64
-<<<<<<< HEAD
-=======
     restart: always
->>>>>>> feature/VP
     image: mysql:8.3.0
     environment:
       MYSQL_DATABASE: "${DB_DATABASE}"
       MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
     ports:
-<<<<<<< HEAD
       - 3306:3306
-  # database:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.mongo
-  #   ports:
-  #     - 27017:27017
-=======
-      - 3306:3306
->>>>>>> feature/VP

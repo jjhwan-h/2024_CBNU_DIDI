@@ -17,13 +17,8 @@ router.get('/vote-rooms/registration',isLoggedIn,(req,res,next)=>{
     res.render('voteRooms/createRoom');
 })
 
-<<<<<<< HEAD
-//GET /vote-rooms/:id
-router.get('/vote-rooms/:id',getVoteRoom);
-=======
 //GET /vote-rooms/:room_id
 router.get('/vote-rooms/:room_id',getVoteRoom);
->>>>>>> feature/VP
 
 //GET /
 router.get('/',sendToastForVC,(req,res,next)=>{

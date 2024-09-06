@@ -10,11 +10,8 @@ import passport from 'passport';
 import { InferAttributes, Transaction, where } from 'sequelize';
 import Room from '../models/room';
 import UserRoom from '../models/userRoom';
-<<<<<<< HEAD
-=======
 import { sendProofRequest } from '../middlewares';
 import Candidate from '../models/candidate';
->>>>>>> feature/VP
 
 const join :RequestHandler=async (req,res,next)=>{ 
     if(checkAllInputs(req.body)){
@@ -58,17 +55,10 @@ const join :RequestHandler=async (req,res,next)=>{
 }
 
 const issueVoteVC:RequestHandler=async(req,res,next)=>{
-<<<<<<< HEAD
-    res.write((`${JSON.stringify({"vc":"VC발급중..."})}`));
-    const email= req.user?.email;
-    const name = req.user?.name;
-    const roomId = req.body.roomId
-=======
     res.write((`${JSON.stringify({"progress":"VC발급중..."})}`));
     const email= req.user?.email;
     const name = req.user?.name;
     const roomId = parseInt(req.params.room_id,10);
->>>>>>> feature/VP
     if(email && name && req.user?.id){
         const transaction = await sequelize.transaction();
         try{
@@ -112,16 +102,11 @@ const issueVoteVC:RequestHandler=async(req,res,next)=>{
         }
         catch(error){
             await transaction.rollback();
-<<<<<<< HEAD
-            console.log(error)
-            res.write(`error:${error}`);
-=======
             if( error instanceof Error){
                 console.error(error);
                 const redirectUrl = `/?message=${error.message}VC검증 중 문제가 발생하였습니다. 다시 시도해주세요.`
                 res.write(`url:${redirectUrl}`);
             }
->>>>>>> feature/VP
             res.end();
             return;
         }
@@ -133,26 +118,6 @@ const issueVoteVC:RequestHandler=async(req,res,next)=>{
     }
 }
 
-<<<<<<< HEAD
-const issueDidVC:RequestHandler=async(req,res,next)=>{
-    try{
-        const did:string = await User.findOne({
-            where:{
-                id:req.user?.id,
-            }
-        }).then((el)=>{
-            return el?.dataValues.did!
-        })
-        await faber.issueDidCredential({did});
-        const redirectUrl = `/users?message=Did발급이 완료되었습니다.`;
-        res.write(`${JSON.stringify({"url":redirectUrl})}`);
-        res.end();
-        return;
-    }catch(error){
-        console.error(error);
-        const redirectUrl = `/users?message=DID발급중 문제가 발생했습니다. 다시 시도해주세요.`;
-        res.write(`${JSON.stringify({"url":redirectUrl})}`);
-=======
 const vpAuth:RequestHandler=async(req,res,next)=>{
     const roomId = parseInt(req.params.room_id,10);
     const transaction = await sequelize.transaction();
@@ -221,7 +186,6 @@ const vpAuth:RequestHandler=async(req,res,next)=>{
             const redirectUrl = `/?message=${error.message}VP검증 중 문제가 발생하였습니다. 다시 시도해주세요.`
             res.write(`url:${redirectUrl}`);
         }
->>>>>>> feature/VP
         res.end();
         return;
     }
@@ -277,8 +241,4 @@ const logout:RequestHandler =(req,res,next) => {
     })
 }
 
-<<<<<<< HEAD
-export {join,login, logout, myPage,issueVoteVC, issueDidVC}
-=======
 export {join,login, logout, myPage,issueVoteVC,vpAuth}
->>>>>>> feature/VP

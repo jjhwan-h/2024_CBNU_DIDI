@@ -67,13 +67,10 @@ export const getQR=(url,formData={})=>{
         },
         body: formData
     }).then(response => {
-<<<<<<< HEAD
-=======
         if(response.redirected){
             window.location.href=`${window.location.href}/?error=로그인이 필요한 서비스입니다.`;
             return;
         }
->>>>>>> feature/VP
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         // const output = document.getElementById('output');
@@ -86,10 +83,7 @@ export const getQR=(url,formData={})=>{
                 }
                 const chunk = decoder.decode(value, { stream: true });
                 const message = JSON.parse(chunk);
-<<<<<<< HEAD
-=======
                 console.log(message)
->>>>>>> feature/VP
                 if (message.connection){
                    const newImg = $('<img>');
                    const newBtn = $('<button></button>', {
@@ -110,21 +104,6 @@ export const getQR=(url,formData={})=>{
                    $('.QR').append(newImg);
                    $('.url').append(newBtn);
                 }
-<<<<<<< HEAD
-                else if(message.did){
-                    $('.QR').empty();
-                    $('.url').empty();
-                    $('#info').text(message.did)
-                    $('.qr-info').show();
-                }
-                else if(message.vc){
-                    $('.QR').empty();
-                    $('.url').empty();
-                    $('#info').text(message.vc)
-                    $('.qr-info').show();
-                }
-=======
->>>>>>> feature/VP
                 else if(message.complete){
                     console.log(message.complete)
                     $('.QR').empty();
@@ -132,8 +111,6 @@ export const getQR=(url,formData={})=>{
                     $('#info').text("connection 생성중...")
                     window.location.href=message.complete
                 }
-<<<<<<< HEAD
-=======
                 else if(message.progress){
                     $('.QR').empty();
                     $('.url').empty();
@@ -142,7 +119,6 @@ export const getQR=(url,formData={})=>{
                 }else if(message.url){
                     window.location.href=message.url
                 }
->>>>>>> feature/VP
                 read(); 
             });
         }

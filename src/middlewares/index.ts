@@ -32,11 +32,6 @@ const connection:RequestHandler = async(req,res,next)=>{
 
 const sendProofRequest:RequestHandler = async (req,res,next) =>{
     await faber.sendProofRequest();
-<<<<<<< HEAD
-    res.write("data:{message:waiting for acceptance}\n\n");
-    next();
-=======
->>>>>>> feature/VP
 };
 
 const isLoggedIn:RequestHandler = (req,res,next)=>{
@@ -84,11 +79,7 @@ const didAuth:RequestHandler = async(req,res,next)=>{
     id:req.user?.id
     }
   });
-<<<<<<< HEAD
-  res.write((`${JSON.stringify({"did":"DID Auth중..."})}`));
-=======
   res.write((`${JSON.stringify({"progress":"DID Auth중..."})}`));
->>>>>>> feature/VP
   try{
     const randomBuffer = randomBytes(16);
     const randomMessage = randomBuffer.toString('hex');

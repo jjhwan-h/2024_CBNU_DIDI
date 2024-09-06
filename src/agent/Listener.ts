@@ -49,24 +49,13 @@ export class Listener{
       return null; // 에러 발생 시 null을 반환하거나 대체 값을 처리할 수 있음
     });
   }
-<<<<<<< HEAD:src/agent/Listener.ts
-
-=======
->>>>>>> feature/VP:src/Listener.ts
  public async messageListener() : Promise<any> {
   return new Promise((resolve,reject)=>{
     faber.agent.events.on(BasicMessageEventTypes.BasicMessageStateChanged, async (event: BasicMessageStateChangedEvent) => {
       if (event.payload.basicMessageRecord.role === BasicMessageRole.Receiver) {
         console.log(`\n received a message: ${event.payload.message.content}\n`)
-<<<<<<< HEAD:src/agent/Listener.ts
-        // didauth를 위한 서명된 message와 did수신
-        try{
-          console.log(event.payload.basicMessageRecord)
-          console.log(event.metadata.contextCorrelationId)
-=======
         // didauth를 위한 서명된 message와 did수신 / 투표값 수신
         try{
->>>>>>> feature/VP:src/Listener.ts
           const jsonObject = JSON.parse(event.payload.message.content);
           resolve(jsonObject)
         }catch (err){
