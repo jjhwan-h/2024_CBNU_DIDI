@@ -1,0 +1,27 @@
+<script>
+    window.onload = () => {
+      if (new URL(location.href).searchParams.get('error')) {
+        console.log('error');
+        const msg= new URL(location.href).searchParams.get('error');
+        alert(msg);
+      }
+      if (new URL(location.href).searchParams.get('message')) {
+        const msg= new URL(location.href).searchParams.get('message');
+        alert(msg);
+      }
+      const url = new URL(window.location)
+      if (url.search || url.hash){
+          url.search='';
+          url.hash='';
+          window.history.replaceState({},document.title,url.pathname);
+      }
+    };
+  </script>
+    </body>
+    <footer class="footer">
+    <p class="col-md-12">
+      <span>DIDI.</span>
+      <a target="_blank" >Icons by <a href="https://icons8.kr/">Icons8</a></a>
+    </p>
+    </footer>
+</html>

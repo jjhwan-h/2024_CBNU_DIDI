@@ -1,0 +1,21 @@
+* {
+    box-sizing: border-box;
+  }
+
+  /*모니터크기*/
+  .OutBox1 {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  video {
+    width: 100%;
+    height: auto;
+  }
+
+  #logo{
+    width:150px;
+    height: auto;
+  }

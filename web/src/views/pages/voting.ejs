@@ -1,0 +1,135 @@
+<%- include('../partials/header') %>
+  <link rel="stylesheet" href="/pages/voting.css">
+    <div class="OutBox1">
+      <video src="ScriptVideo.mp4" autoplay muted loop></video>
+    </div>
+
+    <div class="OutBox2">
+      <div class="MainBox">
+        <div class="empty1"></div>
+
+        <div class="title">D-Voting 사용 방법</div>
+
+        <div class="empty2"></div>
+
+        <div class="box">
+          <div class="box2">
+            <img src="icon.png" alt="아이콘" />
+            <div class="empty3"></div>
+            <div class="text1">회원가입: DID 발급</div>
+            <div class="empty3"></div>
+            <div class="text2">
+              DID란 탈중앙화 신원증명으로 데이터의 주권이 개개인에 있고, 필요한
+              때 그 데이터를 중앙화된 시스템을 거치지 않고 증명할 수 있는 기술을
+              의미합니다. 그래서 DIDI블록은 사용자에게 DID를 발급하여, 사용자가
+              DIDI블록에서 본인인증이 필요할 시 DID를 통해서 이루어질 수 있도록
+              합니다.
+            </div>
+          </div>
+          <div class="columnempty"></div>
+
+          <div class="box2">
+            <img src="icon.png" alt="아이콘" />
+            <div class="empty3"></div>
+            <div class="text1">회원가입: VC 발급</div>
+            <div class="empty3"></div>
+            <div class="text2">
+              VC란 주민등록증과 같이 사용자의 신원증명을 할 수 있는 정보를
+              뜻합니다. 그래서 DIDI블록은 사용자의 개인정보(이름, 전화번호,
+              이메일)를 VC로 발급하여 SSI앱에 저장할 수 있도록 합니다.
+            </div>
+          </div>
+          <div class="columnempty"></div>
+
+          <div class="box2">
+            <img src="icon.png" alt="아이콘" />
+            <div class="empty3"></div>
+            <div class="text1">회원가입: SSI앱 설치</div>
+            <div class="empty3"></div>
+            <div class="text2">
+              SSI란 자기주권 신원증명 방식으로, 제 3자에게  자신을 증명할 수
+              있는 정보를 맡기지 않고  스스로 관리 및 보관하는 개념입니다.
+              그래서 DIDI블록은 발급받은 DID, VC 보관 및 VP를 제출할 수 있는
+              앱으로 SSI앱을 제공합니다. 이를 통해 사용자는 스스로 개인정보를
+              저장하고 관리할 수 있습니다.
+            </div>
+          </div>
+        </div>
+
+        <div class="empty4"></div>
+
+        <div class="box">
+          <div class="box2">
+            <img src="icon.png" alt="아이콘" />
+            <div class="empty3"></div>
+            <div class="text1">본인인증: VP발급</div>
+            <div class="empty3"></div>
+            <div class="text2">
+              VP란 VC에 저장한 정보들 중 필요한 정보만 선택해 제공하는
+              기술입니다, 그래서 dIDI블록은 로그인과 투표 시 본인 인증 때
+              관리자가 필요한 정보를 사용자에게 요청하고, 사용자는 해당 정보만
+              VC에서 선택해 관리자에게 제공할 수 있도록 합니다.
+            </div>
+          </div>
+          <div class="columnempty"></div>
+
+          <div class="box2">
+            <img src="icon.png" alt="아이콘" />
+            <div class="empty3"></div>
+            <div class="text1">투표</div>
+            <div class="empty3"></div>
+            <div class="text2">
+              투표는 블록체인을 통해 이루어집니다. 그래서 DIDI블록은, VP를 통해
+              안전하게 본인 인증이 완료되면 블록체인 투표방에 입장해 투표를
+              진행합니다. 누가 투표했는지는 알 수 없지만, 투표 내용은 분산되어
+              저장됩니다. 그래서 누군가 임의로 투표 내용을 조작할 수 없습니다.
+            </div>
+          </div>
+          <div class="columnempty"></div>
+
+          <div class="box2">
+            <img src="icon.png" alt="아이콘" />
+            <div class="empty3"></div>
+            <div class="text1">개표</div>
+            <div class="empty3"></div>
+            <div class="text2">
+              블록체인에 저장된 투표 내용을 바탕으로 개표를 진행합니다. 분산
+              저장되어 있는 투표 내용을 바탕으로 개표를 진행하기 때문에 투표의
+              무결성과 신뢰성을 보장합니다.
+            </div>
+          </div>
+        </div>
+
+        <div class="empty4"></div>
+
+        <div class="box">
+          <div class="box2">
+            <img src="icon.png" alt="아이콘" />
+            <div class="empty3"></div>
+            <div class="text1">Q&A</div>
+            <div class="empty3"></div>
+            <div class="text2">
+              DIDI 블록을 사용하면서 궁금한 사항을 남길 수 있습니다.
+            </div>
+          </div>
+          <div class="columnempty"></div>
+
+          <div class="box2">
+            <img src="icon.png" alt="아이콘" />
+            <div class="empty3"></div>
+            <div class="text1">마이페이지</div>
+            <div class="empty3"></div>
+            <div class="text2">
+              본인의 투표 내역, 투표방을 만든 내역을 확인할 수 있으며 개인
+              정보를 수정시 기존 VC를 폐기 후 재발급 받을 수 있습니다. 또한
+              단말기 변경을 원할 시 기존 단말기 해제 및 새로운 단말기 등록을 할
+              수 있습니다.
+            </div>
+          </div>
+          <div class="columnempty"></div>
+          <div class="box2"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

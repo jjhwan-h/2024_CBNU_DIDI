@@ -1,0 +1,45 @@
+<%- include('../partials/header') %>
+<%- include('../partials/qrModal') %>
+<% let user = info; %>
+
+<div class="custom-container mt-5 active">
+    <div class="row justify-content-center m-4">
+        <div class="col-md-6 text-center">
+            <h2 class="my-4">마이페이지</h2>
+            <hr>
+            <div class="account-card">
+                <div class="profile-circle">✔</div>
+                <div class="profile-info mt-3">
+                    <h4><%= user.name %></h4>
+                    <p><%= user.email %></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="m-4"> 
+        <p class="h4">투표권 목록 <span id="voteCount">0</span></p>
+        <ul class="vote-list" id="voteList">
+            <!-- 투표권 목록이 여기에 추가됩니다 -->
+        </ul>
+    </div>
+    <% const itemsPerPage = 4; %>
+    <% roomData= JSON.parse(roomInfo);%>
+    <%const pageCount = Math.ceil(roomData.length/itemsPerPage);%>
+    <nav aria-label="Page navigation" class="text-center">
+        <ul class="pagination justify-content-center"> 
+            <% for (let i = 0; i < pageCount; i++) { %>
+                <li class="page-item <%= i === 0 ? 'active' : '' %> "><a class="secondary-btn page-link text-center " href="#"><%= i + 1 %></a></li>
+            <% } %>
+        </ul>
+    </nav>
+</div>
+
+<script>
+    window.serverData = {
+            roomInfo: <%- JSON.stringify(roomInfo)%>,
+            itemsPerPage : 4,
+        }
+</script>
+<script type="module" src="/scripts/myPage.js"></script>
+<%- include('../partials/footer') %>
