@@ -1,12 +1,12 @@
 services:
-  backend:
+  web:
     platform: linux/arm64
     restart: always
     build:
-      context: .
+      context: ./web
       dockerfile: Dockerfile
     volumes:
-      - ./src:/myfolder/src
+      - ./web/src:/myfolder/src
     ports:
       - 3000:3000
     env_file:
