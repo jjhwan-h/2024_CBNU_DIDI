@@ -15,10 +15,8 @@ func New() (*chi.Mux, error) {
 	// logger := logging.NewLogger()
 	db, err := database.DBConn()
 	if err != nil {
-		//logger.WithField("module", "database").Error(err)
 		return nil, err
 	}
-
 	contextTime := viper.GetInt64("CONTEXT_TIME")
 	timeout := time.Duration(contextTime) * time.Second
 

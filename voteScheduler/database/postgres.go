@@ -5,6 +5,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
+	"sync"
 
 	"github.com/spf13/viper"
 	"github.com/uptrace/bun"
@@ -13,30 +15,39 @@ import (
 	"github.com/uptrace/bun/extra/bundebug"
 )
 
+var (
+	db   *bun.DB
+	once sync.Once
+	err  error
+)
+
 // DBConn returns a postgres connection pool.
 func DBConn() (*bun.DB, error) {
-	user := viper.GetString("DB_USER")
-	password := viper.GetString("DB_PASSWORD")
-	host := viper.GetString("DB_HOST")
-	port := viper.GetString("DB_PORT")
-	dbname := viper.GetString("DB_NAME")
-	sslmode := viper.GetString("DB_SSLMODE")
+	once.Do(func() {
+		user := viper.GetString("DB_USER")
+		password := viper.GetString("DB_PASSWORD")
+		host := viper.GetString("DB_HOST")
+		port := viper.GetString("DB_PORT")
+		dbname := viper.GetString("DB_NAME")
+		sslmode := viper.GetString("DB_SSLMODE")
 
-	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", user, password, host, port, dbname, sslmode)
+		dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s", user, password, host, port, dbname, sslmode)
 
-	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
+		sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 
-	db := bun.NewDB(sqldb, pgdialect.New())
+		db = bun.NewDB(sqldb, pgdialect.New())
 
-	if err := checkConn(db); err != nil {
-		return nil, err
-	}
+		err := checkConn(db)
+		if err != nil {
+			log.Println(err)
+		} else {
+			if viper.GetBool("db_debug") {
+				db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
+			}
+		}
+	})
 
-	if viper.GetBool("db_debug") {
-		db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
-	}
-
-	return db, nil
+	return db, err
 }
 
 func checkConn(db *bun.DB) error {
