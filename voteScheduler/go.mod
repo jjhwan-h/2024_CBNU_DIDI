@@ -3,9 +3,11 @@ module voteScheduler
 go 1.22.5
 
 require (
+	github.com/beevik/ntp v1.4.3
 	github.com/go-chi/chi/v5 v5.0.10
 	github.com/go-chi/docgen v1.3.0
 	github.com/go-chi/render v1.0.3
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	github.com/uptrace/bun v1.2.3
@@ -41,6 +43,7 @@ require (
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/crypto v0.26.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
+	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/sys v0.24.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect

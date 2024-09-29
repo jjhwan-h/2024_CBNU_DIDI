@@ -1,6 +1,8 @@
 package main
 
-import "voteScheduler/cmd"
+import (
+	"voteScheduler/cmd"
+)
 
 func main() {
 	cmd.Execute()

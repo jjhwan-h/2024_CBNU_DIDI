@@ -17,6 +17,7 @@ var serveCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
+
 		server.Start()
 	},
 }
