@@ -6,12 +6,12 @@ let candidateCount = 1;
 $(document).ready(function() {
     getCurrentDateTime();
     const currentYear = new Date().getFullYear();
-        const startYear = 1900;
-        const endYear = currentYear;
+    const startYear = 1900;
+    const endYear = currentYear;
 
-        for (let year = endYear; year >= startYear; year--) {
-            $('#candidate-age').append(new Option(year, year));
-        }
+    for (let year = endYear; year >= startYear; year--) {
+        $('#candidate-age').append(new Option(year, year));
+    }
 
     $('#nextToCandidates').click(function() {
         $('#voteInfoContainer').removeClass('active');
@@ -212,6 +212,22 @@ $('.file-input').click(function(event){
     $(`.${btnName}-input`).click();
 });
 
+$('#start-date').on('change',function(){
+    let startDate = new Date($(this).val());
+
+    startDate.setDate(startDate.getDate() + 1);
+
+    // ISO 형식으로 변환하여 종료 시간 필드의 min 값 설정
+    var year = startDate.getFullYear();
+    var month = ('0' + (startDate.getMonth() + 1)).slice(-2);
+    var day = ('0' + startDate.getDate()).slice(-2);
+    var hours = ('0' + startDate.getHours()).slice(-2);
+    var minutes = ('0' + startDate.getMinutes()).slice(-2);
+
+    var minEndDate = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+    $('#end-date').attr('min', minEndDate); 
+});
+
 const getCurrentDateTime=()=>{
     const startTime = window.serverData.startTime;
     const startTimeEnd = window.serverData.startTimeEnd;
@@ -220,6 +236,5 @@ const getCurrentDateTime=()=>{
 
     $('#start-date').attr('min',startTime);
     $('#start-date').attr('max',startTimeEnd);
-    $('#end-date').attr('min',endTime);
     $('#end-date').attr('max',endTimeEnd);
 }
