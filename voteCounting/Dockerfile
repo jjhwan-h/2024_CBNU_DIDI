@@ -14,13 +14,8 @@ RUN go build -o app .
 
 FROM alpine:latest
 
-RUN apk add --no-cache ca-certificates
-
 WORKDIR /root/
 
 COPY --from=builder /app/app .
 
-COPY start.sh ./start.sh
-RUN chmod +x ./start.sh
-
-CMD ["./start.sh"]
+CMD ["./app", "serve"]

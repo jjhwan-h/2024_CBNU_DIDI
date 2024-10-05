@@ -11,9 +11,9 @@ import (
 var cfgFile string
 
 var RootCmd = &cobra.Command{
-	Use:   "vote-scheduler",
-	Short: "Check the end time of the vote",
-	Long:  "It checks the end time of the vote and sends it to the message queue.",
+	Use:   "vote-counting",
+	Short: "Count the votes",
+	Long:  "Receive a message from the message queue, verify the blockchain, and count the votes.",
 }
 
 func Execute() {

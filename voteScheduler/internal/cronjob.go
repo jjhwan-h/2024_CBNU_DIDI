@@ -1,9 +1,10 @@
-package task
+package internal
 
 import (
 	"context"
 	"fmt"
 	"log"
+	"strconv"
 	"time"
 	"voteScheduler/database"
 	"voteScheduler/repository"
@@ -47,6 +48,8 @@ func NewCronJob() *Cron {
 				fmt.Println(room.EndTime)
 				fmt.Println(currentTime)
 				// mq로 메세지 전송
+				roomID := strconv.Itoa(room.RoomID)
+				sendMessageToQueue(roomID)
 			}
 		}
 	})
