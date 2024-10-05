@@ -11,12 +11,65 @@ services:
       - 3000:3000
     env_file:
       - ./.env.docker
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS}"
+
+  vote-counting:
+    platform: linux/arm64
+    restart: always
+    build:
+      context: ./voteCounting
+      dockerfile: Dockerfile
+    env_file:
+      - ./voteCounting/.dev.env
+    depends_on:
+      - rabbitmq
+
+  vote-scheduler:
+    platform: linux/arm64
+    restart: always
+    build:
+      context: ./voteScheduler
+      dockerfile: Dockerfile
+    ports:
+      - 4001:4001
+    env_file:
+      - ./voteScheduler/.dev.env
+    depends_on:
+      - rabbitmq
+
   database:
     platform: linux/arm64
     restart: always
     image: mysql:8.3.0
     environment:
-      MYSQL_DATABASE: "${DB_DATABASE}"
-      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_DATABASE: "${WEB_DB_DATABASE}"
+      MYSQL_ROOT_PASSWORD: "${WEB_DB_PASSWORD}"
     ports:
       - 3306:3306
+    volumes:
+      - didi_web_db:/var/lib/mysql
+  
+  scheduler-database:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: "${SCHE_DB_USER}"
+      POSTGRES_PASSWORD: "${SCHE_DB_PASSWORD}"
+      POSTGRES_DB: "${SCHE_DB_NAME}"
+    ports:
+      - "5432:5432"
+    volumes:
+      - didi_scheduler_db:/var/lib/postgresql/data
+
+volumes:
+  didi_web_db:
+  didi_scheduler_db:

@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"strings"
 	"voteScheduler/api/app/route"
-	"voteScheduler/task"
+	"voteScheduler/internal"
 
 	"github.com/spf13/viper"
 )
@@ -42,7 +42,7 @@ func NewServer() (*Server, error) {
 }
 
 func (srv *Server) Start() {
-	cron := task.NewCronJob()
+	cron := internal.NewCronJob()
 	if cron == nil {
 		panic("failed to connect database")
 	}
