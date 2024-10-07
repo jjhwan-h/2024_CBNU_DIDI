@@ -45,6 +45,17 @@ services:
       - ./voteScheduler/.dev.env
     depends_on:
       - rabbitmq
+  
+  blockchain:
+    platform: linux/arm64
+    restart: always
+    build:
+      context: ./blockchain
+      dockerfile: Dockerfile
+    ports:
+      - 4004:4004
+    env_file:
+      - ./blockchain/.dev.env
 
   database:
     platform: linux/arm64

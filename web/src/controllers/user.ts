@@ -162,10 +162,8 @@ const vpAuth:RequestHandler=async(req,res,next)=>{
                 res.write(`${JSON.stringify({"progress":"투표정보전달..."})}`);
                 await faber.sendMessage(JSON.stringify(voteInfo));
                 const vote = await faber.listener.messageListener();
-                console.log(vote);
-
                 /* TODO:: 블록체인에서 투표처리 */
-
+                // exVc.RoomId, vote
                 
                 transaction.commit();
                 const redirectUrl = `/users?message=투표가 완료되었습니다.`;
