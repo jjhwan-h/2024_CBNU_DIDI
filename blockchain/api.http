@@ -1,0 +1,23 @@
+http://localhost:4004/
+
+###
+http://localhost:4004/blocks
+
+###
+http://localhost:4004/status
+
+###
+POST http://localhost:4004/blocks
+
+{
+    "roomId":"1",
+    "choice":"3"
+}
+
+
+###
+http://localhost:4004/blocks/4
+
+
+###
+GET http://localhost:4004/balance/1?total=true

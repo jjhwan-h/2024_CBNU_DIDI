@@ -164,7 +164,6 @@ export const registerRoom:RequestHandler = async (req,res,next)=>{
                             }
                             
                         }
-                        //TODO::유권자 등록 메일전송
                     }
             });
         }catch(error){

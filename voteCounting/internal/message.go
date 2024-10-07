@@ -4,14 +4,20 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
 )
 
 type VoteEndedMessage struct {
-	VoteID string `json:"vote_id"`
+	RoomID string `json:"vote_id"`
 	Status string `json:"status"`
+}
+
+type resultResponse struct {
+	RoomId string `json:"roomId"`
+	Result []byte `json:"result"`
 }
 
 func failOnError(err error, msg string) {
@@ -30,8 +36,25 @@ func worker(id int, jobs <-chan amqp.Delivery) {
 			log.Printf("Failed to process message: %s", msg.Body)
 			msg.Nack(false, true)
 		}
-		fmt.Println(data)
-		// TODO::개표로직추가
+		//개표로직
+		port := viper.GetString("BLOCKCHAIN_PORT")
+		host := viper.GetString("BLOCKCHAIN_HOST")
+		url := fmt.Sprintf("http://%s:%s/balance/%s?total=true", host, port, data.RoomID)
+
+		var res resultResponse
+		resp, err := http.Get(url)
+		if err != nil {
+			log.Printf("Failed to counting vote: %sroom", data.RoomID)
+			msg.Nack(false, true)
+		}
+		err = json.NewDecoder(resp.Body).Decode(&res)
+		if err != nil {
+			log.Println("Failed to Decode result")
+			msg.Nack(false, true)
+		}
+		log.Println(string(res.Result))
+
+		//TODO::웹서버로 결과전송
 		msg.Ack(false)
 	}
 }

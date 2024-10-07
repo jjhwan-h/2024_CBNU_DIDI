@@ -19,7 +19,7 @@ func failOnError(err error, msg string) {
 	}
 }
 
-func sendMessageToQueue(voteID string) {
+func sendMessageToQueue(roomID string) {
 	URL := viper.GetString("MQ")
 	conn, err := amqp.Dial(URL)
 	failOnError(err, "Failed to connect to RabbitMQ")
@@ -40,7 +40,7 @@ func sendMessageToQueue(voteID string) {
 	failOnError(err, "Failed to declare a queue")
 
 	body := VoteEndedMessage{
-		VoteID: voteID,
+		VoteID: roomID,
 		Status: "end",
 	}
 	jsonData, err := json.Marshal(body)
