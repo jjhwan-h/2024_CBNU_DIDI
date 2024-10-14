@@ -14,7 +14,7 @@ export default class Candidate extends Model<InferAttributes<Candidate>, InferCr
     declare age:string;
     declare img:string;
     declare desc:string;
-    
+    declare count:number;
     declare RoomId:ForeignKey<Room['id']>;
     
     static initiate(sequelize: Sequelize.Sequelize){
@@ -47,6 +47,11 @@ export default class Candidate extends Model<InferAttributes<Candidate>, InferCr
             desc:{
                 type:Sequelize.STRING(800),
                 allowNull:false,
+            },
+            count:{
+                type:Sequelize.INTEGER,
+                allowNull:false,
+                defaultValue:0
             }
         },{
             sequelize,

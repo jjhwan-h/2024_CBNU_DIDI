@@ -1,8 +1,4 @@
-enum RoomCategory{
-    RESIDENT="주민투표",
-    POPULARITY="인기투표",
-    PNC="찬반투표"
-}
+import { RoomCategory, RoomStatus } from "../../models/room"
 
 export interface IRoomData{
     name:string,
@@ -13,6 +9,7 @@ export interface IRoomData{
     img:string,
     creator:number,
     voterCount:number
+    status:RoomStatus
 }
 export interface IRoom{
     [key : string] : string | RoomCategory | Date | number

@@ -125,14 +125,14 @@ class Faber extends BaseAgent {
     const getConnectionRecord = (outOfBandId: string) =>
       new Promise<ConnectionRecord>((resolve, reject) => {
         try{
-            // Timeout of  200000 seconds
+            // Timeout of  1m
             const timeoutId = setTimeout(() => {
               try {
                 reject(new Error(redText(Output.MissingConnectionRecord)));
               } catch (error:any) {
                 console.error('Timeout error occurred: ', error.message);
               }
-            }, 200000);
+            }, 60000);
 
           // Start listener
           this.agent.events.on<ConnectionStateChangedEvent>(ConnectionEventTypes.ConnectionStateChanged, (e) => {
@@ -158,7 +158,7 @@ class Faber extends BaseAgent {
     const connectionRecord = await getConnectionRecord(this.outOfBandId)
 
     try {
-      await this.agent.connections.returnWhenIsConnected(connectionRecord.id)
+      await this.agent.connections.returnWhenIsConnected(connectionRecord.id,{timeoutMs:60000})
     } catch (e) {
       console.log(redText(`\nTimeout of 20 seconds reached.. Returning to home screen.\n`))
       return

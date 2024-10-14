@@ -6,6 +6,7 @@ export interface ICandidate {
     age: string;
     desc: string;
     img:string;
+    count:number;
     RoomId:number;
 }
 
@@ -14,3 +15,4 @@ export interface ICandidates {
 }
 
 export type ICandidateAttr = "name" | "gender" | "age" | "desc" | "img" |"num";
+

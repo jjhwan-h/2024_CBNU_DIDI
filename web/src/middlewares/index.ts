@@ -1,15 +1,15 @@
 import faber from "../agent/Faber"
 import { RequestHandler } from 'express';
 import qrcode from 'qrcode';
-import Room from "../models/room";
+import Room, { RoomStatus } from "../models/room";
 import { Op } from "sequelize";
 import UserRoom from "../models/userRoom";
 import User from "../models/user";
 import { randomBytes } from "crypto";
-import { fromBase64, hasOwnProperty } from "../controllers/utils";
+import { fromBase64, getCurrentTime } from "../controllers/utils";
 import { Key as AskarKey, KeyAlgs } from "@hyperledger/aries-askar-shared";
 import baseX from "base-x";
-import { error } from "console";
+import axios from "axios";
 
 const connection:RequestHandler = async(req,res,next)=>{
     res.setHeader('Content-Type', 'text/plain');
@@ -125,4 +125,52 @@ const didAuth:RequestHandler = async(req,res,next)=>{
   } 
 }
 
-export{sendProofRequest,connection, isNotLoggedIn, isLoggedIn, sendToastForVC,didAuth};
+const checkRoomStatus:RequestHandler = async (req,res,next)=>{
+  const roomId = parseInt(req.params.room_id,10);
+  try {
+      const room = await Room.findOne({
+          where: { id: roomId }
+      });
+      if (!room) {
+          throw new Error("잘못된 요청입니다.");
+      }
+      console.log(room.status)
+      if (room.status===RoomStatus.VOTING){ //종료아님으로 저장됨
+        let response;
+        try{
+          const schedulerURL = process.env.SCHEDULER_URL as string;
+          response = await axios.get(schedulerURL+`/rooms/${roomId}/status`);
+        }catch(err){
+          throw new Error("투표종료를 확인하는것에 실패하였습니다.");
+        }
+        try{
+          console.log(response.data);
+          if (response.data){ //종료
+            room.status=RoomStatus.ENDED;
+            await room.save();
+            throw new Error("이미 종료된 투표입니다.")
+          }else{ //종료아님
+            req.status="VOTING"
+          }
+        }catch(err){
+          throw err;
+        }
+      }else if(room.status===RoomStatus.ENDED){
+        //개표가 완료되지않았으면 개표중 페이지 랜더링.
+        req.status="ENDED"
+      }else{
+        req.status="COUNTED"
+        //개표가 완료되었으면 개표완료페이지 랜더링.
+        
+      }
+  } catch (error: any) {
+      console.error(error);
+      const redirectUrl = `/vote-rooms?message=${error}`;
+      res.redirect(redirectUrl);
+      res.end();
+      return;
+  }
+  next();
+}
+
+export{sendProofRequest,connection, isNotLoggedIn, isLoggedIn, sendToastForVC,didAuth,checkRoomStatus};

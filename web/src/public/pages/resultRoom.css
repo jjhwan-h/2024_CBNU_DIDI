@@ -1,0 +1,63 @@
+.vote-header {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.result-card {
+    border-radius: 10px;
+    margin: 20px 0;
+    padding: 20px;
+    border: 1px solid #ddd;
+}
+
+.result-bar {
+    height: 25px;
+    border-radius: 5px;
+}
+
+.progress{
+    height: 25px;
+}
+
+.candidate {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.candidate img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.candidate-name {
+    font-weight: bold;
+}
+
+.gray-background {
+    background-color: #f0f0f0;
+}
+
+.red-background {
+    background-color: #f58c8c;
+}
+
+.yellow-background {
+    background-color: #ffeb99;
+}
+
+.blue-background {
+    background-color: #b3d7ff;
+}
+
+.gray {
+    background-color: #d8d8d8;
+}
+
+.highlight-number {
+    font-size: 24px;
+    color: #f77;
+    font-weight: bold;
+}

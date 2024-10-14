@@ -10,7 +10,7 @@ services:
     ports:
       - 3000:3000
     env_file:
-      - ./.env.docker
+      - ./web/.env.docker
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -22,14 +22,14 @@ services:
       RABBITMQ_DEFAULT_USER: "${RABBITMQ_DEFAULT_USER}"
       RABBITMQ_DEFAULT_PASS: "${RABBITMQ_DEFAULT_PASS}"
 
-  vote-counting:
+  vote-counter:
     platform: linux/arm64
     restart: always
     build:
-      context: ./voteCounting
+      context: ./voteCounter
       dockerfile: Dockerfile
     env_file:
-      - ./voteCounting/.dev.env
+      - ./voteCounter/.dev.env
     depends_on:
       - rabbitmq
 
@@ -56,6 +56,8 @@ services:
       - 4004:4004
     env_file:
       - ./blockchain/.dev.env
+    volumes:
+      - didi_blockchain_db:/blockchain.db
 
   database:
     platform: linux/arm64
@@ -84,3 +86,4 @@ services:
 volumes:
   didi_web_db:
   didi_scheduler_db:
+  didi_blockchain_db:

@@ -4,10 +4,16 @@ import Candidate from "./candidate";
 import Vc from "./vc";
 import UserRoom from "./userRoom";
 
-enum RoomCategory{
+export enum RoomCategory{
     RESIDENT="주민투표",
     POPULARITY="인기투표",
     PNC="찬반투표"
+}
+
+export enum RoomStatus{
+    VOTING="VOTING",
+    ENDED="ENDED",
+    COUNTED="COUNTED"
 }
 export default class Room extends Model<InferAttributes<Room>, InferCreationAttributes<Room>>
 {
@@ -21,10 +27,11 @@ export default class Room extends Model<InferAttributes<Room>, InferCreationAttr
     declare "eDate":Date;
     declare creator:number
     declare voterCount:number
+    declare status:RoomStatus
 
     declare CandidateId:ForeignKey<Candidate['id']>;
     declare UserRoomId:ForeignKey<UserRoom['id']>;
-
+    declare Candidates?:Candidate[];
     declare getUsers: BelongsToManyGetAssociationsMixin<User>;
 
     static initiate(sequelize: Sequelize.Sequelize){
@@ -65,6 +72,11 @@ export default class Room extends Model<InferAttributes<Room>, InferCreationAttr
             voterCount:{
                 type:Sequelize.INTEGER,
                 allowNull:false,
+            },
+            status:{
+                type: Sequelize.ENUM(...Object.values(RoomStatus)),
+                allowNull: false, 
+                defaultValue: RoomStatus.VOTING
             }
         },{
             sequelize,

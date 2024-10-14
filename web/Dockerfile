@@ -7,4 +7,6 @@ RUN yarn install
 
 COPY . /myfolder/
 
-CMD npm run start
+# 컨테이너가 종료되지 않도록 대기 상태 유지
+CMD ["tail", "-f", "/dev/null"]
+# CMD ["npm", "run", "start"]

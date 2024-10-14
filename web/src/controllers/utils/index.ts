@@ -76,7 +76,7 @@ export const getCurrentTime = (): Promise<Moment>=>{
       }
       
       let seoulTime = moment(date).tz("Asia/Seoul");
-      seoulTime = seoulTime.set({ minute: 0, second: 0, millisecond: 0 });
+      seoulTime = seoulTime.set({minute:0, second: 0, millisecond: 0 });
       console.log("NTP 서버에서 받은 시간 (서울 시간):", seoulTime);
       resolve(seoulTime);  // 성공 시 Promise를 resolve
     });

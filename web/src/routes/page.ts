@@ -1,6 +1,6 @@
 import express from 'express';
 import {getVoteRooms, getVoteRoom} from '../controllers/voteRoom';
-import { isLoggedIn, sendToastForVC } from '../middlewares';
+import { isLoggedIn, sendToastForVC,checkRoomStatus } from '../middlewares';
 import { getCreateRoom } from '../controllers/page';
 const router = express.Router();
 
@@ -22,7 +22,7 @@ router.get('/vote-rooms',sendToastForVC,getVoteRooms);
 router.get('/vote-rooms/registration',isLoggedIn,getCreateRoom);
 
 //GET /vote-rooms/:room_id
-router.get('/vote-rooms/:room_id',getVoteRoom);
+router.get('/vote-rooms/:room_id',checkRoomStatus,getVoteRoom);
 
 
 

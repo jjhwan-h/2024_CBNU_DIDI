@@ -5,7 +5,7 @@ import multer from "multer";
 import dotenv from "dotenv";
 import sharp from 'sharp';
 
-import { afterUpload,  registerRoom} from '../controllers/voteRoom';
+import { afterUpload,  registerRoom, saveVoteResults} from '../controllers/voteRoom';
 import { isLoggedIn } from '../middlewares';
 
 dotenv.config();
@@ -98,3 +98,6 @@ router.post('/',isLoggedIn,upload.single("voter"),registerRoom)
 //POST /rooms/img-upload
 router.post('/img-upload',isLoggedIn,upload.single("image"),sharpImage,imageUpload,afterUpload);
 export {router};
+
+//POST /rooms/:room_id/result
+router.post('/:room_id/result',saveVoteResults);

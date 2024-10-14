@@ -5,7 +5,6 @@ import {transporter} from '../configs/email';
 import {successHtml, errMail, successMail, alreadyVerifiedHtml} from '../configs/email';
 import { IMailOptions } from './interfaces/IMailOptions';
 import { sendMail } from './utils';
-import dotenv from 'dotenv';
 
 const generateEmailVerificationToken = ()=>{
     const token = crypto.randomUUID();

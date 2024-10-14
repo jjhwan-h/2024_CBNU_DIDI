@@ -1,6 +1,7 @@
 import { RequestHandler } from 'express';
-import {checkAllInputs} from './utils/index';
+import {checkAllInputs, getCurrentTime} from './utils/index';
 import bcrypt from 'bcrypt';
+import axios from 'axios';
 import faber from '../agent/Faber';
 import Email from '../models/email';
 import User from '../models/user';
@@ -12,6 +13,9 @@ import Room from '../models/room';
 import UserRoom from '../models/userRoom';
 import { sendProofRequest } from '../middlewares';
 import Candidate from '../models/candidate';
+
+import dotenv from 'dotenv';
+dotenv.config();
 
 const join :RequestHandler=async (req,res,next)=>{ 
     if(checkAllInputs(req.body)){
@@ -62,18 +66,16 @@ const issueVoteVC:RequestHandler=async(req,res,next)=>{
     if(email && name && req.user?.id){
         const transaction = await sequelize.transaction();
         try{
-            await UserRoom.findOne(
-                {
-                    where:{
-                        UserId:req.user.id,
-                        RoomId:roomId
-                    }
-                }
-            ).then((el)=>{
-                if (el?.isIssued){
-                    throw new Error("Already Issued");
+            const userRoom = await UserRoom.findOne({
+                where: {
+                    UserId: req.user.id,
+                    RoomId: roomId
                 }
             });
+            if (userRoom?.isIssued) {
+                throw new Error("Already Issued");
+            }
+
             const vc = await Vc.create({
                 isUsed:false,
                 RoomId:roomId,
@@ -121,6 +123,7 @@ const issueVoteVC:RequestHandler=async(req,res,next)=>{
 const vpAuth:RequestHandler=async(req,res,next)=>{
     const roomId = parseInt(req.params.room_id,10);
     const transaction = await sequelize.transaction();
+
     try{
         /*vc발급 주체는 검증.*/
         res.write(`${JSON.stringify({"progress":"VP검증중..."})}`);
@@ -162,9 +165,20 @@ const vpAuth:RequestHandler=async(req,res,next)=>{
                 res.write(`${JSON.stringify({"progress":"투표정보전달..."})}`);
                 await faber.sendMessage(JSON.stringify(voteInfo));
                 const vote = await faber.listener.messageListener();
-                /* TODO:: 블록체인에서 투표처리 */
-                // exVc.RoomId, vote
-                
+    
+                const postData =JSON.stringify({
+                    roomId:exVc.RoomId, //투표방 번호
+                    choice:vote         //투표값
+                });
+                const bolckchainUrl = process.env.BLOCKCHAIN_URL as string
+
+                try {
+                    const response = await axios.post(bolckchainUrl + "/blocks", postData);
+                    console.log("success");
+                } catch (error) {
+                    throw new Error("Failed to send vote value to the blockchain");
+                }
+
                 transaction.commit();
                 const redirectUrl = `/users?message=투표가 완료되었습니다.`;
                 res.write(`${JSON.stringify({"complete":redirectUrl})}`);
@@ -176,13 +190,12 @@ const vpAuth:RequestHandler=async(req,res,next)=>{
         }else{
             throw new Error("잘못된 자격증명 입니다.");
         }
-        // 투표선택수령
     }catch(error:unknown){
         await transaction.rollback();
         if( error instanceof Error){
             console.error(error);
-            const redirectUrl = `/?message=${error.message}VP검증 중 문제가 발생하였습니다. 다시 시도해주세요.`
-            res.write(`url:${redirectUrl}`);
+            const redirectUrl = `/?message=${error.message}투표과정 중 문제가 발생하였습니다. 다시 시도해주세요.`
+            res.write(`${JSON.stringify({url:redirectUrl})}`);
         }
         res.end();
         return;

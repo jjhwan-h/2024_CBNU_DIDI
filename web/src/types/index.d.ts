@@ -11,6 +11,7 @@ interface IRoomInfo{
     name: string,
     img: string
 }
+
 declare global{
     interface Error{ 
         status?: number;
@@ -22,10 +23,11 @@ declare global{
         }
         interface Request {
             roomInfo : IRoomInfo[]
+            status: string
         }
     }
-
 }
+
 declare module "express-session" {
     export interface SessionData {
         email: string,

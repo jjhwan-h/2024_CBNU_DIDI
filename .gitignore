@@ -1,10 +1,12 @@
-node_modules
+**/node_modules
 
 **/.dev.env
 **/.env
+**/.env.docker
 .env
 .env.docker
 web/.sequelizerc
-web/dist
+web/src/dist
 web/backend-397418-8286cc4a1853.json
-blockchain.db
+web/src/sampleData
+blockchain/blockchain.db

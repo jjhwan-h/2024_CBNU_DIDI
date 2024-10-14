@@ -2,7 +2,12 @@
 <%- include('../partials/descModal') %>
 <%- include('../partials/toast') %>
 <div class="col-md-12 text-center">
-    <h3 class="mt-3 ">투표방 목록</h3>
+    <h3 class="mt-3 "><%=roomState%>투표방 목록</h3>
+    <div class="col-md-3 offset-md-9">
+        <a href="/vote-rooms?end=false" class="btn btn-primary">진행 중인 투표방</a>
+        <a href="/vote-rooms?end=true" class="btn btn-primary">종료된 투표방</a>
+    </div>
+    
     <div class="row">
             <% roomJsonString=JSON.parse(roomJsonString); %>
             <% const itemsPerPage = 4;%>
