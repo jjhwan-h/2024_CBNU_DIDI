@@ -1,6 +1,7 @@
 package internal
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -52,9 +53,18 @@ func worker(id int, jobs <-chan amqp.Delivery) {
 			log.Println("Failed to Decode result")
 			msg.Nack(false, true)
 		}
+
 		log.Println(string(res.Result))
 
-		//TODO::웹서버로 결과전송
+		port = viper.GetString("WEB_PORT")
+		host = viper.GetString("WEB_HOST")
+		url = fmt.Sprintf("http://%s:%s/rooms/%s/result", host, port, data.RoomID)
+		_, err = http.Post(url, "application/json", bytes.NewBuffer(res.Result))
+		if err != nil {
+			log.Println("Failed to Send result")
+			msg.Nack(false, true)
+		}
+
 		msg.Ack(false)
 	}
 }
