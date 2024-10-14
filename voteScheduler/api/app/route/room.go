@@ -19,6 +19,8 @@ func NewRoomRouter(timeout time.Duration, db *bun.DB, router chi.Router) {
 	router.Group(func(r chi.Router) {
 		router.Get("/rooms/{id}", rh.Get)
 		router.Get("/rooms", rh.GetAll)
+		router.Get("/rooms/{id}/status", rh.GetStatus)
 		router.Post("/rooms", rh.Register)
+		router.Delete("/rooms/{id}", rh.Delete)
 	})
 }

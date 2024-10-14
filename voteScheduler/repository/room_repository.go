@@ -55,3 +55,15 @@ func (s *roomRepository) Register(c context.Context, room *domain.Room) error {
 	}
 	return nil
 }
+
+func (s *roomRepository) Delete(c context.Context, roomID int) error {
+	r := &domain.Room{RoomID: roomID}
+	_, err := s.db.NewDelete().
+		Model(r).
+		Where("room_id = ?", roomID).
+		Exec(c)
+	if err != nil {
+		return err
+	}
+	return nil
+}

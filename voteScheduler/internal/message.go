@@ -1,8 +1,13 @@
 package internal
 
 import (
+	"context"
 	"encoding/json"
 	"log"
+	"strconv"
+	"time"
+	"voteScheduler/database"
+	"voteScheduler/repository"
 
 	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
@@ -56,6 +61,28 @@ func sendMessageToQueue(roomID string) {
 			Body:        jsonData,
 		})
 	failOnError(err, "Failed to publish a message")
+
+	// 방 삭제
+	db, err := database.DBConn()
+	if err != nil {
+		failOnError(err, "Failed to connect DB")
+	}
+
+	rr := repository.NewRoomRepository(db)
+	contextTime := viper.GetInt64("CONTEXT_TIME")
+	id, err := strconv.Atoi(roomID)
+	if err != nil {
+		failOnError(err, "Failed to convert roomID")
+	}
+
+	timeout := time.Duration(contextTime) * time.Second
+	context, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	err = rr.Delete(context, id)
+	if err == nil {
+		log.Printf("room: %d deleted\n", id)
+	}
 
 	log.Printf(" [x] Sent %s\n", body)
 }

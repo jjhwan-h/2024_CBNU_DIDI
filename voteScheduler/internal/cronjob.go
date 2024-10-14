@@ -6,11 +6,12 @@ import (
 	"log"
 	"strconv"
 	"time"
+
 	"voteScheduler/database"
 	"voteScheduler/repository"
 	"voteScheduler/usecase"
+	"voteScheduler/utils"
 
-	"github.com/beevik/ntp"
 	"github.com/robfig/cron/v3"
 	"github.com/spf13/viper"
 )
@@ -37,7 +38,7 @@ func NewCronJob() *Cron {
 			log.Printf("Room 정보를 가져오는 중 오류 발생: %v", err)
 		}
 
-		currentTime, err := c.GetCurrentTime()
+		currentTime, err := utils.GetCurrentTime()
 		if err != nil {
 			log.Printf("NTP 서버에서 시간을 가져오는 데 실패했습니다: %v", err)
 		}
@@ -64,13 +65,4 @@ func (c *Cron) StopCron() {
 	}
 	c.job.Stop()
 	log.Println("Cron job이 정상종료되었습니다.")
-}
-
-func (c *Cron) GetCurrentTime() (time.Time, error) {
-	currentTime, err := ntp.Time("pool.ntp.org")
-	if err != nil {
-		return time.Time{}, err
-	}
-
-	return currentTime, nil
 }

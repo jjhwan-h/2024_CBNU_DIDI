@@ -23,12 +23,14 @@ type RoomRepository interface {
 	Get(c context.Context, roomID int) (*Room, error)
 	GetAll(c context.Context) ([]*Room, error)
 	Register(c context.Context, room *Room) error
+	Delete(c context.Context, roomID int) error
 }
 
 type RoomUsecase interface {
 	Get(c context.Context, roomID int) (*Room, error)
 	GetAll(c context.Context) ([]*Room, error)
 	Register(c context.Context, room *Room) error
+	Delete(c context.Context, roomID int) error
 }
 
 func (r *Room) BeforeInsert(db *bun.DB) error {

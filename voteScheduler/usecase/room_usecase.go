@@ -35,3 +35,9 @@ func (ru *roomUsecase) Register(c context.Context, room *domain.Room) error {
 	defer cancel()
 	return ru.roomRepository.Register(ctx, room)
 }
+
+func (ru *roomUsecase) Delete(c context.Context, roomID int) error {
+	ctx, cancel := context.WithTimeout(c, ru.contextTimeout)
+	defer cancel()
+	return ru.roomRepository.Delete(ctx, roomID)
+}
