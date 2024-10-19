@@ -47,12 +47,113 @@ hyperledger v0.1.3
 |개표방법|1. 투표방 생성 시 투표종료 시간을 스케줄러 서버로 전송한다.<br> 2. 스케줄러 서버는 투표 종료시간을 데이터베이스에 저장한다.<br> 3. 스케줄러 서버는 주기적으로(30분) 데이터베이스에 저장된 투표종료시간을 점검한다.<br> 4. 투표 종료시간이 넘은 투표방은 메세지큐를 통해 개표서버로 전달한다.<br> 5. 개표서버는 블록체인에 있는 해당 투표방 정보를 가져와 개표 후 웹서버로 전달한다.<br>
 
 ### ◼️ 프로젝트 아키텍쳐
-![image](https://github.com/user-attachments/assets/e4e23322-b048-4a90-b382-ac3914a40b6f)
+![image](https://github.com/user-attachments/assets/65fb9779-132c-414a-ab82-ac982e89c0cd)
+
 
 
 
 ### ◼️ 시스템 흐름도
----
+**방생성**
+```mermaid
+%%방생성
+graph LR
+  start(((Start))) --> id1{로그인여부}
+  id1 -- yes --> id2[/방정보 입력/]
+  id1 -- no --> id3(((End)))
+  id2 --> id4{투표 시작/종료 시간
+  유효성 체크}
+  id4 -- no --> id2
+  id4 -- yes --> id5[/후보자정보 입력/]
+  id5 --> id6[/유권자정보 입력/]
+  id6 --> id7{유권자 중복 체크}
+  id7 -- no --> id6
+  id7 -- yes --> id8{유권자 회원가입 여부}
+  id8 -- no --> id9[Pre User로 생성]
+  id8 -- yes --> id10[VC 발급 레코드 추가]
+  id9 --> id10
+  id10 --> id11[방생성 #40;VOTING상태#41;]
+  id11 --> id12[Room-Scheduler로
+  방성성 정보 전송]
+  id11 --> id13[유권자 등록 이메일 발송]
+  id12 --> id14[Room-Scheduler DB에 저장]
+  id13 --> id15(((End)))
+  id14 -->id15
+  
+```
+**투표권(VC)발급**
+```mermaid
+graph LR
+%%투표권(VC)발급
+start(((Start))) --> id1[마이페이지 접속]
+id1 --> id2[로그인 검증]
+id2 --> id13[사용자 기기와 연결
+QR 또는 URL]
+id13 --> id3{DID Resolve}
+%%DID Auth과정
+id3 -- yes--> id4[사용자 Public key로 
+문자열 암호화]
+id3 -- no --> id5(((End)))
+id4 --> id6[사용자 기기로 암호화된 문자열 전달]
+id6 --> id7[Private키로 복호화 후 서버로 전달]
+id7 --> id8{DID Auth
+#40;복호화된 문자열 검증#41;}
+id8 -- no --> id9(((End)))
+id8 -- yes --> id10[VC발급여부 확인]
+id10 --> id11[VC발급]
+id11 --> id12(((End)))
+
+```
+**투표**
+```mermaid
+graph LR
+%%투표
+start(((Start))) --> id1[투표방 접속 시도]
+id1 --> id2{투표방 상태 확인}
+id2 -- VOTING --> id3[Room-Scheduler서버로 투표방 상태 요청]
+id2 -- END --> id4(((End)))
+id3 --> id5{NTP서버 시간과 비교}
+id5 -- 종료 전 --> id6[투표방 접속]
+id5 -- 종료 후 --> id7[투표방 상태 END로 저장]
+id7 --> id8(((End)))
+id6 -->id9[사용자 기기와 연결
+QR또는 URL]
+id9 --> id10[VP요청]
+id10 --> id11[서버가 발급한것이 맞는지 확인]
+id11 -->id12[투표 정보 사용자 기기로 전달]
+id12 --> id13[투표값 서버로 전달]
+id13 --> id14[중복투표검증]
+id14 --> id15[block chain으로
+투표값 전송]
+```
+**투표 종료확인**
+```mermaid
+graph LR
+%%투표 종료시간 확인
+start(((Start))) --> id0[cronjob 시작]
+id0 --> id1[NTP 서버시간 불러오기]
+id1 --> id2[DB에서 투표방 시간 불러오기]
+id2 --> id3{NTP 서버시간과 종료시간비교}
+id3 -- 종료 전 --> id4[continue]
+id3 -- 종료 후 --> id5[메세지 큐로 투표방 id값 전송]
+id5 --> id6[Vote-Counter에서 
+읽을 준비가 되면 
+메세지큐에서 메세지 전송]
+
+```
+
+**개표**
+```mermaid
+graph LR
+%%개표
+start(((Start))) --> id1[Vote-Counter에서 메세지 받음]
+id1-->id2[block chain으로 room-id전송]
+id2 --> id3[해당 room-id에 해당하는 block값들 전송]
+id3 --> id4[개표진행]
+id4 --> id5[웹서버로 개표값 전송]
+id5 --> id6[투표방 상태 COUNTED로 저장]
+id6 --> id7[투표값 저장]
+id7 --> id8(((End)))
+```
 
 ### ◼️ 프로젝트 구성
 ---
