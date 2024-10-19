@@ -29,12 +29,13 @@
   
 ### ◼️ 개발 환경
 ---
-node.js v18.19.0
-go v1.22
-mysql v8.3.0
-postgres v13
-aries-framework v0.4.2
-hyperledger v0.1.3
+**node.js v18.19.0**<br>
+**go v1.22**<br>
+**mysql v8.3.0**<br>
+**postgres v13**<br>
+**aries-framework v0.4.2**<br>
+**hyperledger v0.1.3**<br>
+**Test Indy Network**<br>
 
 ### ◼️ 주요 기능
 ---
@@ -155,12 +156,13 @@ id6 --> id7[투표값 저장]
 id7 --> id8(((End)))
 ```
 
-### ◼️ 프로젝트 구성
----
-
 ### ◼️ 참고 및 출처
----
-
+**Credo-ts**<br>
+https://github.com/openwallet-foundation/credo-ts<br>
+**hyperledger/aries-askar**<br>
+https://github.com/hyperledger/aries-askar<br>
+**nomadcoders/nomadcoin**<br>
+https://github.com/nomadcoders/nomadcoin<br>
 ### ◼️ 영상 및 사진
 ---
 
