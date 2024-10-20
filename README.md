@@ -112,6 +112,7 @@ start(((Start))) --> id1[투표방 접속 시도]
 id1 --> id2{투표방 상태 확인}
 id2 -- VOTING --> id3[Room-Scheduler서버로 투표방 상태 요청]
 id2 -- END --> id4(((End)))
+id2 -- COUNTED --> id16[개표페이지]
 id3 --> id5{NTP서버 시간과 비교}
 id5 -- 종료 전 --> id6[투표방 접속]
 id5 -- 종료 후 --> id7[투표방 상태 END로 저장]
