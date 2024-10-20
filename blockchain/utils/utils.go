@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 )
 
 func HandleErr(err error) {
@@ -15,7 +16,7 @@ func HandleErr(err error) {
 	}
 }
 
-func ToBytes(i interface{}) []byte {
+func ToBytes(i interface{}) []byte { //특정한 포맷x
 	var aBuffer bytes.Buffer
 	encoder := gob.NewEncoder(&aBuffer)
 	err := encoder.Encode(i)
@@ -23,7 +24,7 @@ func ToBytes(i interface{}) []byte {
 	return aBuffer.Bytes()
 }
 
-func ToJson(i interface{}) []byte {
+func ToJson(i interface{}) []byte { //json 포맷
 	jsonData, err := json.Marshal(i)
 	HandleErr(err)
 	return jsonData
@@ -38,4 +39,12 @@ func Hash(i interface{}) string {
 	s := fmt.Sprintf("%v", i)
 	hash := sha256.Sum256([]byte(s))
 	return fmt.Sprintf("%x", hash)
+}
+
+func Splitter(s string, sep string, i int) string {
+	r := strings.Split(s, sep)
+	if len(r)-1 < i {
+		return ""
+	}
+	return r[i]
 }

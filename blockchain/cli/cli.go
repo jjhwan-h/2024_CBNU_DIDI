@@ -3,12 +3,10 @@ package cli
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"runtime"
 
-	"github.com/jjhwan-h/DIDI_BLOCKCHAIN/rest"
-	"github.com/joho/godotenv"
+	"github.com/jjhwan-h/DIDI_SERVER/rest"
 )
 
 func usage() {
@@ -19,22 +17,16 @@ func usage() {
 }
 
 func Start() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("Error loading .env file")
-	}
-
 	if len(os.Args) == 1 {
 		usage()
 	}
-
-	port := os.Getenv("PORT")
 	mode := flag.String("mode", "rest", "rest")
-	flag.Parse()
-
+	port := os.Getenv("PORT")
 	if port == "" {
-		log.Fatal("Error loading port number")
+		return
 	}
+
+	flag.Parse()
 
 	switch *mode {
 	case "rest":

@@ -17,5 +17,6 @@ FROM alpine:latest
 WORKDIR /root/
 
 COPY --from=builder /app/app .
+RUN apk add --no-cache curl
 
-CMD ["./app","-mode=rest"]
+CMD ["./app", "-mode=rest"]

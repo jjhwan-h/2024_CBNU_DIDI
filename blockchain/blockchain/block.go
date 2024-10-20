@@ -2,12 +2,11 @@ package blockchain
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 	"time"
 
-	"github.com/jjhwan-h/DIDI_BLOCKCHAIN/db"
-	"github.com/jjhwan-h/DIDI_BLOCKCHAIN/utils"
+	"github.com/jjhwan-h/DIDI_SERVER/db"
+	"github.com/jjhwan-h/DIDI_SERVER/utils"
 )
 
 type TxVote struct {
@@ -26,7 +25,7 @@ type Block struct {
 
 var ErrNotFound = errors.New("block not found")
 
-func (b *Block) persist() {
+func persistBlock(b *Block) {
 	db.SaveBlock(b.Hash, utils.ToBytes(b))
 }
 
@@ -49,7 +48,7 @@ func (b *Block) mine() {
 	for {
 		b.Timestamp = int(time.Now().Unix())
 		hash := utils.Hash(b)
-		fmt.Printf("Target:%s\nHash:%s\nNonce:%d", target, hash, b.Nonce)
+		//fmt.Printf("Target:%s\nHash:%s\nNonce:%d", target, hash, b.Nonce)
 		if strings.HasPrefix(hash, target) {
 			b.Hash = hash
 			break
@@ -69,6 +68,6 @@ func createBlock(prevHash string, height int, roomId string, choice string) *Blo
 		TxVote:     &TxVote{roomId, choice},
 	}
 	block.mine()
-	block.persist()
+	persistBlock(&block)
 	return &block
 }
