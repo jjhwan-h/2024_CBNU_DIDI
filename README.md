@@ -1,5 +1,6 @@
 # 🗳️ DIDI블록
 ## DID와 블록체인을 이용한 온라인 투표 시스템 
+![image](https://github.com/user-attachments/assets/009af3fd-9ed6-41ae-9f18-48b4dfe703d3)
 
 ### 👥 팀원
 ---
