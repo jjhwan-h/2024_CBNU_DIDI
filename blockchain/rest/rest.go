@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/jjhwan-h/DIDI_SERVER/blockchain"
-	"github.com/jjhwan-h/DIDI_SERVER/p2p"
+	"github.com/jjhwan-h/DIDI/blockchain/blockchain"
+	"github.com/jjhwan-h/DIDI/blockchain/p2p"
 )
 
 var port string

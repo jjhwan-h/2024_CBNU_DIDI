@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/jjhwan-h/DIDI_SERVER/db"
-	"github.com/jjhwan-h/DIDI_SERVER/utils"
+	"github.com/jjhwan-h/DIDI/blockchain/db"
+	"github.com/jjhwan-h/DIDI/blockchain/utils"
 )
 
 const (

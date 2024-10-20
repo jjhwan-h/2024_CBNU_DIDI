@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jjhwan-h/DIDI_SERVER/utils"
+	"github.com/jjhwan-h/DIDI/blockchain/utils"
 	bolt "go.etcd.io/bbolt"
 )
 

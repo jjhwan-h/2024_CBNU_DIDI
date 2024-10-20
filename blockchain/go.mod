@@ -1,4 +1,4 @@
-module github.com/jjhwan-h/DIDI_SERVER
+module github.com/jjhwan-h/DIDI/blockchain
 
 go 1.22.5
 

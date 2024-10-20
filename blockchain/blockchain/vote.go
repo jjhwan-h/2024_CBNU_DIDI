@@ -1,7 +1,7 @@
 package blockchain
 
 import (
-	"github.com/jjhwan-h/DIDI_SERVER/utils"
+	"github.com/jjhwan-h/DIDI/blockchain/utils"
 )
 
 func (b *blockchain) BalanceByRoom(roomId string) []byte {

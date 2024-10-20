@@ -6,7 +6,7 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/jjhwan-h/DIDI_SERVER/rest"
+	"github.com/jjhwan-h/DIDI/blockchain/rest"
 )
 
 func usage() {

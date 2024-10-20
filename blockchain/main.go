@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/jjhwan-h/DIDI_SERVER/cli"
-	"github.com/jjhwan-h/DIDI_SERVER/db"
+	"github.com/jjhwan-h/DIDI/blockchain/cli"
+	"github.com/jjhwan-h/DIDI/blockchain/db"
 )
 
 func main() {
