@@ -20,13 +20,16 @@ func Start() {
 	if len(os.Args) == 1 {
 		usage()
 	}
-	mode := flag.String("mode", "rest", "rest")
+	mode := flag.String("mode", "rest", "Server mode (default: rest)")
+	portFlag := flag.String("port", "4004", "Port number (default: 4004)")
+
+	// Parse flags
+	flag.Parse()
+
 	port := os.Getenv("PORT")
 	if port == "" {
-		return
+		port = *portFlag // Use the value from the flag if environment variable is not set
 	}
-
-	flag.Parse()
 
 	switch *mode {
 	case "rest":

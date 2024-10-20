@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/jjhwan-h/DIDI/blockchain/utils"
 	bolt "go.etcd.io/bbolt"
@@ -18,8 +17,9 @@ const (
 var db *bolt.DB
 
 func getDbName() string {
-	port := os.Args[2][6:]
-	return fmt.Sprintf("%s_%s.db", dbName, port)
+	// port := os.Args[2][6:]
+	// return fmt.Sprintf("%s_%s.db", dbName, port)
+	return fmt.Sprintf("%s.db", dbName)
 }
 
 func DB() *bolt.DB {

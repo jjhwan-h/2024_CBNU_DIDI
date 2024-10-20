@@ -23,11 +23,11 @@ http://localhost:4004/blocks/4
 GET http://localhost:4004/balance/1?total=true
 
 ###
-POST http://localhost:40/peers
+POST http://localhost:4004/peers
 
 {
     "address": "127.0.0.1",
-    "port": "5000"
+    "port": "4006"
 }
 
 ###

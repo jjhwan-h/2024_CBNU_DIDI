@@ -50,7 +50,7 @@ services:
   
   blockchain-node1:
     platform: linux/arm64
-    restart: always
+    restart: on-failure
     build:
       context: ./blockchain
       dockerfile: Dockerfile
@@ -59,9 +59,9 @@ services:
     environment:
       PORT: "${NODE1}"
     volumes:
-      - didi_blockchain_db1:/blockchain.db
+      - didi_blockchain_db1:/app/blockchain.db
       - ./blockchain/start.sh:/app/start.sh
-    command: ["/bin/sh", "/app/start.sh"]
+    command : ["/bin/sh", "/app/start.sh"]
   
   blockchain-node2:
     platform: linux/arm64
@@ -74,7 +74,7 @@ services:
     environment:
       PORT: "${NODE2}"
     volumes:
-      - didi_blockchain_db2:/blockchain.db
+      - didi_blockchain_db2:/app/blockchain.db
 
   blockchain-node3:
     platform: linux/arm64
@@ -87,7 +87,7 @@ services:
     environment:
       PORT: "${NODE3}"
     volumes:
-      - didi_blockchain_db3:/blockchain.db
+      - didi_blockchain_db3:/app/blockchain.db
 
   database:
     platform: linux/arm64
