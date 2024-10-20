@@ -28,25 +28,27 @@ services:
     build:
       context: ./voteCounter
       dockerfile: Dockerfile
+    ports:
+      - 4002:4002
     env_file:
       - ./voteCounter/.dev.env
     depends_on:
       - rabbitmq
 
-  vote-scheduler:
+  room-scheduler:
     platform: linux/arm64
     restart: always
     build:
-      context: ./voteScheduler
+      context: ./roomScheduler
       dockerfile: Dockerfile
     ports:
       - 4001:4001
     env_file:
-      - ./voteScheduler/.dev.env
+      - ./roomScheduler/.dev.env
     depends_on:
       - rabbitmq
   
-  blockchain:
+  blockchain-node1:
     platform: linux/arm64
     restart: always
     build:
@@ -54,10 +56,38 @@ services:
       dockerfile: Dockerfile
     ports:
       - 4004:4004
-    env_file:
-      - ./blockchain/.dev.env
+    environment:
+      PORT: "${NODE1}"
     volumes:
-      - didi_blockchain_db:/blockchain.db
+      - didi_blockchain_db1:/blockchain.db
+      - ./blockchain/start.sh:/app/start.sh
+    command: ["/bin/sh", "/app/start.sh"]
+  
+  blockchain-node2:
+    platform: linux/arm64
+    restart: always
+    build:
+      context: ./blockchain
+      dockerfile: Dockerfile
+    ports:
+      - 4005:4005
+    environment:
+      PORT: "${NODE2}"
+    volumes:
+      - didi_blockchain_db2:/blockchain.db
+
+  blockchain-node3:
+    platform: linux/arm64
+    restart: always
+    build:
+      context: ./blockchain
+      dockerfile: Dockerfile
+    ports:
+      - 4006:4006
+    environment:
+      PORT: "${NODE3}"
+    volumes:
+      - didi_blockchain_db3:/blockchain.db
 
   database:
     platform: linux/arm64
@@ -79,11 +109,13 @@ services:
       POSTGRES_PASSWORD: "${SCHE_DB_PASSWORD}"
       POSTGRES_DB: "${SCHE_DB_NAME}"
     ports:
-      - "5432:5432"
+      - 5432:5432
     volumes:
       - didi_scheduler_db:/var/lib/postgresql/data
 
 volumes:
   didi_web_db:
   didi_scheduler_db:
-  didi_blockchain_db:
+  didi_blockchain_db1:
+  didi_blockchain_db2:
+  didi_blockchain_db3:
