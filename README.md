@@ -165,7 +165,7 @@ https://github.com/hyperledger/aries-askar<br>
 **nomadcoders/nomadcoin**<br>
 https://github.com/nomadcoders/nomadcoin<br>
 ### ◼️ 영상 및 사진
----
+데모영상: https://drive.google.com/drive/folders/1ydreaF1cjDFiHgTD4mFt3JJdlTPqJVqw?usp=sharing
 
 
 
