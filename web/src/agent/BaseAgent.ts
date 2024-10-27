@@ -96,7 +96,7 @@ public async createDid():Promise<string>{ //indy bcovrin did 생성방법
       },
     ],
     overwrite:true,
-  })
+  });
   const indyDocument: DidCreateResult = await this.agent.dids.create({
     method: 'indy',
     // the secret contains a the verification method type and id

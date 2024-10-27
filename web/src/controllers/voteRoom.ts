@@ -1,10 +1,9 @@
 import { RequestHandler } from 'express';
 import Room, { RoomStatus } from '../models/room';
 import User from '../models/user';
-import { getCurrentTime } from './utils/index';
 import Candidate from '../models/candidate';
 import {IRoom, IRoomData} from './interfaces/IvoterRoom';
-import { checkAllInputs, hasOwnProperty, sendMail } from './utils/index';
+import { checkAllInputs, hasOwnProperty, sendMail } from '../utils/index';
 import { sequelize } from '../models';
 import UserRoom from '../models/userRoom';
 import { ICandidate, ICandidateAttr, ICandidates } from './interfaces/ICandidate';
@@ -15,6 +14,15 @@ import axios from 'axios';
 
 function isCandidateKey(key: string): key is keyof ICandidate {
     return ['num','name','age','gender','desc','img'].includes(key);
+}
+
+function resetMinutesAndSeconds(inputDate:Date):Date {
+  // 입력받은 날짜 객체에서 분과 초를 0으로 설정
+  const date = new Date(inputDate);
+  date.setMinutes(0);
+  date.setSeconds(0);
+
+  return date;
 }
 
 export const getVoteRooms:RequestHandler = async (req,res)=>{
@@ -59,6 +67,7 @@ export const getVoteRooms:RequestHandler = async (req,res)=>{
 export const getVoteRoom:RequestHandler=async(req,res)=>{
     const roomId = req.params.room_id;
     try{
+      req.status="VOTING"
       if(req.status=="VOTING"){
         const room = await Room.findOne({
           where:{id:roomId},
@@ -166,7 +175,9 @@ export const registerRoom: RequestHandler = async (req, res, next) => {
       const transaction = await sequelize.transaction();
   
       try {
-        
+        room["sDate"] = resetMinutesAndSeconds(room["sDate"] as Date);
+        room["eDate"] = resetMinutesAndSeconds(room["eDate"] as Date);
+        console.log(room["sDate"]);
         // 트랜잭션 내에서 Room 생성
         const createdRoom = await Room.create(room as unknown as IRoomData, { transaction });
         const roomId = createdRoom.dataValues.id;
@@ -218,7 +229,7 @@ export const registerRoom: RequestHandler = async (req, res, next) => {
   
         // 외부 스케줄러 호출
         const schedulerURL = process.env.SCHEDULER_URL as string;
-        await axios.post(`${schedulerURL}/rooms`, { "room_id": roomId, "end_time": `${room.eDate}:00Z` });
+        await axios.post(`${schedulerURL}/rooms`, { "room_id": roomId, "end_time": room["eDate"] });
   
         // 트랜잭션 커밋
         await transaction.commit();

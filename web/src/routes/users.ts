@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/join',isNotLoggedIn,join);
 
 //POST /users/vote/:room_id
-router.post('/vote/:room_id',isLoggedIn,connection,checkRoomStatus,vpAuth);
+router.post('/vote/:room_id',connection,checkRoomStatus,vpAuth);
 
 //POST /users/vote-right/:room_id
 router.post('/vote-right/:room_id',isLoggedIn,connection,didAuth,issueVoteVC);

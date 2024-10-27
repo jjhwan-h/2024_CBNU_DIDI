@@ -1,11 +1,12 @@
 import { RequestHandler } from "express";
-import { getCurrentTime } from "./utils";
 import { Moment } from "moment-timezone";
+import { cachedTime } from "../utils/time";
+import moment from 'moment';
 
 
 const getCreateRoom:RequestHandler = async (req,res,next)=>{
     try{
-        const currentTime:Moment = await getCurrentTime();
+        const currentTime:Moment = moment(cachedTime);
         const startTime = currentTime.format("YYYY-MM-DDTHH:mm");
         const startTimeEnd = currentTime.add(2,'month').format("YYYY-MM-DDTHH:mm");
         const endTime = currentTime.add(1,'hours').format("YYYY-MM-DDTHH:mm");
