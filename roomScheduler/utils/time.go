@@ -11,6 +11,7 @@ func GetCurrentTime() (time.Time, error) {
 	if err != nil {
 		return time.Time{}, err
 	}
+	seoulTime := currentTime.In(time.FixedZone("Asia/Seoul", 9*3600))
 
-	return currentTime, nil
+	return seoulTime, nil
 }

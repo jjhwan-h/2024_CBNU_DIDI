@@ -6,10 +6,10 @@ import { Op } from "sequelize";
 import UserRoom from "../models/userRoom";
 import User from "../models/user";
 import { randomBytes } from "crypto";
-import { fromBase64, getCurrentTime } from "../controllers/utils";
+import { fromBase64} from "../utils";
 import { Key as AskarKey, KeyAlgs } from "@hyperledger/aries-askar-shared";
 import baseX from "base-x";
-import axios from "axios";
+import { cachedTime } from "../utils/time";
 
 const connection:RequestHandler = async(req,res,next)=>{
     res.setHeader('Content-Type', 'text/plain');
@@ -138,14 +138,22 @@ const checkRoomStatus:RequestHandler = async (req,res,next)=>{
       if (room.status===RoomStatus.VOTING){ //종료아님으로 저장됨
         let response;
         try{
-          const schedulerURL = process.env.SCHEDULER_URL as string;
-          response = await axios.get(schedulerURL+`/rooms/${roomId}/status`);
+          // const schedulerURL = process.env.SCHEDULER_URL as string;
+          // response = await axios.get(schedulerURL+`/rooms/${roomId}/status`);
+          const currentTime = cachedTime;
+          console.log(room.eDate);
+          console.log(cachedTime);
+          if(room.eDate<currentTime){
+            response = true;
+          }else{
+            response = false;
+          }
         }catch(err){
           throw new Error("투표종료를 확인하는것에 실패하였습니다.");
         }
         try{
-          console.log(response.data);
-          if (response.data){ //종료
+          console.log(response);
+          if (response){ //종료
             room.status=RoomStatus.ENDED;
             await room.save();
             throw new Error("이미 종료된 투표입니다.")
@@ -158,6 +166,7 @@ const checkRoomStatus:RequestHandler = async (req,res,next)=>{
       }else if(room.status===RoomStatus.ENDED){
         //개표가 완료되지않았으면 개표중 페이지 랜더링.
         req.status="ENDED"
+        return res.render('voteRooms/countingRoom');
       }else{
         req.status="COUNTED"
         //개표가 완료되었으면 개표완료페이지 랜더링.

@@ -2,21 +2,15 @@
 import faber from "./Faber";
 import type {
   BasicMessageStateChangedEvent,
-  CredentialExchangeRecord,
-  CredentialStateChangedEvent,
-  ProofExchangeRecord,
   ProofStateChangedEvent,
 } from '@aries-framework/core'
 import {
   BasicMessageEventTypes,
   BasicMessageRole,
-  CredentialEventTypes,
-  CredentialState,
   ProofEventTypes,
   ProofState,
 } from '@aries-framework/core'
-import { decodeBase64 } from "../controllers/utils";
-import { EventEmitter } from "stream";
+import { decodeBase64 } from "../utils";
 
 export class Listener{
   

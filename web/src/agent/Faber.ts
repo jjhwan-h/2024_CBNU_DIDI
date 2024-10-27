@@ -353,7 +353,7 @@ class Faber extends BaseAgent {
             //schema_id:schema?.schemaId[0],
             //schema_issuer_id:this.anonCredsIssuerId,
             issuer_id: this.anonCredsIssuerId,
-            cred_def_id: this.credentialDefinition?.credentialDefinitionId,
+            //cred_def_id: this.credentialDefinition?.credentialDefinitionId,
           },
         ],
       },

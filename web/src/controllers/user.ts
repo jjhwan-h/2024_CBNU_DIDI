@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import {checkAllInputs, getCurrentTime} from './utils/index';
+import {checkAllInputs} from '../utils/index';
 import bcrypt from 'bcrypt';
 import axios from 'axios';
 import faber from '../agent/Faber';
@@ -125,7 +125,7 @@ const vpAuth:RequestHandler=async(req,res,next)=>{
     const transaction = await sequelize.transaction();
 
     try{
-        /*vc발급 주체는 검증.*/
+        /*vc발급 주체 검증.*/
         res.write(`${JSON.stringify({"progress":"VP검증중..."})}`);
         sendProofRequest(req,res,next);
         const vp =  await faber.listener.proofAcceptListener();

@@ -13,6 +13,7 @@ import passport from 'passport';
 import passportConfig from './middlewares/passport';
 import dotenv from 'dotenv';
 import nocache from 'nocache';
+import { startTimeUpdate } from './utils/time';
 
 dotenv.config();
 const app = express();
@@ -58,6 +59,7 @@ app.use((req,res,next)=>{
   res.locals.isAuthenticated = auth; 
   next();
 })
+startTimeUpdate(60000);
 app.use('/',pageRouter);
 app.use('/rooms',voteRoomRouter);
 app.use('/auth',authRouter);
