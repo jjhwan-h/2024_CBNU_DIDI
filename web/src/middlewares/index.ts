@@ -10,6 +10,7 @@ import { fromBase64} from "../utils";
 import { Key as AskarKey, KeyAlgs } from "@hyperledger/aries-askar-shared";
 import baseX from "base-x";
 import { cachedTime } from "../utils/time";
+import Candidate from "../models/candidate";
 
 const connection:RequestHandler = async(req,res,next)=>{
     res.setHeader('Content-Type', 'text/plain');
@@ -129,7 +130,11 @@ const checkRoomStatus:RequestHandler = async (req,res,next)=>{
   const roomId = parseInt(req.params.room_id,10);
   try {
       const room = await Room.findOne({
-          where: { id: roomId }
+          where: { id: roomId },
+          include:{
+            model:Candidate,
+            attributes:['name','age','img','num','desc','gender','count']
+          }
       });
       if (!room) {
           throw new Error("잘못된 요청입니다.");
@@ -141,16 +146,18 @@ const checkRoomStatus:RequestHandler = async (req,res,next)=>{
           // const schedulerURL = process.env.SCHEDULER_URL as string;
           // response = await axios.get(schedulerURL+`/rooms/${roomId}/status`);
           const currentTime = cachedTime;
-          console.log(room.eDate);
-          console.log(cachedTime);
-          if(room.eDate<currentTime){
-            response = true;
-          }else{
+          if (room.sDate>currentTime){ // 투표 시작 전
+            return res.render('voteRooms/waitingRoom',{name:room.name,sDate:room.sDate});
+          }
+          if(room.eDate>currentTime && room.sDate<currentTime){ // 투표 중
             response = false;
+          }else{ // 투표 종료
+            response = true;
           }
         }catch(err){
           throw new Error("투표종료를 확인하는것에 실패하였습니다.");
         }
+
         try{
           console.log(response);
           if (response){ //종료
@@ -170,7 +177,10 @@ const checkRoomStatus:RequestHandler = async (req,res,next)=>{
       }else{
         req.status="COUNTED"
         //개표가 완료되었으면 개표완료페이지 랜더링.
-        
+        const numOfVoted = room.Candidates?.reduce((acc,num)=> acc + num.count,0); //투표한 사람 수
+        const numOfVoters = room.voterCount  // 유권자 수
+        console.log(numOfVoted,numOfVoters)
+        return res.render('voteRooms/resultRoom',{room, numOfVoted, numOfVoters});
       }
   } catch (error: any) {
       console.error(error);

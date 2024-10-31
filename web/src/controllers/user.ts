@@ -136,13 +136,13 @@ const vpAuth:RequestHandler=async(req,res,next)=>{
         const vcId = parseInt(vp.vc.raw,10);
         const roomNum = parseInt(vp.room.raw,10);
         
-        if(vcId && roomNum===roomId){
+        if(vcId && roomNum===roomId){ 
             const exVc = await Vc.findOne({
                 where:{
                     id:vcId
                 },transaction});
     
-            if(exVc && !exVc.isUsed &&exVc.RoomId === roomNum){
+            if(exVc && !exVc.isUsed && exVc.RoomId === roomNum){
                 /* 투표 정보 전달 */
                 console.log("투표가능");
                 exVc.isUsed=true; //중복투표 방지
@@ -167,8 +167,8 @@ const vpAuth:RequestHandler=async(req,res,next)=>{
                 const vote = await faber.listener.messageListener();
     
                 const postData =JSON.stringify({
-                    roomId:exVc.RoomId, //투표방 번호
-                    choice:vote         //투표값
+                    roomId:exVc.RoomId.toString(), //투표방 번호
+                    choice:vote.toString()         //투표값
                 });
                 const bolckchainUrl = process.env.BLOCKCHAIN_URL as string
 
@@ -180,7 +180,7 @@ const vpAuth:RequestHandler=async(req,res,next)=>{
                 }
 
                 transaction.commit();
-                const redirectUrl = `/users?message=투표가 완료되었습니다.`;
+                const redirectUrl = `/vote-rooms?message=투표가 완료되었습니다.`;
                 res.write(`${JSON.stringify({"complete":redirectUrl})}`);
                 res.end();
                 return;
