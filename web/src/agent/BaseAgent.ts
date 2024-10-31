@@ -5,6 +5,10 @@ import {
   AnonCredsCredentialFormatService,
   AnonCredsModule,
   AnonCredsProofFormatService,
+  V1CredentialProtocol,
+  V1ProofProtocol,
+  LegacyIndyCredentialFormatService,
+  LegacyIndyProofFormatService,
 } from '@aries-framework/anoncreds'
 import { AskarModule } from '@aries-framework/askar'
 import {
@@ -122,26 +126,35 @@ public async initializeAgent() {
 
 const getAskarAnonCredsIndyModules=()=>{
   //const mediatorInvitationUrl =process.env.MEDIATORINVITATIONURL
-    return {
-      connections: new ConnectionsModule({
-        autoAcceptConnections: true,
-      }),
-      credentials: new CredentialsModule({
-        autoAcceptCredentials: AutoAcceptCredential.ContentApproved,
-        credentialProtocols: [
-          new V2CredentialProtocol({
-            credentialFormats: [ new AnonCredsCredentialFormatService()],
-          }),
-        ],
-      }),
-      proofs: new ProofsModule({
-        autoAcceptProofs: AutoAcceptProof.ContentApproved,
-        proofProtocols: [
-          new V2ProofProtocol({
-            proofFormats: [ new AnonCredsProofFormatService()],
-          }),
-        ],
-      }),
+  const legacyIndyCredentialFormatService = new LegacyIndyCredentialFormatService()
+  const legacyIndyProofFormatService = new LegacyIndyProofFormatService()
+
+  return {
+    connections: new ConnectionsModule({
+      autoAcceptConnections: true,
+    }),
+    credentials: new CredentialsModule({
+      autoAcceptCredentials: AutoAcceptCredential.ContentApproved,
+      credentialProtocols: [
+        new V1CredentialProtocol({
+          indyCredentialFormat: legacyIndyCredentialFormatService,
+        }),
+        new V2CredentialProtocol({
+          credentialFormats: [legacyIndyCredentialFormatService, new AnonCredsCredentialFormatService()],
+        }),
+      ],
+    }),
+    proofs: new ProofsModule({
+      autoAcceptProofs: AutoAcceptProof.ContentApproved,
+      proofProtocols: [
+        new V1ProofProtocol({
+          indyProofFormat: legacyIndyProofFormatService,
+        }),
+        new V2ProofProtocol({
+          proofFormats: [legacyIndyProofFormatService, new AnonCredsProofFormatService()],
+        }),
+      ],
+    }),
       anoncreds: new AnonCredsModule({
         registries: [new IndyVdrAnonCredsRegistry()],
       }),

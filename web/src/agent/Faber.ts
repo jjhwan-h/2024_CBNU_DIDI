@@ -1,4 +1,4 @@
-import type { RegisterCredentialDefinitionReturnStateFinished } from '@aries-framework/anoncreds'
+import { AnonCredsCredentialRepository, type RegisterCredentialDefinitionReturnStateFinished } from '@aries-framework/anoncreds'
 import type { ConnectionRecord, ConnectionStateChangedEvent,  BaseRecordConstructor, TagsBase} from '@aries-framework/core'
 import type { IndyVdrRegisterSchemaOptions, IndyVdrRegisterCredentialDefinitionOptions } from '@aries-framework/indy-vdr'
 import { ConnectionEventTypes, utils,BaseRecord} from '@aries-framework/core'
@@ -59,6 +59,7 @@ class Faber extends BaseAgent {
     if(!vcCount){
       this.saveItems('vc-count',{key:0});
     }
+
   }
 
   private async save(record:BaseRecord){
@@ -304,7 +305,7 @@ class Faber extends BaseAgent {
         },
       })
       }else{
-        console.log("UserSchema is not exist");
+        console.log("VoteSchema is not exist");
       }  
     }catch(error){
       console.error(error)
