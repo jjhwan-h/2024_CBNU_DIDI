@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"sync"
 	"time"
 
 	"voteScheduler/database"
@@ -16,8 +17,22 @@ import (
 	"github.com/spf13/viper"
 )
 
+const workerCount = 5
+
+var wg sync.WaitGroup
+
+type Job struct {
+	roomID string
+}
 type Cron struct {
 	job *cron.Cron
+}
+
+func worker(jobs <-chan Job, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for job := range jobs {
+		sendMessageToQueue(job.roomID)
+	}
 }
 
 func NewCronJob() *Cron {
@@ -42,17 +57,28 @@ func NewCronJob() *Cron {
 		if err != nil {
 			log.Printf("NTP 서버에서 시간을 가져오는 데 실패했습니다: %v", err)
 		}
+		start := time.Now()
+
+		jobs := make(chan Job)
+
+		for i := 0; i < workerCount; i++ {
+			wg.Add(1)
+			go worker(jobs, &wg)
+		}
 
 		log.Printf("종료된 투표 탐색중..")
 		for _, room := range rooms {
 			if room.EndTime.Before(currentTime) {
-				fmt.Println(room.EndTime)
-				fmt.Println(currentTime)
-				// mq로 메세지 전송
+				// fmt.Println(room.EndTime)
+				// fmt.Println(currentTime)
 				roomID := strconv.Itoa(room.RoomID)
-				sendMessageToQueue(roomID)
+				jobs <- Job{roomID: roomID}
 			}
 		}
+		close(jobs)
+		wg.Wait()
+		elapsed := time.Since(start)
+		fmt.Printf("time took:%s\n", elapsed)
 	})
 	c.job.Start()
 	return c
