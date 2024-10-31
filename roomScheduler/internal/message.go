@@ -24,6 +24,31 @@ func failOnError(err error, msg string) {
 	}
 }
 
+func afterSendMessage(roomID string) {
+	// 방 삭제
+	db, err := database.DBConn()
+	if err != nil {
+		failOnError(err, "Failed to connect DB")
+	}
+
+	rr := repository.NewRoomRepository(db)
+	contextTime := viper.GetInt64("CONTEXT_TIME")
+	id, err := strconv.Atoi(roomID)
+	if err != nil {
+		failOnError(err, "Failed to convert roomID")
+	}
+
+	timeout := time.Duration(contextTime) * time.Second
+	context, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	err = rr.Delete(context, id)
+	if err == nil {
+		log.Printf("room: %d deleted\n", id)
+	}
+
+}
+
 func sendMessageToQueue(roomID string) {
 	URL := viper.GetString("MQ")
 	conn, err := amqp.Dial(URL)
@@ -62,27 +87,6 @@ func sendMessageToQueue(roomID string) {
 		})
 	failOnError(err, "Failed to publish a message")
 
-	// 방 삭제
-	db, err := database.DBConn()
-	if err != nil {
-		failOnError(err, "Failed to connect DB")
-	}
-
-	rr := repository.NewRoomRepository(db)
-	contextTime := viper.GetInt64("CONTEXT_TIME")
-	id, err := strconv.Atoi(roomID)
-	if err != nil {
-		failOnError(err, "Failed to convert roomID")
-	}
-
-	timeout := time.Duration(contextTime) * time.Second
-	context, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-
-	err = rr.Delete(context, id)
-	if err == nil {
-		log.Printf("room: %d deleted\n", id)
-	}
-
+	afterSendMessage(roomID)
 	log.Printf(" [x] Sent %s\n", body)
 }

@@ -6,10 +6,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"sync"
+	"time"
 
 	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
 )
+
+const workerCount = 5
+
+var wg sync.WaitGroup
 
 type VoteEndedMessage struct {
 	RoomID string `json:"vote_id"`
@@ -27,7 +35,9 @@ func failOnError(err error, msg string) {
 	}
 }
 
-func worker(id int, jobs <-chan amqp.Delivery) {
+func worker(id int, jobs <-chan amqp.Delivery, wg *sync.WaitGroup) {
+	defer wg.Done()
+
 	for msg := range jobs {
 		log.Printf("Worker %d received a message: %s", id, msg.Body)
 		var data VoteEndedMessage
@@ -61,11 +71,13 @@ func worker(id int, jobs <-chan amqp.Delivery) {
 		url = fmt.Sprintf("http://%s:%s/rooms/%s/result", host, port, data.RoomID)
 		_, err = http.Post(url, "application/json", bytes.NewBuffer(res.Result))
 		if err != nil {
-			log.Println("Failed to Send result")
-			msg.Nack(false, true)
+			//log.Println("Failed to Send result")
+			msg.Ack(false)
+		} else {
+			log.Println("Succeed to Send result")
+			msg.Ack(false)
 		}
 
-		msg.Ack(false)
 	}
 }
 
@@ -100,11 +112,12 @@ func Listen() {
 	)
 	failOnError(err, "Failed to register a consumer")
 
+	start := time.Now()
 	jobQueue := make(chan amqp.Delivery)
 
-	workerCount := 5
 	for w := 1; w <= workerCount; w++ {
-		go worker(w, jobQueue)
+		wg.Add(1)
+		go worker(w, jobQueue, &wg)
 	}
 
 	go func() {
@@ -113,6 +126,13 @@ func Listen() {
 		}
 	}()
 
+	elapsed := time.Since(start)
+	fmt.Printf("time took:%s\n", elapsed)
+
 	log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
-	select {}
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	<-c
+	close(jobQueue)
+	wg.Wait()
 }
